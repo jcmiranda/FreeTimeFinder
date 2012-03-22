@@ -1,20 +1,22 @@
 package calendar;
 import java.util.Date;
 
+import org.joda.time.*;
+
 public class Response {
-	private Date _startTime;
-	private Date _endTime;
+	private DateTime _startTime;
+	private DateTime _endTime;
 	
-	public Response(Date st, Date et) {
+	public Response(DateTime st, DateTime et) {
 		_startTime = st;
 		_endTime = et;
 	}
 	
-	public Date getStartTime() {
+	public DateTime getStartTime() {
 		// TODO
 		return null;
 	}
-	public Date getEndTime() {
+	public DateTime getEndTime() {
 		// TODO
 		return null;
 	}
