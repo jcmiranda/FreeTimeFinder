@@ -1,6 +1,8 @@
 package calendar;
 
+import java.util.ArrayList;
 import java.util.Collection;
+
 import org.joda.time.DateTime;
 
 public class CalendarImpl implements Calendar {
@@ -8,6 +10,7 @@ public class CalendarImpl implements Calendar {
 	private DateTime _startTime;
 	private DateTime _endTime;
 	private String _name;
+	private ArrayList<Response> _responses;
 	
 	public CalendarImpl(DateTime st, DateTime et, String name) {
 		_startTime = st;
@@ -30,6 +33,10 @@ public class CalendarImpl implements Calendar {
 	}
 	public Collection<Response> getResponses() {
 		return null;
+	}
+	
+	public void setResponses(ArrayList<Response> responses) {
+		_responses = responses;
 	}
 
 }
