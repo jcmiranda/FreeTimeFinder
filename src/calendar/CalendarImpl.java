@@ -11,6 +11,7 @@ public class CalendarImpl implements Calendar {
 	private DateTime _startTime;
 	private DateTime _endTime;
 	private String _name;
+
 	private ArrayList<Response> _responses = new ArrayList<Response>();
 	
 	public CalendarImpl(DateTime st, DateTime et, String name) {
@@ -64,6 +65,10 @@ public class CalendarImpl implements Calendar {
 		for(Response r : _responses) {
 			r.print();
 		}
+	}
+	
+	public void setResponses(ArrayList<Response> responses) {
+		_responses = responses;
 	}
 
 }
