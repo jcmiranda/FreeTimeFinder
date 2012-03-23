@@ -18,7 +18,10 @@ public class TimeFinderTest {
 		TimeFinderTest tft = new TimeFinderTest();
 		TimeFinder timeFind = new TimeFinder();
 		
-	/*	{0,0,1,1},
+	/*	{0,0,1,1},  0: 5
+					1: 5
+					2: 6
+					3: 0
 		{0,1,1,1},
 		{1,0,0,1},
 		{1,1,1,1},
@@ -28,6 +31,7 @@ public class TimeFinderTest {
 		TestCalGroup calGroup = tft.new TestCalGroup(); 
 		ArrayList<Response> resp = new ArrayList<Response>();
 		
+		System.out.println("START: " + start.hourOfDay().getAsText() + ":" + start.minuteOfHour().getAsText());
 		resp.add(new Response(start, start.plusMinutes(15)));
 		resp.add(new Response(start.plusMinutes(15), start.plusMinutes(30)));
 		resp.add(new Response(start.plusMinutes(60), start.plusMinutes(65)));
@@ -37,7 +41,7 @@ public class TimeFinderTest {
 		assert(resp != null) : "resp";
 		assert(tft.new TestOwner("A") != null) : "owner";
 		assert(tft.new TestCalendar(start, start.plusMinutes(65), tft.new TestOwner("A"), resp) != null) : "cal";
-		//calGroup.addCalendar(tft.new TestCalendar(start, start.plusMinutes(65), tft.new TestOwner("A"), resp));
+		calGroup.addCalendar(tft.new TestCalendar(start, start.plusMinutes(65), tft.new TestOwner("A"), resp));
 		
 		ArrayList<Response> resp2 = new ArrayList<Response>();
 		resp2.add(new Response(start, start.plusMinutes(15)));

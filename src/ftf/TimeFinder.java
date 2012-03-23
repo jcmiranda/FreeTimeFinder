@@ -37,9 +37,10 @@ public class TimeFinder {
 		for(Calendar cal : calendars){
 			ArrayList<Response> responses = (ArrayList<Response>) cal.getResponses();
 			for(Response r : responses){
+				System.out.println(r.getStartTime().hourOfDay().getAsText() + ":" + r.getStartTime().minuteOfHour().getAsText() + ", " + cal.getEndTime().hourOfDay().getAsText() + ":" + cal.getEndTime().minuteOfHour().getAsText());
 				row = (r.getStartTime().getDayOfYear() - cal.getStartTime().getDayOfYear())*dayLen/interval + (r.getStartTime().getMinuteOfDay() - cal.getStartTime().getMinuteOfDay())/interval;
 				int end = (r.getEndTime().getDayOfYear() - cal.getStartTime().getDayOfYear())*dayLen/interval + (r.getEndTime().getMinuteOfDay() - cal.getStartTime().getMinuteOfDay())/interval;
-				while(row <= end){
+				while(row < end){
 					freeTimes[row][col] = 0;
 					row++;
 				}
@@ -150,7 +151,7 @@ public class TimeFinder {
 				{0,1,1,1}
 		};
 		PriorityQueue<TimeAvailabilityPair> q = tF.calculateTimes(times, 15, 30, 1);
-		System.out.println("QUEUE:");
+		System.out.println("QUEUE 1:");
 		int size = q.size();
 		for(int i=0; i<size; i++){
 			TimeAvailabilityPair t = q.poll();
