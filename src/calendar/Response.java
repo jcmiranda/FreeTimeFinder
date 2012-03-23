@@ -12,10 +12,10 @@ public class Response {
 	
 	public DateTime getStartTime() {
 		// TODO
-		return null;
+		return _startTime;
 	}
 	public DateTime getEndTime() {
 		// TODO
-		return null;
+		return _endTime;
 	}
 }
