@@ -8,7 +8,7 @@ import org.joda.time.DateTime;
 public class When2MeetEvent implements CalendarGroup {
 	private DateTime _st;
 	private DateTime _et;
-	private Collection<CalendarImpl> _cals = new ArrayList<CalendarImpl>();
+	private ArrayList<CalendarImpl> _cals = new ArrayList<CalendarImpl>();
 	
 	public When2MeetEvent(DateTime st, DateTime et) {
 		_st = st;
@@ -16,7 +16,7 @@ public class When2MeetEvent implements CalendarGroup {
 	}
 	
 	@Override
-	public Collection<CalendarImpl> getCalendars() {
+	public ArrayList<CalendarImpl> getCalendars() {
 		return  _cals;
 	}
 
