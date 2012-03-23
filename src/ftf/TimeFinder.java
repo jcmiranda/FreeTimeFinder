@@ -17,8 +17,6 @@ public class TimeFinder {
 
 	public Response[] findBestTimes(CalendarGroup e, int interval, int duration, int numToReturn, int minAttendees){
 		
-		//int tStep = 60/interval;
-		
 		ArrayList<Calendar> calendars = (ArrayList<Calendar>) e.getCalendars();
 		if(calendars.size() <= 0){
 			return null;
@@ -143,7 +141,6 @@ public class TimeFinder {
 	}
 	
 	public static void main(String[] args) {
-		// TODO Auto-generated method stub
 		TimeFinder tF = new TimeFinder();
 		int[][] times = {
 				{0,0,1,1},
@@ -198,7 +195,6 @@ public class TimeFinder {
 		System.out.println("interval=15; " + start.dayOfWeek().getAsText() + ", " + start.hourOfDay().getAsText() + ":"+ start.minuteOfHour().getAsText() +"-" + end.dayOfWeek().getAsText()+ ", " + end.hourOfDay().getAsText() + ":"+ end.minuteOfHour().getAsText() + "; m=" +(end.getDayOfYear() - start.getDayOfYear() + 1)*tF.numIntervalsInDay(start, end, 15));
 		
 		DateTime r = end.minusDays(4).minusMinutes(120);
-		//DateTime r = start.plusMinutes();
 		System.out.println("row for interval 60 on day 1: " + ((r.getDayOfYear() - start.getDayOfYear())*tF.numIntervalsInDay(start, end, 60) + (r.getMinuteOfDay() - start.getMinuteOfDay())/60));
 		DateTime toCompare = start.plusDays(2/(tF.numIntervalsInDay(start, end, 60))).plusMinutes((2 % (tF.numIntervalsInDay(start, end, 60)))*60);
 		System.out.println(r.dayOfWeek().getAsText() + ", "+ r.hourOfDay().getAsText() + ":" + r.minuteOfHour().getAsText());
