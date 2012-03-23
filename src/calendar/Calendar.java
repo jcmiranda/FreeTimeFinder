@@ -7,4 +7,5 @@ public interface Calendar {
 	DateTime getEndTime();
 	Owner getOwner();
 	Collection<Response> getResponses();
+	void addResponse(Response r);
 }

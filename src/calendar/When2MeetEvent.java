@@ -3,21 +3,16 @@ package calendar;
 import java.util.ArrayList;
 import java.util.Collection;
 
-import org.joda.time.LocalDate;
-import org.joda.time.LocalTime;
+import org.joda.time.DateTime;
 
 public class When2MeetEvent implements CalendarGroup {
-	private LocalTime _st;
-	private LocalTime _et;
-	private LocalDate _sd;
-	private LocalDate _ed;
+	private DateTime _st;
+	private DateTime _et;
 	private Collection<CalendarImpl> _cals = new ArrayList<CalendarImpl>();
 	
-	public When2MeetEvent(LocalTime st, LocalTime et, LocalDate sd, LocalDate ed) {
+	public When2MeetEvent(DateTime st, DateTime et) {
 		_st = st;
 		_et = et;
-		_sd = sd;
-		_ed = ed;
 	}
 	
 	@Override

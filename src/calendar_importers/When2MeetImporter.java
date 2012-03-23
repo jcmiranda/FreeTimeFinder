@@ -1,6 +1,8 @@
 package calendar_importers;
 
 import calendar.When2MeetEvent;
+import calendar.CalendarImpl;
+import calendar.Response;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -10,6 +12,7 @@ import java.util.HashMap;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import org.joda.time.DateTime;
 import org.joda.time.LocalDate;
 import org.joda.time.LocalTime;
 
@@ -18,6 +21,7 @@ import calendar.CalendarGroup;
 public class When2MeetImporter implements CalendarsImporter {
 	private URL _url;
 	private HashMap<Integer, String> _IDsToNames = new HashMap<Integer, String>();
+	private HashMap<Integer, CalendarImpl> _IDsToCals = new HashMap<Integer, CalendarImpl>();
 	private HashMap<Integer, ArrayList<Integer>> _slotToIDs = new HashMap<Integer, ArrayList<Integer>>();
 	private HashMap<String, Integer> _months = new HashMap<String, Integer>();
 	private Pattern _namePattern = Pattern.compile("PeopleNames\\[[\\d+]\\] = '(\\w+)'");
@@ -27,17 +31,21 @@ public class When2MeetImporter implements CalendarsImporter {
 	private Pattern _timesPattern = Pattern.compile("width:(\\d+)px;font\\-size:(\\d+)px;margin:(\\d+)px (\\d+)px (\\d+)px (\\d+)px;'>(\\d*)(\\s*)(\\w+)&nbsp");
 	private int _timeIndex = 7;
 	private int _AMPMIndex = 9;
-	private LocalTime _st;
-	private LocalTime _et;
+	// Top left corner
+	private DateTime _startTime;
+	// Bottom right corner
+	private DateTime _endTime;
 	private LocalDate _sd;
 	private LocalDate _ed;
+	private LocalTime _st;
+	private LocalTime _et;
+	private int _slotsInDay;
+	private int _minInSlot = 15; // Minutes in a time slot
 	private int _year = 2012;
 	
 	public When2MeetImporter(String url) throws IOException {
 			_url = new URL(url);
-			initializeMonths();
-		
-			
+			initializeMonths();		
 	}
 	
 	private void initializeMonths() {
@@ -172,6 +180,53 @@ public class When2MeetImporter implements CalendarsImporter {
 			if(inputLine.substring(0, Math.min(100, inputLine.length())).contains("PeopleIDs")) {
 				parseNamesToIDs(inputLine);	}
 		}
+		printAvail();
+		_startTime = makeDateTime(_sd, _st);
+		_endTime = makeDateTime(_ed, _et);
+		_slotsInDay = (_et.getHourOfDay() * 60 + _et.getMinuteOfHour() + 1 - 
+				(_st.getHourOfDay()*60 + _st.getMinuteOfHour())) / _minInSlot;
+		//_days = _ed.getDayOfYear() - _sd.getDayOfYear() + 1;
+	}
+	
+
+	
+	private DateTime makeDateTime(LocalDate date, LocalTime time) {
+		return new DateTime(_year, date.getMonthOfYear(), 
+				date.getDayOfMonth(), time.getHourOfDay(), time.getMinuteOfHour());
+	}
+	
+	private DateTime slotToTime(int slotIndex, boolean start) {
+		DateTime ret = _startTime;
+		System.out.println("Slot Index: " + slotIndex);
+		System.out.println("Adding days: " + slotIndex / _slotsInDay);
+		System.out.println("Adding minutes: " + _minInSlot * (slotIndex % _slotsInDay));
+		ret = ret.plusDays(slotIndex / _slotsInDay);
+		ret = ret.plusMinutes(_minInSlot * (slotIndex % _slotsInDay));
+		if(!start)
+			ret = ret.plusMinutes(_minInSlot);
+		return ret;
+	}
+	
+	private void buildCalendars() {
+		
+		for(int id : _IDsToNames.keySet()) {
+			CalendarImpl cal = new CalendarImpl(_startTime, _endTime, _IDsToNames.get(id));
+			_IDsToCals.put(id, cal);
+		}
+		
+		// Iterate over all slots
+		for(int slotIndex : _slotToIDs.keySet()) {
+			// Iterate over all the ids that are free at a given time
+			for(int id : _slotToIDs.get(slotIndex)) {
+				DateTime st = slotToTime(slotIndex, true);
+				DateTime et = slotToTime(slotIndex, false);
+				Response r = new Response(st, et);
+				System.out.println("Adding Response from " + st + " to " + et + " to " + _IDsToNames.get(id));
+				_IDsToCals.get(id).addResponse(r);
+			}
+			
+		}
+		
 	}
 	
 	@Override
@@ -181,7 +236,13 @@ public class When2MeetImporter implements CalendarsImporter {
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
-		CalendarGroup w2me = new When2MeetEvent(_st, _et, _sd, _ed);
+		CalendarGroup w2me = new When2MeetEvent(_startTime, _endTime);
+		buildCalendars();
+		
+		for(int id : _IDsToCals.keySet()) {
+			_IDsToCals.get(id).flatten();
+			_IDsToCals.get(id).print();
+		}
 		
 		// TODO Auto-generated method stub
 		return w2me;
