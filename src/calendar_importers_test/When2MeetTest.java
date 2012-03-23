@@ -9,5 +9,4 @@ public class When2MeetTest {
 		When2MeetImporter wtmi = new When2MeetImporter(url);
 		wtmi.importFresh();
 	}
-	
 }

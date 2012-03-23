@@ -30,4 +30,10 @@ public class When2MeetEvent implements CalendarGroup {
 		_cals.add(c);
 	}
 
+	@Override
+	public void addCalendars(ArrayList<CalendarImpl> cals) {
+		// TODO Auto-generated method stub
+		
+	}
+
 }
