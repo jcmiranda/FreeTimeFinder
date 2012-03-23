@@ -1,31 +1,55 @@
-/*package ftf;
+package ftf;
 import java.util.ArrayList;
 import java.util.PriorityQueue;
 
-import calendar.Calendar;
+import org.joda.time.DateTime;
+
+import calendar.CalendarImpl;
 import calendar.CalendarGroup;
 import calendar.Response;
 
 public class TimeFinder {
+	private int _numSlotsInDay;
+	private int _interval;
+	private DateTime _calStart;
 	
 	public int dayLen(DateTime start, DateTime end){
-		return end.getMinuteOfDay() - start.getMinuteOfDay();
+		return end.getMinuteOfDay() - start.getMinuteOfDay() + 1;
 	}
 	
 	public int numIntervalsInDay(DateTime start, DateTime end, int interval){
 		return this.dayLen(start, end)/interval;
 	}
+	
+	private DateTime slotToTime(int slotIndex) {
+		DateTime ret = _calStart;
+		ret = ret.plusDays(slotIndex / _numSlotsInDay);
+		ret = ret.plusMinutes(_interval * (slotIndex % _numSlotsInDay));
+		if(ret.getHourOfDay() == 0 && ret.getMinuteOfHour() == 0)
+			ret = ret.minusMinutes(1);
+		return ret;
+	}
+	
+	public int toSlot(DateTime dt) {
+		int daysOff = dt.getDayOfYear() - _calStart.getDayOfYear();
+		int minutesOff = dt.getMinuteOfDay() - _calStart.getMinuteOfDay();
+		return daysOff * _numSlotsInDay + minutesOff / _interval;
+	}
 
 	public Response[] findBestTimes(CalendarGroup e, int interval, int duration, int numToReturn, int minAttendees){
 		
-		ArrayList<Calendar> calendars = (ArrayList<Calendar>) e.getCalendars();
+		ArrayList<CalendarImpl> calendars = (ArrayList<CalendarImpl>) e.getCalendars();
 		if(calendars.size() <= 0){
 			return null;
 		}
 		
-		
-		int dayLen = calendars.get(0).getEndTime().getMinuteOfDay() - calendars.get(0).getStartTime().getMinuteOfDay();
-		int m = (calendars.get(0).getEndTime().getDayOfYear() - calendars.get(0).getStartTime().getDayOfYear() + 1)*dayLen/interval;
+		CalendarImpl firstCal = calendars.get(0);
+		int dayLen = dayLen(firstCal.getStartTime(), firstCal.getEndTime());
+		_numSlotsInDay = dayLen / interval;
+		_interval = interval;
+		System.out.println("dayLen: " + dayLen);
+		System.out.println("interval: " + interval);
+		int m = (firstCal.getEndTime().getDayOfYear() - firstCal.getStartTime().getDayOfYear() + 1)*_numSlotsInDay;
 		int n = calendars.size();
 		int[][] freeTimes = new int[m][n];
 		for(int r=0; r<m; r++){
@@ -35,12 +59,18 @@ public class TimeFinder {
 		}
 		
 		int col=0, row=0;
-		for(Calendar cal : calendars){
+		for(CalendarImpl cal : calendars){
 			ArrayList<Response> responses = (ArrayList<Response>) cal.getResponses();
+			_calStart = cal.getStartTime();
 			for(Response r : responses){
-				System.out.println(r.getStartTime().hourOfDay().getAsText() + ":" + r.getStartTime().minuteOfHour().getAsText() + ", " + cal.getEndTime().hourOfDay().getAsText() + ":" + cal.getEndTime().minuteOfHour().getAsText());
-				row = (r.getStartTime().getDayOfYear() - cal.getStartTime().getDayOfYear())*dayLen/interval + (r.getStartTime().getMinuteOfDay() - cal.getStartTime().getMinuteOfDay())/interval;
-				int end = (r.getEndTime().getDayOfYear() - cal.getStartTime().getDayOfYear())*dayLen/interval + (r.getEndTime().getMinuteOfDay() - cal.getStartTime().getMinuteOfDay())/interval;
+				// System.out.println(r.getStartTime().hourOfDay().getAsText() + ":" + r.getStartTime().minuteOfHour().getAsText() + ", " + cal.getEndTime().hourOfDay().getAsText() + ":" + cal.getEndTime().minuteOfHour().getAsText());
+				row = toSlot(r.getStartTime());
+				int end = toSlot(r.getEndTime());
+				/*row = (r.getStartTime().getDayOfYear() - cal.getStartTime().getDayOfYear())*dayLen/interval 
+						+ (r.getStartTime().getMinuteOfDay() - cal.getStartTime().getMinuteOfDay())/interval;
+				int end = (r.getEndTime().getDayOfYear() - cal.getStartTime().getDayOfYear())*dayLen/interval 
+						+ (r.getEndTime().getMinuteOfDay() - cal.getStartTime().getMinuteOfDay())/interval;
+				*/
 				while(row < end){
 					freeTimes[row][col] = 0;
 					row++;
@@ -49,22 +79,33 @@ public class TimeFinder {
 			col++;
 		}
 		
+		/*
+		
+		// Print out free / busy array
+		System.out.println(calendars.get(0).getName());
+		for(int slotInDay = 0; slotInDay < _numSlotsInDay; slotInDay++) {
+			if(slotInDay % 4 == 0)
+				System.out.println("========");
+			for(int day = 0; day < firstCal.getEndTime().getDayOfYear() - firstCal.getStartTime().getDayOfYear()+1; day++) {
+				System.out.print(freeTimes[day*_numSlotsInDay+slotInDay][0] + " ");
+			}
+			System.out.println();
+		}
+		*/
+		
 		
 		PriorityQueue<TimeAvailabilityPair> times = calculateTimes(freeTimes, interval, duration, minAttendees);
 	
 		int i=0, num;
-		if(times.size()<numToReturn){
-			num = times.size();
-		}
-		else{
-			num = numToReturn;
-		}
+		num = Math.min(times.size(), numToReturn);
+		System.out.println("Num: " + num);
 		Response[] toReturn = new Response[num];
 		while(i<num){
 			TimeAvailabilityPair t = times.poll();
-			int startDay = t.getTime()/(dayLen/interval);
-			int startTime = t.getTime() % (dayLen/interval);
-			toReturn[i] = new Response(calendars.get(0).getStartTime().plusDays(startDay).plusMinutes(startTime*interval), calendars.get(0).getStartTime().plusDays(startDay).plusMinutes(startTime*interval+duration));
+			DateTime startTime = slotToTime(t.getTime());
+			DateTime endTime = startTime.plusMinutes(duration);
+			toReturn[i] = new Response(startTime, endTime);
+			// toReturn[i] = new Response(calendars.get(0).getStartTime().plusDays(startDay).plusMinutes(startTime*interval), calendars.get(0).getStartTime().plusDays(startDay).plusMinutes(startTime*interval+duration));
 			i++;
 		}
 		
@@ -73,7 +114,11 @@ public class TimeFinder {
 	
 	public PriorityQueue<TimeAvailabilityPair> calculateTimes(int[][] times, int interval, int duration, int minAttendees){
 		
-		int[] result = new int[times.length];
+		int numRows = times.length;
+		int numCol = times[0].length;
+		System.out.println("Num Col:" + numCol);
+		int[] result = new int[numRows];
+		System.out.println("Times Length: " + times.length);
 		int span = duration/interval - 1;
 		//initialize all entries to 0
 		for(int i=0; i<result.length; i++){
@@ -81,15 +126,15 @@ public class TimeFinder {
 		}
 		
 		System.out.println("FIRST:");
-		for(int row=0; row<times.length; row++){
-			for(int col=0; col<times[0].length; col++){
+		for(int row=0; row<numRows; row++){
+			for(int col=0; col<numCol; col++){
 				result[row] += times[row][col];
 			}
-			System.out.println(row + ": " + result[row]);
+			// System.out.println(row + ": " + result[row]);
 		}
 		System.out.println("SECOND:");
-		for(int i=0; i<result.length; i++){
-			if(i+span < result.length){
+		for(int i=0; i<numRows; i++){
+			if(i+span < numRows){
 				for(int j=i+1; j<= i+span; j++){
 					result[i] += result[j];
 				}
@@ -97,15 +142,16 @@ public class TimeFinder {
 			else{
 				result[i] = 0;
 			}
-			System.out.println(i + ": " + result[i]);
+			// System.out.println(i + ": " + result[i]);
 		}
 		PriorityQueue<TimeAvailabilityPair> bestTimes = new PriorityQueue<TimeAvailabilityPair>();
 		int lastIn = 0;
-		for(int curr=0; curr<result.length; curr++){
-			if((bestTimes.isEmpty() || result[curr] != result[lastIn]) && result[curr]>minAttendees){
+		for(int curr=0; curr<numRows; curr++){
+			if((bestTimes.isEmpty() || result[curr] != result[lastIn]) && result[curr]>=minAttendees*duration/interval){
 				bestTimes.add(new TimeAvailabilityPair(curr, result[curr]));
-				lastIn = curr;
+				
 			}
+			lastIn = curr;
 		}
 		
 		return bestTimes;
@@ -208,4 +254,4 @@ public class TimeFinder {
 		
 	}
 }
-*/
+
