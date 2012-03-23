@@ -1,11 +1,14 @@
 package calendar;
 import java.util.Collection;
 
-import org.joda.time.DateTime;
+import org.joda.time.LocalDate;
+import org.joda.time.LocalTime;
 
 public interface Calendar {
-	DateTime getStartTime();
-	DateTime getEndTime();
+	LocalTime getStartTime();
+	LocalTime getEndTime();
+	LocalDate getStartDate();
+	LocalDate getEndDate();
 	Owner getOwner();
 	Collection<Response> getResponses();
 }
