@@ -11,7 +11,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-
 import org.joda.time.DateTime;
 import org.joda.time.LocalDate;
 import org.joda.time.LocalTime;
@@ -240,7 +239,9 @@ public class When2MeetImporter implements CalendarsImporter {
 			CalendarImpl inverted = cal.invert(cal.getName() + " Busy");
 			_IDsToCals.put(id, inverted);
 			_IDsToCals.get(id).print();
+			w2me.addCalendar(inverted);
 		}
+		
 		
 		// TODO Auto-generated method stub
 		return w2me;
