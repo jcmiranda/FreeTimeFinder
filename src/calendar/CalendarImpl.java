@@ -96,6 +96,11 @@ public class CalendarImpl implements Calendar {
 		return ret;
 	}
 	
+	public void sort() {
+		Collections.sort(_responses);
+		return;
+	}
+	
 	public void flatten() {
 		Collections.sort(_responses);
 		ArrayList<Response> newResp = new ArrayList<Response>();
