@@ -2,8 +2,9 @@ package ftf;
 import java.util.ArrayList;
 import java.util.PriorityQueue;
 
-import calendar.*;
-import org.joda.time.*;
+import calendar.Calendar;
+import calendar.CalendarGroup;
+import calendar.Response;
 
 public class TimeFinder {
 
