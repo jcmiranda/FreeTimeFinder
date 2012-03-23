@@ -1,7 +1,5 @@
 package calendar;
-import java.util.Date;
-
-import org.joda.time.*;
+import org.joda.time.DateTime;
 
 public class Response {
 	private DateTime _startTime;
@@ -14,10 +12,10 @@ public class Response {
 	
 	public DateTime getStartTime() {
 		// TODO
-		return null;
+		return _startTime;
 	}
 	public DateTime getEndTime() {
 		// TODO
-		return null;
+		return _endTime;
 	}
 }

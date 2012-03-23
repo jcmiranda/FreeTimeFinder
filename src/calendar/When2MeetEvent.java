@@ -11,7 +11,7 @@ public class When2MeetEvent implements CalendarGroup {
 	private LocalTime _et;
 	private LocalDate _sd;
 	private LocalDate _ed;
-	private Collection<? extends Calendar> _cals = new ArrayList<CalendarImpl>();
+	private Collection<CalendarImpl> _cals = new ArrayList<CalendarImpl>();
 	
 	public When2MeetEvent(LocalTime st, LocalTime et, LocalDate sd, LocalDate ed) {
 		_st = st;
@@ -21,18 +21,18 @@ public class When2MeetEvent implements CalendarGroup {
 	}
 	
 	@Override
-	public Collection<Calendar> getCalendars() {
-		return _cals;
-	}
-
-	@Override
-	public void addCalendar(Calendar c) {
-		_cals.add(c);
+	public Collection<CalendarImpl> getCalendars() {
+		return  _cals;
 	}
 
 	@Override
 	public void clearCalendars() {
 		_cals.clear();
+	}
+
+	@Override
+	public void addCalendar(CalendarImpl c) {
+		_cals.add(c);
 	}
 
 }

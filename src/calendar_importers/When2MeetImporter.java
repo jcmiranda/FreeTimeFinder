@@ -1,11 +1,14 @@
 package calendar_importers;
+
 import calendar.When2MeetEvent;
-import java.net.*;
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-import java.io.*;
 
 import org.joda.time.LocalDate;
 import org.joda.time.LocalTime;

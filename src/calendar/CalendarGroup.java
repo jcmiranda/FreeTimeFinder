@@ -2,7 +2,7 @@ package calendar;
 import java.util.Collection;
 
 public interface CalendarGroup {
-	Collection<Calendar> getCalendars();
-	void addCalendar(Calendar c);
+	Collection<CalendarImpl> getCalendars();
+	void addCalendar(CalendarImpl c);
 	void clearCalendars();
 }
