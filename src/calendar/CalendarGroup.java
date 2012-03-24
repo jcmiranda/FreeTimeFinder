@@ -3,8 +3,8 @@ import java.util.ArrayList;
 import java.util.Collection;
 
 public interface CalendarGroup {
-	ArrayList<CalendarImpl> getCalendars();
-	void addCalendar(CalendarImpl c);
-	void addCalendars(ArrayList<CalendarImpl> cals);
+	ArrayList<CalendarSlotsImpl> getCalendars();
+	void addCalendar(CalendarSlotsImpl c);
+	void addCalendars(ArrayList<CalendarSlotsImpl> cals);
 	void clearCalendars();
 }

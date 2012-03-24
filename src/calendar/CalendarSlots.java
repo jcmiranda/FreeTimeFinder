@@ -19,7 +19,10 @@ public interface CalendarSlots {
 	CalSlotsFB getAvail(int day, int slot);
 	CalSlotsFB getAvail(int slot);
 	
+	void setOwner(Owner o);
 	void setAvail(int day, int slot, CalSlotsFB avail);
 	void setAvail(int slot, CalSlotsFB avail);
 	
+	void invert();
+	void print();
 }

@@ -10,10 +10,12 @@ public class CalendarSlotsImpl implements CalendarSlots {
 	private Owner _owner = new OwnerImpl("Unowned");
 	private CalSlotsFB[][] _avail;
 	
-	public CalendarSlotsImpl(DateTime startTime, DateTime endTime, Owner owner, int minInSlot, CalSlotsFB initAvail) {
+	public CalendarSlotsImpl(DateTime startTime, DateTime endTime, int minInSlot, CalSlotsFB initAvail) {
 		_startTime = startTime;
 		_endTime = endTime;
-		_owner = owner;
+		System.out.println("StartTime:" + _startTime + "\tEndTime: "+_endTime);
+		System.out.println("Length day: " + lenDayInMinutes());
+		// 36 slots in a day
 		_numSlotsInDay = lenDayInMinutes() / minInSlot;
 		_numDays = numDays();
 		
@@ -21,16 +23,19 @@ public class CalendarSlotsImpl implements CalendarSlots {
 		for(int day = 0; day < _numDays; day++)
 			for(int slot = 0; slot < _numSlotsInDay; slot++)
 				_avail[day][slot] = initAvail;
-		
 	}
 	
+	// Need absolute value in case endtime is midnight
 	private int lenDayInMinutes() {
-		return _endTime.getMinuteOfDay() - _startTime.getMinuteOfDay();
+		if(_endTime.getMinuteOfDay() == 0)
+			return 24*60 - _startTime.getMinuteOfDay();
+		else
+			return _endTime.getMinuteOfDay() - _startTime.getMinuteOfDay();
 	}
 	
 	private int numDays() {
 		if(_endTime.getYear() == _startTime.getYear())
-			return _endTime.getDayOfYear() - _startTime.getDayOfYear() + 1;
+			return _endTime.getDayOfYear() - _startTime.getDayOfYear();
 		else if(_endTime.getYear() == _startTime.getYear() + 1)
 			return _endTime.getDayOfYear() + 365 - _startTime.getDayOfYear();
 		System.err.println("err in numDays in CalendarSlotsImpl");
@@ -65,6 +70,7 @@ public class CalendarSlotsImpl implements CalendarSlots {
 		return _avail[day][slotInDay];
 	}
 
+	
 	@Override
 	public void setAvail(int day, int slot, CalSlotsFB avail) {
 		_avail[day][slot] = avail;
@@ -73,9 +79,44 @@ public class CalendarSlotsImpl implements CalendarSlots {
 
 	@Override
 	public void setAvail(int slot, CalSlotsFB avail) {
+		System.out.println("Slot: " + slot);
+		System.out.println("Num slots in day: " + _numSlotsInDay);
 		int day = slot / _numSlotsInDay;
 		int slotInDay = slot % _numSlotsInDay;
+		System.out.println("Day: " + day + "\tSlotInDay:" + slotInDay);
 		_avail[day][slotInDay] = avail;
 	}
+
+	@Override
+	public void setOwner(Owner o) { _owner = o; }
+
+	@Override
+	public void invert() {
+		for(int day = 0; day < _numDays; day++) {
+			for(int slotInDay = 0; slotInDay < _numSlotsInDay; slotInDay++){
+				if(_avail[day][slotInDay] == CalSlotsFB.busy)
+					_avail[day][slotInDay] = CalSlotsFB.free;
+				else
+					_avail[day][slotInDay] = CalSlotsFB.busy;
+			}
+		}
+	}
+
+	@Override
+	public void print() {
+		for(int slotInDay = 0; slotInDay < _numSlotsInDay; slotInDay++){
+			if(slotInDay % 4 == 0)
+				System.out.println("=========");
+			for(int day = 0; day < _numDays; day++) {
+				if(_avail[day][slotInDay] == CalSlotsFB.busy)
+					System.out.print("b");
+				else
+					System.out.print("f");
+			}
+			System.out.println();
+		}
+	}
+	
+	
 
 }
