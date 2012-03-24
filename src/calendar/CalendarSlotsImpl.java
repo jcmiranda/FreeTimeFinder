@@ -10,6 +10,34 @@ public class CalendarSlotsImpl implements CalendarSlots {
 	private Owner _owner = new OwnerImpl("Unowned");
 	private CalSlotsFB[][] _avail;
 	
+	public CalendarSlotsImpl(DateTime startTime, DateTime endTime, Owner owner, int minInSlot, CalSlotsFB initAvail) {
+		_startTime = startTime;
+		_endTime = endTime;
+		_owner = owner;
+		_numSlotsInDay = lenDayInMinutes() / minInSlot;
+		_numDays = numDays();
+		
+		_avail = new CalSlotsFB[_numDays][_numSlotsInDay];
+		for(int day = 0; day < _numDays; day++)
+			for(int slot = 0; slot < _numSlotsInDay; slot++)
+				_avail[day][slot] = initAvail;
+		
+	}
+	
+	private int lenDayInMinutes() {
+		return _endTime.getMinuteOfDay() - _startTime.getMinuteOfDay();
+	}
+	
+	private int numDays() {
+		if(_endTime.getYear() == _startTime.getYear())
+			return _endTime.getDayOfYear() - _startTime.getDayOfYear() + 1;
+		else if(_endTime.getYear() == _startTime.getYear() + 1)
+			return _endTime.getDayOfYear() + 365 - _startTime.getDayOfYear();
+		System.err.println("err in numDays in CalendarSlotsImpl");
+		System.exit(1);
+		return -1;
+	}
+	
 	@Override
 	public DateTime getStartTime() { return _startTime; }
 
