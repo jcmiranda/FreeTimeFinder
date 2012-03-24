@@ -13,6 +13,8 @@ public interface CalendarSlots {
 	DateTime getEndTime();
 	Owner getOwner();
 	
+	int getSlotsInDay();
+	int getTotalSlots();
 	// Accessors for data in calendar
 	CalSlotsFB getAvail(int day, int slot);
 	CalSlotsFB getAvail(int slot);
