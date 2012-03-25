@@ -2,6 +2,6 @@ package calendar;
 import java.util.Collection;
 
 public interface CalendarGroup {
-	Collection<Calendar> getCalendars();
+	Collection<? extends Calendar> getCalendars();
 	void addCalendar(Calendar c);
 }
