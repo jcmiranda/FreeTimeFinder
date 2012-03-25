@@ -1,6 +1,5 @@
 package calendar;
 import java.util.Collection;
-
 import org.joda.time.DateTime;
 
 public interface Calendar {
@@ -8,4 +7,5 @@ public interface Calendar {
 	DateTime getEndTime();
 	Owner getOwner();
 	Collection<Response> getResponses();
+	void addResponse(Response r);
 }

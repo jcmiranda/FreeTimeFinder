@@ -1,15 +1,21 @@
 package calendar;
-import java.util.Date;
+import org.joda.time.DateTime;
 
-import org.joda.time.*;
-
-public class Response {
+public class Response implements Comparable<Response> {
 	private DateTime _startTime;
 	private DateTime _endTime;
+	private String _name;
 	
 	public Response(DateTime st, DateTime et) {
 		_startTime = st;
 		_endTime = et;
+		_name = null;
+	}
+	
+	public Response(DateTime st, DateTime et, String name) {
+		_startTime = st;
+		_endTime = et;
+		_name = name;
 	}
 	
 	public DateTime getStartTime() {
@@ -19,5 +25,22 @@ public class Response {
 	public DateTime getEndTime() {
 		// TODO
 		return _endTime;
+	}
+	public String getName() {
+		return _name;
+	}
+	private String timeToString(DateTime t) {
+		return (t.getYear()+"-"+t.getMonthOfYear()+"-"+t.getDayOfMonth()+
+				" " + t.getHourOfDay() + ":" + t.getMinuteOfHour());
+	}
+	
+	public void print() {
+		System.out.println("Start: " + timeToString(_startTime) 
+				+ "\tEnd: " + timeToString(_endTime));
+	}
+	
+	@Override
+	public int compareTo(Response r) {
+		return this.getStartTime().compareTo(r.getStartTime());
 	}
 }
