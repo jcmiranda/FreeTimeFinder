@@ -36,8 +36,7 @@ public class Response implements Comparable<Response> {
 	
 	public void print() {
 		System.out.println("Start: " + timeToString(_startTime) 
-				+ "\tEnd: " + timeToString(_endTime)
-				+ "\tName: " + _name);
+				+ "\tEnd: " + timeToString(_endTime));
 	}
 	
 	@Override

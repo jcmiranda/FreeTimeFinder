@@ -4,14 +4,15 @@ import calendar.When2MeetEvent;
 import calendar.CalendarImpl;
 import calendar.Response;
 import java.io.BufferedReader;
+import java.io.FileInputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-
 import org.joda.time.DateTime;
 import org.joda.time.LocalDate;
 import org.joda.time.LocalTime;
@@ -20,6 +21,7 @@ import calendar.CalendarGroup;
 
 public class When2MeetImporter implements CalendarsImporter {
 	private URL _url;
+	private String _urlString;
 	private HashMap<Integer, String> _IDsToNames = new HashMap<Integer, String>();
 	private HashMap<Integer, CalendarImpl> _IDsToCals = new HashMap<Integer, CalendarImpl>();
 	private HashMap<Integer, ArrayList<Integer>> _slotToIDs = new HashMap<Integer, ArrayList<Integer>>();
@@ -44,7 +46,8 @@ public class When2MeetImporter implements CalendarsImporter {
 	private int _year = 2012;
 	
 	public When2MeetImporter(String url) throws IOException {
-			_url = new URL(url);
+			_urlString = url;
+			//_url = new URL(url);
 			initializeMonths();		
 	}
 	
@@ -135,7 +138,6 @@ public class When2MeetImporter implements CalendarsImporter {
 	}
 	
 	private void addAvail(String str, Matcher availMatcher) {
-		System.out.println("adding availability");
 		do {
 			Integer slot = new Integer(Integer.parseInt(availMatcher.group(1)));
 			Integer id = new Integer(Integer.parseInt(availMatcher.group(2)));
@@ -160,7 +162,8 @@ public class When2MeetImporter implements CalendarsImporter {
 	}
 
 	private void parseHTML() throws IOException {
-		BufferedReader page = new BufferedReader(new InputStreamReader(_url.openStream()));
+		BufferedReader page = new BufferedReader(new InputStreamReader(new FileInputStream(_urlString)));
+		//BufferedReader page = new BufferedReader(new InputStreamReader(_url.openStream()));
 		
 		String inputLine;
 		while((inputLine = page.readLine()) != null) {
@@ -185,7 +188,6 @@ public class When2MeetImporter implements CalendarsImporter {
 		_endTime = makeDateTime(_ed, _et);
 		_slotsInDay = (_et.getHourOfDay() * 60 + _et.getMinuteOfHour() + 1 - 
 				(_st.getHourOfDay()*60 + _st.getMinuteOfHour())) / _minInSlot;
-		//_days = _ed.getDayOfYear() - _sd.getDayOfYear() + 1;
 	}
 	
 
@@ -197,13 +199,12 @@ public class When2MeetImporter implements CalendarsImporter {
 	
 	private DateTime slotToTime(int slotIndex, boolean start) {
 		DateTime ret = _startTime;
-		System.out.println("Slot Index: " + slotIndex);
-		System.out.println("Adding days: " + slotIndex / _slotsInDay);
-		System.out.println("Adding minutes: " + _minInSlot * (slotIndex % _slotsInDay));
 		ret = ret.plusDays(slotIndex / _slotsInDay);
 		ret = ret.plusMinutes(_minInSlot * (slotIndex % _slotsInDay));
 		if(!start)
 			ret = ret.plusMinutes(_minInSlot);
+		if(ret.getHourOfDay() == 0 && ret.getMinuteOfHour() == 0)
+			ret = ret.minusMinutes(1);
 		return ret;
 	}
 	
@@ -221,12 +222,9 @@ public class When2MeetImporter implements CalendarsImporter {
 				DateTime st = slotToTime(slotIndex, true);
 				DateTime et = slotToTime(slotIndex, false);
 				Response r = new Response(st, et);
-				System.out.println("Adding Response from " + st + " to " + et + " to " + _IDsToNames.get(id));
 				_IDsToCals.get(id).addResponse(r);
-			}
-			
-		}
-		
+			}	
+		}	
 	}
 	
 	@Override
@@ -240,9 +238,15 @@ public class When2MeetImporter implements CalendarsImporter {
 		buildCalendars();
 		
 		for(int id : _IDsToCals.keySet()) {
-			_IDsToCals.get(id).flatten();
+			System.out.println("======================================");
+			CalendarImpl cal = _IDsToCals.get(id);
+			cal.flatten();
+			CalendarImpl inverted = cal.invert(cal.getName() + " Busy");
+			_IDsToCals.put(id, inverted);
 			_IDsToCals.get(id).print();
+			w2me.addCalendar(inverted);
 		}
+		
 		
 		// TODO Auto-generated method stub
 		return w2me;

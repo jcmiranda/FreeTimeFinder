@@ -1,8 +1,10 @@
 package calendar;
+import java.util.ArrayList;
 import java.util.Collection;
 
 public interface CalendarGroup {
-	Collection<CalendarImpl> getCalendars();
-	void addCalendar(CalendarImpl c);
+	ArrayList<CalendarSlotsImpl> getCalendars();
+	void addCalendar(CalendarSlotsImpl c);
+	void addCalendars(ArrayList<CalendarSlotsImpl> cals);
 	void clearCalendars();
 }

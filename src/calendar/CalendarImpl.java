@@ -31,6 +31,7 @@ public class CalendarImpl implements Calendar {
 		return _name;
 	}
 	public Owner getOwner() {
+		// TODO
 		return null;
 	}
 	public ArrayList<Response> getResponses() {
@@ -38,6 +39,66 @@ public class CalendarImpl implements Calendar {
 	}
 	public void addResponse(Response r) {
 		_responses.add(r);
+	}
+	
+	private boolean sameTimeOfDay(DateTime dt1, DateTime dt2) {
+		return dt1.getHourOfDay() == dt2.getHourOfDay() &&
+				dt1.getMinuteOfHour() == dt2.getMinuteOfHour();
+	}
+	
+	private DateTime toEndPrevDay(DateTime dt) {
+		DateTime ret = dt.minusDays(1);
+		ret = ret.plusHours(_endTime.getHourOfDay() - _startTime.getHourOfDay());
+		ret = ret.plusMinutes(_endTime.getMinuteOfHour() - _startTime.getMinuteOfHour());
+		return ret;
+	}
+	private DateTime toStartNextDay(DateTime dt) {
+		DateTime ret = dt.plusDays(1);
+		ret = ret.minusHours(_endTime.getHourOfDay() - _startTime.getHourOfDay());
+		ret = ret.minusMinutes(_endTime.getMinuteOfHour() - _startTime.getMinuteOfHour());
+		return ret;	
+	}
+	
+	public CalendarImpl invert(String newName) {
+		CalendarImpl ret = new CalendarImpl(_startTime, _endTime, newName);
+		
+		DateTime st = _startTime;
+		DateTime et = _responses.get(0).getStartTime();
+		for(int i = 0; i < _responses.size(); i++) {
+			Response thisResponse = _responses.get(i);
+			et = thisResponse.getStartTime();
+			if(st.compareTo(et) != 0) {
+				if(sameTimeOfDay(et, _startTime)) {
+					et = toEndPrevDay(et);
+				}
+				if(et.getDayOfYear() - st.getDayOfYear() != 0) {
+					DateTime splitEndFirstDay = st;
+					splitEndFirstDay = splitEndFirstDay.plusHours( _endTime.getHourOfDay() - splitEndFirstDay.getHourOfDay());
+					splitEndFirstDay = splitEndFirstDay.plusMinutes( _endTime.getMinuteOfHour() - splitEndFirstDay.getMinuteOfHour());
+					
+					DateTime splitStartSecondDay = et;
+					splitStartSecondDay = splitStartSecondDay.minusHours(splitStartSecondDay.getHourOfDay() - _startTime.getHourOfDay());
+					splitStartSecondDay = splitStartSecondDay.minusMinutes(splitStartSecondDay.getMinuteOfHour() - _startTime.getMinuteOfHour());
+					ret.addResponse(new Response(st,splitEndFirstDay));
+					ret.addResponse(new Response(splitStartSecondDay, et));
+				} else {
+					ret.addResponse(new Response(st, et));
+				}
+			}
+
+			st = thisResponse.getEndTime();
+			if(sameTimeOfDay(st, _endTime)) {
+				st = toStartNextDay(st);
+			}
+
+		}
+		
+		return ret;
+	}
+	
+	public void sort() {
+		Collections.sort(_responses);
+		return;
 	}
 	
 	public void flatten() {
