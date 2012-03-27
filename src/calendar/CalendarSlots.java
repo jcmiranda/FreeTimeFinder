@@ -1,7 +1,5 @@
 package calendar;
 
-import java.util.Collection;
-
 import org.joda.time.DateTime;
 
 public interface CalendarSlots {
@@ -11,6 +9,7 @@ public interface CalendarSlots {
 	// All should be set at creation
 	DateTime getStartTime();
 	DateTime getEndTime();
+	int getMinInSlot();
 	Owner getOwner();
 	
 	int getSlotsInDay();
@@ -20,9 +19,10 @@ public interface CalendarSlots {
 	CalSlotsFB getAvail(int slot);
 	
 	void setOwner(Owner o);
+	
 	void setAvail(int day, int slot, CalSlotsFB avail);
 	void setAvail(int slot, CalSlotsFB avail);
+	void setAvail(DateTime startTime, DateTime endTime, CalSlotsFB avail);
 	
-	void invert();
 	void print();
 }
