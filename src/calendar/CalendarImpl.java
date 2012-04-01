@@ -31,6 +31,7 @@ public class CalendarImpl implements Calendar {
 		return _name;
 	}
 	public Owner getOwner() {
+		// TODO
 		return null;
 	}
 	public ArrayList<Response> getResponses() {
@@ -93,6 +94,11 @@ public class CalendarImpl implements Calendar {
 		}
 		
 		return ret;
+	}
+	
+	public void sort() {
+		Collections.sort(_responses);
+		return;
 	}
 	
 	public void flatten() {

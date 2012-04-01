@@ -4,14 +4,15 @@ import calendar.When2MeetEvent;
 import calendar.CalendarImpl;
 import calendar.Response;
 import java.io.BufferedReader;
+import java.io.FileInputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-
 import org.joda.time.DateTime;
 import org.joda.time.LocalDate;
 import org.joda.time.LocalTime;
@@ -20,6 +21,7 @@ import calendar.CalendarGroup;
 
 public class When2MeetImporter implements CalendarsImporter {
 	private URL _url;
+	private String _urlString;
 	private HashMap<Integer, String> _IDsToNames = new HashMap<Integer, String>();
 	private HashMap<Integer, CalendarImpl> _IDsToCals = new HashMap<Integer, CalendarImpl>();
 	private HashMap<Integer, ArrayList<Integer>> _slotToIDs = new HashMap<Integer, ArrayList<Integer>>();
@@ -44,7 +46,8 @@ public class When2MeetImporter implements CalendarsImporter {
 	private int _year = 2012;
 	
 	public When2MeetImporter(String url) throws IOException {
-			_url = new URL(url);
+			_urlString = url;
+			//_url = new URL(url);
 			initializeMonths();		
 	}
 	
@@ -159,7 +162,8 @@ public class When2MeetImporter implements CalendarsImporter {
 	}
 
 	private void parseHTML() throws IOException {
-		BufferedReader page = new BufferedReader(new InputStreamReader(_url.openStream()));
+		BufferedReader page = new BufferedReader(new InputStreamReader(new FileInputStream(_urlString)));
+		//BufferedReader page = new BufferedReader(new InputStreamReader(_url.openStream()));
 		
 		String inputLine;
 		while((inputLine = page.readLine()) != null) {
@@ -240,7 +244,9 @@ public class When2MeetImporter implements CalendarsImporter {
 			CalendarImpl inverted = cal.invert(cal.getName() + " Busy");
 			_IDsToCals.put(id, inverted);
 			_IDsToCals.get(id).print();
+			w2me.addCalendar(inverted);
 		}
+		
 		
 		// TODO Auto-generated method stub
 		return w2me;
