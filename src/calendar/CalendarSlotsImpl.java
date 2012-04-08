@@ -28,14 +28,14 @@ public class CalendarSlotsImpl implements CalendarSlots {
 	}
 	
 	// Need absolute value in case endtime is midnight
-	private int lenDayInMinutes() {
+	public int lenDayInMinutes() {
 		if(_endTime.getMinuteOfDay() == 0)
 			return 24*60 - _startTime.getMinuteOfDay();
 		else
 			return _endTime.getMinuteOfDay() - _startTime.getMinuteOfDay();
 	}
 	
-	private int numDays() {
+	public int numDays() {
 		if(_endTime.getYear() == _startTime.getYear())
 			return _endTime.getDayOfYear() - _startTime.getDayOfYear();
 		else if(_endTime.getYear() == _startTime.getYear() + 1)
