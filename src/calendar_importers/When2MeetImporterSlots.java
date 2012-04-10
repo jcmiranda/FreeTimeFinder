@@ -16,7 +16,7 @@ import calendar.CalendarGroup;
 import calendar.CalendarSlotsImpl;
 import calendar.OwnerImpl;
 import calendar.When2MeetEvent;
-import calendar.CalendarSlots.CalSlotsFB;
+import calendar.CalendarSlotsImpl.CalSlotsFB;
 
 public class When2MeetImporterSlots implements CalendarsImporter {
 

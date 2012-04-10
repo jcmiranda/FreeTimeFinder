@@ -6,6 +6,6 @@ public interface Calendar {
 	DateTime getStartTime();
 	DateTime getEndTime();
 	Owner getOwner();
-	Collection<Response> getResponses();
-	void addResponse(Response r);
+	//Collection<Response> getResponses();
+	//void addResponse(Response r);
 }

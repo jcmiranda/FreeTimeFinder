@@ -4,6 +4,7 @@ import java.util.PriorityQueue;
 
 import org.joda.time.DateTime;
 
+import calendar.CalendarGrp;
 import calendar.CalendarImpl;
 import calendar.CalendarGroup;
 import calendar.Response;
@@ -36,9 +37,9 @@ public class TimeFinder {
 		return daysOff * _numSlotsInDay + minutesOff / _interval;
 	}
 
-	public Response[] findBestTimes(CalendarGroup e, int interval, int duration, int numToReturn, int minAttendees){
+	public Response[] findBestTimes(CalendarGrp<CalendarImpl> e, int interval, int duration, int numToReturn, int minAttendees){
 		
-		ArrayList<CalendarImpl> calendars = (ArrayList<CalendarImpl>) e.getCalendars();
+		ArrayList<CalendarImpl> calendars = e.getCalendars();
 		if(calendars.size() <= 0){
 			return null;
 		}
