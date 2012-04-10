@@ -5,6 +5,7 @@ import org.joda.time.DateTime;
 public interface CalendarSlots {
 	
 	public enum CalSlotsFB {free, busy};
+	
 	// Accessors for start time, end time and owner
 	// All should be set at creation
 	DateTime getStartTime();

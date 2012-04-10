@@ -5,29 +5,26 @@ import java.util.ArrayList;
 
 import org.joda.time.DateTime;
 
-import com.google.gdata.util.ServiceException;
-
-import calendar.CalendarGroup;
 import calendar.CalendarImpl;
+import calendar.CalendarSlots.CalSlotsFB;
 import calendar.CalendarSlotsImpl;
 import calendar.GoogleCalendars;
-import calendar.Owner;
 import calendar.Response;
-import calendar.CalendarSlots.CalSlotsFB;
+import calendar.When2MeetEvent;
 import calendar_importers.GCalImporter;
 
 public class Converter {
 	
 	private int _numSlotsInDay;
 	private static final int INTERVAL = 15;
-	private DateTime _calStart;
+	private DateTime _eventStart, _eventEnd;
 	
 	
 	private int dayLen(DateTime start, DateTime end){
 		return end.getMinuteOfDay() - start.getMinuteOfDay() + 1;
 	}
 	
-	private int toSlot(DateTime dt, boolean isEndTime) {
+	/*private int toSlot(DateTime dt, boolean isEndTime) {
 		int daysOff = dt.getDayOfYear() - _calStart.getDayOfYear();
 		int minutesOff = dt.getMinuteOfDay() - _calStart.getMinuteOfDay();
 		int offset = 0;
@@ -35,14 +32,19 @@ public class Converter {
 			offset = 1;
 		}
 		return daysOff * _numSlotsInDay + minutesOff / INTERVAL + offset;
-	}
+	}*/
 	
 	private int toCol(DateTime dt){
-		return dt.getDayOfYear() - _calStart.getDayOfYear();
+		return dt.getDayOfYear() - _eventStart.getDayOfYear();
 	}
 	
 	private int toRow(DateTime dt, boolean isEndTime){
-		int minutesOff = dt.getMinuteOfDay() - _calStart.getMinuteOfDay();
+		int minutesOff;
+		if(isEndTime)
+			minutesOff = Math.min(dt.getMinuteOfDay(), _eventEnd.getMinuteOfDay()) - _eventStart.getMinuteOfDay();
+		else
+			minutesOff = Math.max(dt.getMinuteOfDay() - _eventStart.getMinuteOfDay(), 0);
+		
 		int offset = 0;
 		if(isEndTime && minutesOff % INTERVAL != 0){
 			offset = 1;
@@ -50,23 +52,23 @@ public class Converter {
 		return minutesOff / INTERVAL + offset;
 	}
 	
-	public CalendarSlotsImpl gCalToSlots(GoogleCalendars gCal){
+	public CalendarSlotsImpl gCalToSlots(GoogleCalendars gCal, When2MeetEvent w2m){
 		
 		ArrayList<CalendarImpl> calendars = gCal.getCalendars();
 		if(calendars.size() <= 0){
 			return null;
 		}
 		
-		CalendarImpl firstCal = calendars.get(0);
-		int dayLen = dayLen(firstCal.getStartTime(), firstCal.getEndTime());
+		int dayLen = dayLen(w2m.getStartTime(), w2m.getEndTime());
 		_numSlotsInDay = dayLen / INTERVAL;
+		_eventStart = w2m.getStartTime();
+		_eventEnd = w2m.getEndTime();
 		
-		int n = _numSlotsInDay;
-		int m = firstCal.getEndTime().getDayOfYear() - firstCal.getStartTime().getDayOfYear() + 1;
-		CalSlotsFB[][] availability = new CalSlotsFB[m][n];
+		int numDays = w2m.getEndTime().getDayOfYear() - w2m.getStartTime().getDayOfYear() + 1;
+		CalSlotsFB[][] availability = new CalSlotsFB[numDays][_numSlotsInDay];
 		
-		for(int r=0; r<m; r++){
-			for(int c=0; c<n; c++){
+		for(int r=0; r<numDays; r++){
+			for(int c=0; c<_numSlotsInDay; c++){
 				availability[r][c] = CalSlotsFB.free;
 			}
 		}
@@ -74,49 +76,59 @@ public class Converter {
 		//int col=0, row=0;
 		for(CalendarImpl cal : calendars){
 			ArrayList<Response> responses = (ArrayList<Response>) cal.getResponses();
-			_calStart = cal.getStartTime();
+			//_calStart = cal.getStartTime();
 			for(Response r : responses){
-				int startMin = toRow(r.getStartTime(), false);
-				int startDay = toCol(r.getStartTime());
 				
-				int endMin = toRow(r.getEndTime(), true);
-				int endDay = toCol(r.getEndTime());
-				
-				int currDay = startDay;
-				int currMin = startMin;
-				while(currDay <= endDay){
-					if(currDay == endDay && currMin >= endMin){
-						break;
+				/* ignore responses that begin after the w2m ends or end before the w2m starts */
+				if(r.getStartTime().isBefore(_eventEnd) && r.getEndTime().isAfter(_eventStart)){
+					int startMin = toRow(r.getStartTime(), false);
+					int startDay = toCol(r.getStartTime());
+					
+					/* events that begin before the w2m starts should be altered to start at the beginning of the w2m*/
+					if(startDay < 0){
+						startDay = 0;
+						startMin = 0;
 					}
-					availability[currDay][currMin] = CalSlotsFB.busy;
-					currMin = (currMin+1)%_numSlotsInDay;
-					if(currMin == 0){
-						currDay++;
+					
+					int endMin = toRow(r.getEndTime(), true);
+					int endDay = toCol(r.getEndTime());
+					
+					/* events that end after the w2m ends should be altered to end when the w2m ends*/
+					if(endDay >= numDays){
+						endDay = numDays-1;
+						endMin = _numSlotsInDay;
+					}
+					
+					int currDay = startDay;
+					int currMin = startMin;
+					while(currDay <= endDay){
+						if(currDay == endDay && currMin >= endMin){
+							break;
+						}
+						availability[currDay][currMin] = CalSlotsFB.busy;
+						currMin = (currMin+1)%_numSlotsInDay;
+						if(currMin == 0){
+							currDay++;
+						}
 					}
 				}
 				
-				/*row = toSlot(r.getStartTime(), false);
-				int end = toSlot(r.getEndTime(), true);
-				while(row < end){
-					availability[row][col] = CalSlotsFB.busy;
-					row++;
-				}*/
-				
 			}
-			//col++;
 		}
 		System.out.println("num rows = "+availability.length+" num cols = "+availability[0].length);
-		return new CalendarSlotsImpl(_calStart, firstCal.getEndTime(), gCal.getOwner(), INTERVAL, availability);
+		return new CalendarSlotsImpl(_eventStart, _eventEnd, gCal.getOwner(), INTERVAL, availability);
 		
 	}
 	
-	public static void main(String[] args) throws IOException, ServiceException{
+	public static void main(String[] args) throws IOException{//, ServiceException{
     	GCalImporter myImporter = new GCalImporter();
     	org.joda.time.DateTime startTime = new org.joda.time.DateTime(2011, 6, 28, 8, 0);
 		org.joda.time.DateTime endTime = new org.joda.time.DateTime(2011, 7, 15, 23, 0);
     	GoogleCalendars myCal = myImporter.importMyGCal(startTime, endTime);
+    	endTime = endTime.plusDays(5).minusHours(10);
+    	When2MeetEvent w2me = new When2MeetEvent(startTime, endTime);
     	Converter myConverter = new Converter();
-    	CalendarSlotsImpl slots = myConverter.gCalToSlots(myCal);
+    	CalendarSlotsImpl slots = myConverter.gCalToSlots(myCal, w2me);
     	System.out.println("slots in day: " + slots.getSlotsInDay());
     	System.out.println("*********");
     	slots.print();

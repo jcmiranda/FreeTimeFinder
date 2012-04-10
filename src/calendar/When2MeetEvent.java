@@ -15,6 +15,14 @@ public class When2MeetEvent implements CalendarGroup {
 		_et = et;
 	}
 	
+	public DateTime getStartTime(){
+		return _st;
+	}
+	
+	public DateTime getEndTime(){
+		return _et;
+	}
+	
 	@Override
 	public ArrayList<CalendarSlotsImpl> getCalendars() {
 		return  _cals;
