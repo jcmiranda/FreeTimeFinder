@@ -2,11 +2,13 @@ package ftf_test;
 
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.List;
 
 import org.joda.time.DateTime;
 
-import calendar.*;
+import calendar.Calendar;
+import calendar.CalendarGroup;
+import calendar.Owner;
+import calendar.Response;
 import ftf.TimeFinder;
 
 

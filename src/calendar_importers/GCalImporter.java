@@ -6,7 +6,12 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.swing.JOptionPane;
+import javax.swing.JPasswordField;
+
+import calendar.CalendarGroup;
 import calendar.CalendarImpl;
+import calendar.GoogleCalendars;
 import calendar.Response;
 
 import com.google.gdata.client.calendar.CalendarQuery;
@@ -19,57 +24,61 @@ import com.google.gdata.data.extensions.When;
 import com.google.gdata.util.AuthenticationException;
 import com.google.gdata.util.ServiceException;
 
-//import org.joda.time.DateTime;
-
 //auth stuff:
 	//http://code.google.com/apis/gdata/docs/auth/clientlogin.html
 	//http://www.java-samples.com/java/POST-toHTTPS-url-free-java-sample-program.htm
 	//http://www.java-samples.com/java/POST-toHTTPS-url-free-java-sample-program.htm
 	//http://code.google.com/apis/gdata/docs/auth/overview.html#ClientLogin
 
+//edit recurring events
 
-public class GCalImporter {// implements CalendarsImporter {
+//edit all day
+
+//make interface??
+
+public class GCalImporter implements CalendarsImporter {
 	private CalendarService _client;
+	int MAX_RESPONSES = 100;
 	
-	public GCalImporter() throws IOException, ServiceException {
-		//TEST start and end dates
-		org.joda.time.DateTime startTime = new org.joda.time.DateTime(2011, 6, 28, 8, 0);
-		org.joda.time.DateTime endTime = new org.joda.time.DateTime(2011, 6, 28, 23, 0);
+	public GCalImporter() {
 		//connect to client
 		_client = new CalendarService("yourCompany-yourAppName-v1");
+	}
+	
+	public GoogleCalendars importMyGCal(org.joda.time.DateTime startTime, org.joda.time.DateTime endTime) throws IOException, ServiceException {
 		//authenticate user
 		this.setAuth();
 		//import calendars -- make calendar group
-		this.importCalendarGroup(startTime, endTime);
-		System.out.println("done");
+		return this.importCalendarGroup(startTime, endTime);
 	}
 	
 	public void setAuth() throws AuthenticationException, MalformedURLException {
-		//String user = ...
+		//Get username and password from GUI
+		String username = (String) new JOptionPane().showInputDialog("Please type Google Calendar username:");
+		JOptionPane pwordPane = new JOptionPane();
+		JPasswordField jpf = new JPasswordField();
+		pwordPane.showConfirmDialog(null, jpf, "Please type Google Calendar password:", pwordPane.OK_CANCEL_OPTION);
+		char[] passwordArray = jpf.getPassword();
+		StringBuffer passwordString = new StringBuffer();
+		for (int i = 0; i < passwordArray.length; i++) {
+			passwordString.append(passwordArray[i]);
+		}
+		String password = passwordString.toString();
 		
-		//get username and password from GUI
-		String username = "kelly_buckley@brown.edu";
-		String password = "99macaroons";
-				
-		URL feedURL = new URL("https://www.google.com/accounts/ClientLogin");
-
-		
+		//TODO: set up cookie/token stuff			
+		//URL feedURL = new URL("https://www.google.com/accounts/ClientLogin");
 		//HttpsURLConnection connection = (HttpsURLConnection) URL.openConnection();
 		//connection.setDoInput(true); 
 		//connection.setDoOutput(true);
-		
 		//connection.setRequestMethod("POST"); 
 		//connection.setFollowRedirects(true); 
 		
 		_client.setUserCredentials(username, password);
 	}
 	
-	//@Override
-	//public CalendarGroup importCalendarGroup() throws IOException, ServiceException {
-		
-	public ArrayList<CalendarImpl> importCalendarGroup(org.joda.time.DateTime st, org.joda.time.DateTime et) throws IOException, ServiceException {
+	public GoogleCalendars importCalendarGroup(org.joda.time.DateTime st, org.joda.time.DateTime et) throws IOException, ServiceException {
 		//calendar group
-		ArrayList<CalendarImpl> allCalendars = new ArrayList<CalendarImpl>();
+		GoogleCalendars allCalendars = new GoogleCalendars(st, et);
 		//set URL to get calendars
 		URL feedUrl = new URL("https://www.google.com/calendar/feeds/default/");
 		//write query
@@ -91,36 +100,24 @@ public class GCalImporter {// implements CalendarsImporter {
             //for java.util.date month zero indexed, year is something + 1900
             
             //make new calendar
-            CalendarImpl currCal = new CalendarImpl(st, et, calendar.getTitle().getPlainText());
-            
-            
-          //TEST           
-            System.out.println(calendar.getTitle().getPlainText());
-            System.out.println("curr call start time = "+currCal.getStartTime());
-            System.out.println("cal id = "+calendar.getId());
-            System.out.println("===================================================");
-            
-            
+            CalendarImpl currCal = new CalendarImpl(st, et, calendar.getTitle().getPlainText());          
+           
             //get events for calendar
             ArrayList<Response> calResponses = this.getEvents(st, et, calendar.getId());
-            //ArrayList<Response> calResponses = this.getEvents(st, et, "http://www.google.com/calendar/feeds/default/calendars/iho4gt7a4fvus6qk1s1qc542q8%40group.calendar.google.com");
-            currCal.setResponses(calResponses);
+            currCal.setResponses(calResponses);            
+            
             //add calendar to group of calendars
-            allCalendars.add(currCal);
+            allCalendars.addCalendar(currCal);
             
-            //this.getEvents(currCal);
-            
-            
+            //TEST
+            currCal.print();
           }
         return allCalendars;
 	}
 	
 	public ArrayList<Response> getEvents(org.joda.time.DateTime st, org.joda.time.DateTime et, String calID) throws IOException, ServiceException {
 		ArrayList<Response> responseList = new ArrayList<Response>();
-		//URL feedUrl = new URL("https://www.google.com/calendar/feeds/default/private/full");
 		//get URL
-		//URL feedUrl = new URL("http://www.google.com/calendar/feeds/iho4gt7a4fvus6qk1s1qc542q8%40group.calendar.google.com/private/full");
-		System.out.println("cal id = "+calID);
 		String sub1 = calID.substring(0,37);
 		String sub2 = calID.substring(55,calID.length());
 		calID = sub1+sub2;
@@ -133,6 +130,7 @@ public class GCalImporter {// implements CalendarsImporter {
 		myQuery.setStringCustomParameter("orderby", "starttime");
 		myQuery.setStringCustomParameter("sortorder", "ascending");
 		myQuery.setStringCustomParameter("singleevents", "true");
+		myQuery.setMaxResults(100);
 		//send request and get result feed
 		CalendarEventFeed resultFeed = _client.query(myQuery, CalendarEventFeed.class);
 		
@@ -144,18 +142,28 @@ public class GCalImporter {// implements CalendarsImporter {
 			long endTime = times.get(0).getEndTime().getValue();
 			Response eventResponse = new Response(new org.joda.time.DateTime(startTime), new org.joda.time.DateTime(endTime), event.getTitle().getPlainText());
 			responseList.add(eventResponse);
-			
-			//TEST
-			System.out.println("event response start time = "+eventResponse.getStartTime());
-			System.out.println("event title = "+eventResponse.getName());
-			System.out.println("...................................................");
 		}
 		return responseList;
 	}
 	
     public static void main(String[] args) throws IOException, ServiceException {
-    	new GCalImporter();
+    	GCalImporter myImporter = new GCalImporter();
+    	org.joda.time.DateTime startTime = new org.joda.time.DateTime(2011, 6, 28, 8, 0);
+		org.joda.time.DateTime endTime = new org.joda.time.DateTime(2011, 7, 15, 23, 0);
+    	myImporter.importMyGCal(startTime, endTime);
     }
+
+	@Override
+	public CalendarGroup importFresh() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public void updateCalGrp(CalendarGroup cg) {
+		// TODO Auto-generated method stub
+		
+	}
 
 }
 

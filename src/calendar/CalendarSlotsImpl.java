@@ -33,6 +33,16 @@ public class CalendarSlotsImpl implements Calendar {
 				_avail[day][slot] = initAvail;
 	}
 	
+	public CalendarSlotsImpl(DateTime startTime, DateTime endTime, Owner owner, int minInSlot, CalSlotsFB[][] availability){
+		_startTime = startTime;
+		_endTime = endTime;
+		_owner = owner;
+		_minInSlot = minInSlot;
+		_numDays = availability.length;
+		_numSlotsInDay = lenDayInMinutes() / minInSlot;
+		_avail = availability;
+	}
+	
 	// Need absolute value in case endtime is midnight
 	public int lenDayInMinutes() {
 		if(_endTime.getMinuteOfDay() == 0)
