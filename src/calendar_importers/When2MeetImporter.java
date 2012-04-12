@@ -48,7 +48,7 @@ public class When2MeetImporter implements CalendarsImporter {
 	public When2MeetImporter(String url) throws IOException {
 			_urlString = url;
 			//_url = new URL(url);
-			initializeMonths();		
+			initializeMonths();
 	}
 	
 	private void initializeMonths() {
@@ -234,7 +234,8 @@ public class When2MeetImporter implements CalendarsImporter {
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
-		CalendarGroup w2me = new When2MeetEvent(_startTime, _endTime);
+		//TODO parse event name & event id
+		When2MeetEvent w2me = new When2MeetEvent(_startTime, _endTime, null, 0, _urlString);
 		buildCalendars();
 		
 		for(int id : _IDsToCals.keySet()) {

@@ -2,10 +2,6 @@ package calendar;
 
 import org.joda.time.DateTime;
 
-import calendar.CalendarSlots.CalSlotsFB;
-
-
-
 public class CalendarSlotsImpl implements Calendar {
 	private DateTime _startTime;
 	private DateTime _endTime;
@@ -15,7 +11,7 @@ public class CalendarSlotsImpl implements Calendar {
 	private Owner _owner = new OwnerImpl("Unowned");
 	private CalSlotsFB[][] _avail;
 	
-	//public enum CalSlotsFB {free, busy};
+	public enum CalSlotsFB {free, busy};
 	
 	public CalendarSlotsImpl(DateTime startTime, DateTime endTime, int minInSlot, CalSlotsFB initAvail) {
 		_startTime = startTime;
@@ -67,12 +63,9 @@ public class CalendarSlotsImpl implements Calendar {
 	@Override
 	public DateTime getEndTime() { return _endTime;	}
 
-	@Override
 	public Owner getOwner() { return _owner; }
-
 	
 	public int getSlotsInDay() { return _numSlotsInDay; }
-
 	
 	public int getTotalSlots() { return _numDays * _numSlotsInDay; }
 

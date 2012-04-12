@@ -30,10 +30,7 @@ public class CalendarImpl implements Calendar {
 	public String getName() {
 		return _name;
 	}
-	public Owner getOwner() {
-		// TODO
-		return null;
-	}
+	
 	public ArrayList<Response> getResponses() {
 		return _responses;
 	}
