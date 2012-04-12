@@ -16,10 +16,7 @@ public class CalendarSlots implements Calendar {
 	public CalendarSlots(DateTime startTime, DateTime endTime, int minInSlot, CalSlotsFB initAvail) {
 		_startTime = startTime;
 		_endTime = endTime;
-		System.out.println("StartTime:" + _startTime + "\tEndTime: "+_endTime);
-		System.out.println("Length day: " + lenDayInMinutes());
-		// 36 slots in a day
-		_numSlotsInDay = lenDayInMinutes() / minInSlot;
+		_numSlotsInDay = (lenDayInMinutes() + 1) / minInSlot;
 		_numDays = numDays();
 		_minInSlot = minInSlot;
 		
@@ -49,9 +46,9 @@ public class CalendarSlots implements Calendar {
 	
 	public int numDays() {
 		if(_endTime.getYear() == _startTime.getYear())
-			return _endTime.getDayOfYear() - _startTime.getDayOfYear();
+			return _endTime.getDayOfYear() - _startTime.getDayOfYear() + 1;
 		else if(_endTime.getYear() == _startTime.getYear() + 1)
-			return _endTime.getDayOfYear() + 365 - _startTime.getDayOfYear();
+			return _endTime.getDayOfYear() + 366 - _startTime.getDayOfYear();
 		System.err.println("err in numDays in CalendarSlotsImpl");
 		System.exit(1);
 		return -1;
@@ -90,11 +87,9 @@ public class CalendarSlots implements Calendar {
 
 	
 	public void setAvail(int slot, CalSlotsFB avail) {
-		System.out.println("Slot: " + slot);
-		System.out.println("Num slots in day: " + _numSlotsInDay);
 		int day = slot / _numSlotsInDay;
 		int slotInDay = slot % _numSlotsInDay;
-		System.out.println("Day: " + day + "\tSlotInDay:" + slotInDay);
+		// System.out.println("Day: " + day + " Slot in Day: " + slotInDay);
 		_avail[day][slotInDay] = avail;
 	}
 
