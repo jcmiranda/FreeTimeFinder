@@ -9,7 +9,7 @@ import calendar.CalendarGroup;
 import calendar.When2MeetEvent;
 import calendar_importers.CalendarsImporter;
 import calendar_importers.GCalImporter;
-import calendar_importers.When2MeetImporterSlots;
+import calendar_importers.When2MeetImporter;
 
 public class Communicator {
 
@@ -17,7 +17,7 @@ public class Communicator {
 	private CalendarGroup _cal = null;
 	private HashSet<String> _w2mEventNames = new HashSet<String>();
 	private HashMap<String, When2MeetEvent> _w2mEvents = new HashMap<String, When2MeetEvent>();
-	private HashMap<String, When2MeetImporterSlots> _w2mImporters = new HashMap<String, When2MeetImporterSlots>();
+	private HashMap<String, When2MeetImporter> _w2mImporters = new HashMap<String, When2MeetImporter>();
 	private Converter _converter = new Converter();
 	
 	
@@ -28,10 +28,10 @@ public class Communicator {
 	
 	public void refresh(){
 		//TODO update w2m's and cal by repulling data
-		_cal = _calImporter.importFresh();
+		_cal = _calImporter.importCalendarGroup();
 		for(When2MeetEvent w2me : _w2mEvents.values()){
-			When2MeetImporterSlots importer = _w2mImporters.get(w2me.getName());
-			w2me = (When2MeetEvent) importer.importFresh();
+			When2MeetImporter importer = _w2mImporters.get(w2me.getName());
+			w2me = (When2MeetEvent) importer.importCalendarGroup();
 		}
 	}
 	

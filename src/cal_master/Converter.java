@@ -5,9 +5,9 @@ import java.util.ArrayList;
 
 import org.joda.time.DateTime;
 
-import calendar.CalendarImpl;
+import calendar.CalendarResponses;
 import calendar.CalendarSlots.CalSlotsFB;
-import calendar.CalendarSlotsImpl;
+import calendar.CalendarSlots;
 import calendar.GoogleCalendars;
 import calendar.Response;
 import calendar.When2MeetEvent;
@@ -52,9 +52,9 @@ public class Converter {
 		return minutesOff / INTERVAL + offset;
 	}
 	
-	public CalendarSlotsImpl gCalToSlots(GoogleCalendars gCal, When2MeetEvent w2m){
+	public CalendarSlots gCalToSlots(GoogleCalendars gCal, When2MeetEvent w2m){
 		
-		ArrayList<CalendarImpl> calendars = gCal.getCalendars();
+		ArrayList<CalendarResponses> calendars = gCal.getCalendars();
 		if(calendars.size() <= 0){
 			return null;
 		}
@@ -74,7 +74,7 @@ public class Converter {
 		}
 		
 		//int col=0, row=0;
-		for(CalendarImpl cal : calendars){
+		for(CalendarResponses cal : calendars){
 			ArrayList<Response> responses = (ArrayList<Response>) cal.getResponses();
 			//_calStart = cal.getStartTime();
 			for(Response r : responses){
@@ -116,7 +116,7 @@ public class Converter {
 			}
 		}
 		System.out.println("num rows = "+availability.length+" num cols = "+availability[0].length);
-		return new CalendarSlotsImpl(_eventStart, _eventEnd, gCal.getOwner(), INTERVAL, availability);
+		return new CalendarSlots(_eventStart, _eventEnd, gCal.getOwner(), INTERVAL, availability);
 		
 	}
 	
@@ -128,7 +128,7 @@ public class Converter {
     	endTime = endTime.plusDays(5).minusHours(10);
     	When2MeetEvent w2me = new When2MeetEvent(startTime, endTime);
     	Converter myConverter = new Converter();
-    	CalendarSlotsImpl slots = myConverter.gCalToSlots(myCal, w2me);
+    	CalendarSlots slots = myConverter.gCalToSlots(myCal, w2me);
     	System.out.println("slots in day: " + slots.getSlotsInDay());
     	System.out.println("*********");
     	slots.print();

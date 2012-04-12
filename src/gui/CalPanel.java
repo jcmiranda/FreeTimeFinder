@@ -12,7 +12,7 @@ import javax.swing.JPanel;
 import org.joda.time.DateTime;
 
 import calendar.CalendarGroup;
-import calendar.CalendarImpl;
+import calendar.CalendarResponses;
 import calendar.Response;
 
 public class CalPanel extends JPanel{
@@ -34,7 +34,7 @@ public class CalPanel extends JPanel{
 			_startHour = _calGroup.getCalendars().get(0).getStartTime().getHourOfDay();
 			_endHour = _calGroup.getCalendars().get(0).getEndTime().getHourOfDay();
 
-			for (CalendarImpl calImp: _calGroup.getCalendars()){
+			for (CalendarResponses calImp: _calGroup.getCalendars()){
 				_startHour = Math.min(_startHour, calImp.getStartTime().getHourOfDay());
 				_endHour = Math.max(_endHour, calImp.getEndTime().getHourOfDay());
 			}
@@ -63,7 +63,7 @@ public class CalPanel extends JPanel{
 		}
 
 		g.setColor(BLOCK_COLOR);
-		for (CalendarImpl calImp: _calGroup.getCalendars()){
+		for (CalendarResponses calImp: _calGroup.getCalendars()){
 			for (Response resp : calImp.getResponses()){
 				double startX = ((int) ((double) (resp.getStartTime().getDayOfWeek()-1)/_numDays*this.getWidth())) ;
 				int startY = ((int) ((double) ((double) resp.getStartTime().getMinuteOfHour()/60 + resp.getStartTime().getHourOfDay() - _startHour)/_numHours*this.getHeight()));

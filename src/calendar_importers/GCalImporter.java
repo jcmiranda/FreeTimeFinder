@@ -10,7 +10,7 @@ import javax.swing.JOptionPane;
 import javax.swing.JPasswordField;
 
 import calendar.CalendarGroup;
-import calendar.CalendarImpl;
+import calendar.CalendarResponses;
 import calendar.GoogleCalendars;
 import calendar.Response;
 
@@ -100,7 +100,7 @@ public class GCalImporter implements CalendarsImporter {
             //for java.util.date month zero indexed, year is something + 1900
             
             //make new calendar
-            CalendarImpl currCal = new CalendarImpl(st, et, calendar.getTitle().getPlainText());          
+            CalendarResponses currCal = new CalendarResponses(st, et, calendar.getTitle().getPlainText());          
            
             //get events for calendar
             ArrayList<Response> calResponses = this.getEvents(st, et, calendar.getId());
@@ -154,7 +154,7 @@ public class GCalImporter implements CalendarsImporter {
     }
 
 	@Override
-	public CalendarGroup importFresh() {
+	public CalendarGroup importCalendarGroup() {
 		// TODO Auto-generated method stub
 		return null;
 	}

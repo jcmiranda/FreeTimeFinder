@@ -7,9 +7,8 @@ import java.util.PriorityQueue;
 import org.joda.time.DateTime;
 
 import calendar.CalendarGroup;
-import calendar.CalendarGrp;
-import calendar.CalendarSlotsImpl;
-import calendar.CalendarSlotsImpl.CalSlotsFB;
+import calendar.CalendarSlots;
+import calendar.CalendarSlots.CalSlotsFB;
 
 public class TimeFinderSlots {
 
@@ -33,14 +32,14 @@ public class TimeFinderSlots {
 		return minutesOff / _interval;
 	}
 	
-	public CalendarSlotsImpl findBestTimes(CalendarGrp<CalendarSlotsImpl> e, int interval, int duration, int numToReturn, int minAttendees){
+	public CalendarSlots findBestTimes(CalendarGroup<CalendarSlots> e, int interval, int duration, int numToReturn, int minAttendees){
 		
-		ArrayList<CalendarSlotsImpl> calendars = e.getCalendars();
+		ArrayList<CalendarSlots> calendars = e.getCalendars();
 		if(calendars.size() <= 0){
 			return null;
 		}
 		
-		CalendarSlotsImpl firstCal = calendars.get(0);
+		CalendarSlots firstCal = calendars.get(0);
 		_start = firstCal.getStartTime();
 		_numSlotsInDay = firstCal.lenDayInMinutes()/interval;
 		_interval = interval;
@@ -50,7 +49,7 @@ public class TimeFinderSlots {
 		
 		for(int day=0; day<_numDays; day++){
 			int col = 0;
-			for(CalendarSlotsImpl cal : calendars){
+			for(CalendarSlots cal : calendars){
 				for(int row=0; row<_numSlotsInDay; row++){
 					if(_numSlotsInDay == cal.getSlotsInDay()){
 						switch(cal.getAvail(day, row)){
@@ -85,7 +84,7 @@ public class TimeFinderSlots {
 			}
 		}
 		
-		CalendarSlotsImpl toReturn = new CalendarSlotsImpl(_start, firstCal.getEndTime(), interval, CalSlotsFB.busy);
+		CalendarSlots toReturn = new CalendarSlots(_start, firstCal.getEndTime(), interval, CalSlotsFB.busy);
 		int i = 0;
 		int num = Math.min(numToReturn, times.size());
 		//System.out.println("times size: " + times.size());

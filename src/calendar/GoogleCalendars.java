@@ -1,14 +1,13 @@
 package calendar;
 
 import java.util.ArrayList;
-import java.util.Collection;
 
 import org.joda.time.DateTime;
 
-public class GoogleCalendars extends CalendarGrp<CalendarImpl>{
+public class GoogleCalendars extends CalendarGroup<CalendarResponses>{
 	
 	private Owner _owner;
-	private ArrayList<CalendarImpl> _cals = new ArrayList<CalendarImpl>();
+	private ArrayList<CalendarResponses> _cals = new ArrayList<CalendarResponses>();
 	
 	public GoogleCalendars(DateTime st, DateTime et, Owner o) {
 		super(st, et);
