@@ -2,7 +2,7 @@ package calendar;
 
 import org.joda.time.DateTime;
 
-public class CalendarSlotsImpl implements CalendarSlots {
+public class CalendarSlotsImpl implements Calendar {
 	private DateTime _startTime;
 	private DateTime _endTime;
 	private int _minInSlot;
@@ -10,6 +10,8 @@ public class CalendarSlotsImpl implements CalendarSlots {
 	private int _numDays;
 	private Owner _owner = new OwnerImpl("Unowned");
 	private CalSlotsFB[][] _avail;
+	
+	public enum CalSlotsFB {free, busy};
 	
 	public CalendarSlotsImpl(DateTime startTime, DateTime endTime, int minInSlot, CalSlotsFB initAvail) {
 		_startTime = startTime;
@@ -61,21 +63,18 @@ public class CalendarSlotsImpl implements CalendarSlots {
 	@Override
 	public DateTime getEndTime() { return _endTime;	}
 
-	@Override
 	public Owner getOwner() { return _owner; }
-
-	@Override
+	
 	public int getSlotsInDay() { return _numSlotsInDay; }
-
-	@Override
+	
 	public int getTotalSlots() { return _numDays * _numSlotsInDay; }
 
-	@Override
+	
 	public CalSlotsFB getAvail(int day, int slot) {
 		return _avail[day][slot];
 	}
 
-	@Override
+	
 	public CalSlotsFB getAvail(int slot) {
 		int day = slot / _numSlotsInDay;
 		int slotInDay = slot % _numSlotsInDay;
@@ -83,13 +82,13 @@ public class CalendarSlotsImpl implements CalendarSlots {
 	}
 
 	
-	@Override
+	
 	public void setAvail(int day, int slot, CalSlotsFB avail) {
 		_avail[day][slot] = avail;
 		return;
 	}
 
-	@Override
+	
 	public void setAvail(int slot, CalSlotsFB avail) {
 		System.out.println("Slot: " + slot);
 		System.out.println("Num slots in day: " + _numSlotsInDay);
@@ -99,10 +98,10 @@ public class CalendarSlotsImpl implements CalendarSlots {
 		_avail[day][slotInDay] = avail;
 	}
 
-	@Override
+	
 	public void setOwner(Owner o) { _owner = o; }
 
-	@Override
+	
 	public void print() {
 		for(int slotInDay = 0; slotInDay < _numSlotsInDay; slotInDay++){
 			if(slotInDay % 4 == 0)
@@ -130,7 +129,7 @@ public class CalendarSlotsImpl implements CalendarSlots {
 	}
 	
 	//TODO this may fail if endTime is the same as the end of the calendar
-	@Override
+	
 	public void setAvail(DateTime startTime, DateTime endTime, CalSlotsFB avail) {
 		int startSlot = timeToSlot(startTime, true);
 		int endSlot = timeToSlot(endTime, false);
@@ -145,7 +144,7 @@ public class CalendarSlotsImpl implements CalendarSlots {
 		
 	}
 
-	@Override
+	
 	public int getMinInSlot() {
 		return _minInSlot;
 	}

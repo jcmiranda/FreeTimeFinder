@@ -5,7 +5,7 @@ import org.joda.time.DateTime;
 public interface Calendar {
 	DateTime getStartTime();
 	DateTime getEndTime();
-	Owner getOwner();
-	Collection<Response> getResponses();
-	void addResponse(Response r);
+	//Owner getOwner();
+	//Collection<Response> getResponses();
+	//void addResponse(Response r);
 }

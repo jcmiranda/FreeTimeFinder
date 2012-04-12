@@ -5,35 +5,24 @@ import java.util.Collection;
 
 import org.joda.time.DateTime;
 
-public class When2MeetEvent implements CalendarGroup {
-	private DateTime _st;
-	private DateTime _et;
-	private ArrayList<CalendarSlotsImpl> _cals = new ArrayList<CalendarSlotsImpl>();
+public class When2MeetEvent extends CalendarGrp<CalendarSlotsImpl> {
 	
-	public When2MeetEvent(DateTime st, DateTime et) {
-		_st = st;
-		_et = et;
+	private String _name, _url;
+	private int _id;
+	
+	public When2MeetEvent(DateTime st, DateTime et, String name, int id, String url) {
+		super(st, et);
+		_name = name;
+		_id = id;
+		_url = url;
 	}
 	
-	@Override
-	public ArrayList<CalendarSlotsImpl> getCalendars() {
-		return  _cals;
+	public String getUrl(){
+		return _url;
 	}
-
-	@Override
-	public void clearCalendars() {
-		_cals.clear();
-	}
-
-	@Override
-	public void addCalendar(CalendarSlotsImpl c) {
-		_cals.add(c);
-	}
-
-	@Override
-	public void addCalendars(ArrayList<CalendarSlotsImpl> cals) {
-		// TODO Auto-generated method stub
-		
+	
+	public int getID(){
+		return _id;
 	}
 
 }

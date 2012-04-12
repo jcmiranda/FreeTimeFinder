@@ -1,14 +1,10 @@
 package calendar_importers_test;
 import java.io.IOException;
 
-import javax.swing.JOptionPane;
-
 import calendar.CalendarGroup;
-import calendar.Response;
-import calendar.When2MeetEvent;
-import calendar_importers.When2MeetImporter;
+import calendar.CalendarSlotsImpl;
 import calendar_importers.When2MeetImporterSlots;
-import ftf.TimeFinder;
+import ftf.TimeFinderSlots;
 
 public class When2MeetTest {
 	public static void main(String[] args) throws IOException {
@@ -18,14 +14,12 @@ public class When2MeetTest {
 		When2MeetImporterSlots wtmi = new When2MeetImporterSlots("http://www.when2meet.com/?353066-BlwWl");
 		CalendarGroup w2me = wtmi.importFresh();
 		
-		/*
-		TimeFinder timeFind = new TimeFinder();
-		Response[] times = timeFind.findBestTimes(w2me, 15, 60, 20, 4);
+
+		TimeFinderSlots timeFind = new TimeFinderSlots();
+		CalendarSlotsImpl times = timeFind.findBestTimes(w2me, 15, 60, 20, 4);
 		
-		for(int i = 0; i < times.length; i++) {
-			times[i].print();
-		}
-		*/
+		times.print();
+		
 		
 	}
 }

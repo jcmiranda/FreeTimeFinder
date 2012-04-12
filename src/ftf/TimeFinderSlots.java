@@ -1,13 +1,15 @@
 package ftf;
 
 import java.util.ArrayList;
+
 import java.util.PriorityQueue;
 
 import org.joda.time.DateTime;
 
 import calendar.CalendarGroup;
+import calendar.CalendarGrp;
 import calendar.CalendarSlotsImpl;
-import calendar.CalendarSlots.CalSlotsFB;
+import calendar.CalendarSlotsImpl.CalSlotsFB;
 
 public class TimeFinderSlots {
 
@@ -31,7 +33,7 @@ public class TimeFinderSlots {
 		return minutesOff / _interval;
 	}
 	
-	public CalendarSlotsImpl findBestTimes(CalendarGroup e, int interval, int duration, int numToReturn, int minAttendees){
+	public CalendarSlotsImpl findBestTimes(CalendarGrp<CalendarSlotsImpl> e, int interval, int duration, int numToReturn, int minAttendees){
 		
 		ArrayList<CalendarSlotsImpl> calendars = e.getCalendars();
 		if(calendars.size() <= 0){
