@@ -12,11 +12,12 @@ import java.util.regex.Pattern;
 import org.joda.time.DateTime;
 import org.joda.time.LocalDate;
 
+import calendar.Availability;
 import calendar.CalendarGroup;
 import calendar.CalendarSlots;
 import calendar.OwnerImpl;
 import calendar.When2MeetEvent;
-import calendar.CalendarSlots.CalSlotsFB;
+import calendar.When2MeetOwner;
 
 public class When2MeetImporter implements CalendarsImporter {
 
@@ -24,9 +25,12 @@ public class When2MeetImporter implements CalendarsImporter {
 	private int _eventID;
 	private HashMap<Integer, CalendarSlots> _IDsToCals = new HashMap<Integer, CalendarSlots>();
 	private HashMap<String, Integer> _months = new HashMap<String, Integer>();
+	private ArrayList<Integer> _slotIndexToSlotID = new ArrayList<Integer>();
 	
 	private Pattern _nameIDPattern = Pattern.compile("PeopleNames\\[(\\d+)\\] = '([\\w+\\s*]+)';PeopleIDs\\[(\\d+)\\] = (\\d+);");
 	private int _nameGroupIndex = 2, _IDGroupIndex = 4;
+	private Pattern _slotsPattern = Pattern.compile("TimeOfSlot\\[(\\d+)\\]=(\\d+);");
+	private int _slotIDGroupIndex = 2;
 	private Pattern _availPattern = Pattern.compile("AvailableAtSlot\\[(\\d+)\\]\\.push\\((\\d+)\\);"); 
 	private Pattern _datesPattern = Pattern.compile("text\\-align:center;font\\-size:10px;width:44px;padding\\-right:1px;\">(\\w+) (\\d+)<br>");
 	private Pattern _eventIDPattern = Pattern.compile("http://www.when2meet.com/\\?(\\d+)\\-[a-zA-Z]+");
@@ -84,8 +88,8 @@ public class When2MeetImporter implements CalendarsImporter {
 					System.err.println("cal already found for id");
 					System.exit(1);
 				} else {
-					CalendarSlots cal = new CalendarSlots(_startTime, _endTime, _minInSlot, CalSlotsFB.busy);
-					cal.setOwner(new OwnerImpl(name));
+					CalendarSlots cal = new CalendarSlots(_startTime, _endTime, _minInSlot, Availability.busy);
+					cal.setOwner(new When2MeetOwner(name, id));
 					_IDsToCals.put(id, cal);
 				}
 			}
@@ -106,7 +110,7 @@ public class When2MeetImporter implements CalendarsImporter {
 					System.out.println(id);
 					System.out.println(_IDsToCals.keySet());
 				}
-				_IDsToCals.get(id).setAvail(slot, CalSlotsFB.free);		
+				_IDsToCals.get(id).setAvail(slot, Availability.free);		
 			}
 		}
 	}
@@ -131,6 +135,7 @@ public class When2MeetImporter implements CalendarsImporter {
 			Matcher timeMatcher = _timesPattern.matcher(inputLine);
 			Matcher nameIDMatcher = _nameIDPattern.matcher(inputLine);
 			Matcher eventNameDivMatcher = _eventNameDivPattern.matcher(inputLine);
+			Matcher slotsMatcher = _slotsPattern.matcher(inputLine);
 			
 			if(nextIsEventName) {
 				Matcher eventNameMatcher = _eventNamePattern.matcher(inputLine);
@@ -150,7 +155,11 @@ public class When2MeetImporter implements CalendarsImporter {
 				nameIDLines.add(inputLine);
 				System.out.println(inputLine);
 			}
-			
+			if(slotsMatcher.matches()) {
+				int slotID = Integer.parseInt(slotsMatcher.group(_slotIDGroupIndex));
+				_slotIndexToSlotID.add(slotID);
+			}
+				
 			if(eventNameDivMatcher.matches()) 
 				nextIsEventName = true;
 			
@@ -232,7 +241,7 @@ public class When2MeetImporter implements CalendarsImporter {
 		System.out.println("Event ID: " + _eventID);
 		System.out.println("Event Name: " + _eventName);
 		When2MeetEvent w2me = new When2MeetEvent(_startTime, _endTime, _eventName, 
-				_eventID, _urlString, _IDsToCals.values());
+				_eventID, _urlString, _IDsToCals.values(), _slotIndexToSlotID);
 
 		return w2me;
 	}
