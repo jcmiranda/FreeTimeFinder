@@ -6,12 +6,13 @@ import java.util.ArrayList;
 import org.joda.time.DateTime;
 
 import calendar.CalendarResponses;
-import calendar.CalendarSlots.CalSlotsFB;
 import calendar.CalendarSlots;
 import calendar.GoogleCalendars;
 import calendar.Response;
 import calendar.When2MeetEvent;
+import calendar.CalendarSlots.CalSlotsFB;
 import calendar_importers.GCalImporter;
+
 
 public class Converter {
 	
@@ -121,7 +122,7 @@ public class Converter {
 	}
 	
 	public static void main(String[] args) throws IOException{//, ServiceException{
-    	GCalImporter myImporter = new GCalImporter();
+    	/*GCalImporter myImporter = new GCalImporter();
     	org.joda.time.DateTime startTime = new org.joda.time.DateTime(2011, 6, 28, 8, 0);
 		org.joda.time.DateTime endTime = new org.joda.time.DateTime(2011, 7, 15, 23, 0);
     	GoogleCalendars myCal = myImporter.importMyGCal(startTime, endTime);
@@ -132,7 +133,7 @@ public class Converter {
     	System.out.println("slots in day: " + slots.getSlotsInDay());
     	System.out.println("*********");
     	slots.print();
-    	System.out.println("=========");
+    	System.out.println("=========");*/
 	}
 }
 	

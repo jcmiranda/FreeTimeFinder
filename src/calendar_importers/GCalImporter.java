@@ -14,6 +14,7 @@ import calendar.CalendarResponses;
 import calendar.GoogleCalendars;
 import calendar.Response;
 
+
 import com.google.gdata.client.calendar.CalendarQuery;
 import com.google.gdata.client.calendar.CalendarService;
 import com.google.gdata.data.calendar.CalendarEntry;
@@ -158,12 +159,5 @@ public class GCalImporter implements CalendarsImporter {
 		// TODO Auto-generated method stub
 		return null;
 	}
-
-	@Override
-	public void updateCalGrp(CalendarGroup cg) {
-		// TODO Auto-generated method stub
-		
-	}
-
 }
 

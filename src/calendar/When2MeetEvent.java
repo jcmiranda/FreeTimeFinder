@@ -9,6 +9,7 @@ public class When2MeetEvent extends CalendarGroup<CalendarSlots> {
 	
 	private String _name, _url;
 	private int _id;
+	private boolean _isVisible;
 	
 	
 	public When2MeetEvent(DateTime st, DateTime et, String name, int id, String url, Collection<CalendarSlots> cals){
@@ -29,5 +30,14 @@ public class When2MeetEvent extends CalendarGroup<CalendarSlots> {
 	public String getName(){
 		return _name;
 	}
+	
+	public void setVisible(boolean b){
+		_isVisible = b;
+	}
+	
+	public boolean isVisible(){
+		return _isVisible;
+	}
+	
 
 }

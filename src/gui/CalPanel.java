@@ -15,6 +15,7 @@ import calendar.CalendarGroup;
 import calendar.CalendarResponses;
 import calendar.Response;
 
+
 public class CalPanel extends JPanel{
 
 	CalendarGroup _calGroup;

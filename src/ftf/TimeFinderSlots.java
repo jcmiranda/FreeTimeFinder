@@ -10,6 +10,7 @@ import calendar.CalendarGroup;
 import calendar.CalendarSlots;
 import calendar.CalendarSlots.CalSlotsFB;
 
+
 public class TimeFinderSlots {
 
 	private int _numSlotsInDay;
