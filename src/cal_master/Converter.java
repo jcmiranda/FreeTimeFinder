@@ -5,13 +5,15 @@ import java.util.ArrayList;
 
 import org.joda.time.DateTime;
 
+import com.google.gdata.util.ServiceException;
+
+import calendar.Availability;
 import calendar.CalendarResponses;
 import calendar.CalendarSlots;
 import calendar.GoogleCalendars;
 import calendar.Response;
 import calendar.When2MeetEvent;
-import calendar.CalendarSlots.CalSlotsFB;
-import calendar_importers.GCalImporter;
+import calendar.When2MeetOwner;
 
 
 public class Converter {
@@ -66,11 +68,11 @@ public class Converter {
 		_eventEnd = w2m.getEndTime();
 		
 		int numDays = w2m.getEndTime().getDayOfYear() - w2m.getStartTime().getDayOfYear() + 1;
-		CalSlotsFB[][] availability = new CalSlotsFB[numDays][_numSlotsInDay];
+		Availability[][] availability = new Availability[numDays][_numSlotsInDay];
 		
 		for(int r=0; r<numDays; r++){
 			for(int c=0; c<_numSlotsInDay; c++){
-				availability[r][c] = CalSlotsFB.free;
+				availability[r][c] = Availability.free;
 			}
 		}
 		
@@ -106,7 +108,7 @@ public class Converter {
 						if(currDay == endDay && currMin >= endMin){
 							break;
 						}
-						availability[currDay][currMin] = CalSlotsFB.busy;
+						availability[currDay][currMin] = Availability.busy;
 						currMin = (currMin+1)%_numSlotsInDay;
 						if(currMin == 0){
 							currDay++;
@@ -117,14 +119,18 @@ public class Converter {
 			}
 		}
 		System.out.println("num rows = "+availability.length+" num cols = "+availability[0].length);
-		return new CalendarSlots(_eventStart, _eventEnd, gCal.getOwner(), INTERVAL, availability);
+		When2MeetOwner owner = new When2MeetOwner(gCal.getOwner().getName(), -1);
+		
+		return new CalendarSlots(_eventStart, _eventEnd, owner, INTERVAL, availability);
 		
 	}
 	
-	public static void main(String[] args) throws IOException{//, ServiceException{
-    	/*GCalImporter myImporter = new GCalImporter();
-    	org.joda.time.DateTime startTime = new org.joda.time.DateTime(2011, 6, 28, 8, 0);
-		org.joda.time.DateTime endTime = new org.joda.time.DateTime(2011, 7, 15, 23, 0);
+	public static void main(String[] args) throws IOException, ServiceException{
+
+    	/*
+		GCalImporter myImporter = new GCalImporter();
+    	DateTime startTime = new DateTime(2011, 6, 28, 8, 0);
+		DateTime endTime = new DateTime(2011, 7, 15, 23, 0);
     	GoogleCalendars myCal = myImporter.importMyGCal(startTime, endTime);
     	endTime = endTime.plusDays(5).minusHours(10);
     	When2MeetEvent w2me = new When2MeetEvent(startTime, endTime);
@@ -134,6 +140,7 @@ public class Converter {
     	System.out.println("*********");
     	slots.print();
     	System.out.println("=========");*/
+
 	}
 }
 	

@@ -8,28 +8,25 @@ public class CalendarSlots implements Calendar {
 	private int _minInSlot;
 	private int _numSlotsInDay;
 	private int _numDays;
-	private Owner _owner = new OwnerImpl("Unowned");
-	private CalSlotsFB[][] _avail;
+	private When2MeetOwner _owner;
+	private Availability[][] _avail;
 	
-	public enum CalSlotsFB {free, busy};
 	
-	public CalendarSlots(DateTime startTime, DateTime endTime, int minInSlot, CalSlotsFB initAvail) {
+	
+	public CalendarSlots(DateTime startTime, DateTime endTime, int minInSlot, Availability initAvail) {
 		_startTime = startTime;
 		_endTime = endTime;
-		System.out.println("StartTime:" + _startTime + "\tEndTime: "+_endTime);
-		System.out.println("Length day: " + lenDayInMinutes());
-		// 36 slots in a day
-		_numSlotsInDay = lenDayInMinutes() / minInSlot;
+		_numSlotsInDay = (lenDayInMinutes() + 1) / minInSlot;
 		_numDays = numDays();
 		_minInSlot = minInSlot;
 		
-		_avail = new CalSlotsFB[_numDays][_numSlotsInDay];
+		_avail = new Availability[_numDays][_numSlotsInDay];
 		for(int day = 0; day < _numDays; day++)
 			for(int slot = 0; slot < _numSlotsInDay; slot++)
 				_avail[day][slot] = initAvail;
 	}
 	
-	public CalendarSlots(DateTime startTime, DateTime endTime, Owner owner, int minInSlot, CalSlotsFB[][] availability){
+	public CalendarSlots(DateTime startTime, DateTime endTime, When2MeetOwner owner, int minInSlot, Availability[][] availability){
 		_startTime = startTime;
 		_endTime = endTime;
 		_owner = owner;
@@ -49,9 +46,9 @@ public class CalendarSlots implements Calendar {
 	
 	public int numDays() {
 		if(_endTime.getYear() == _startTime.getYear())
-			return _endTime.getDayOfYear() - _startTime.getDayOfYear();
+			return _endTime.getDayOfYear() - _startTime.getDayOfYear() + 1;
 		else if(_endTime.getYear() == _startTime.getYear() + 1)
-			return _endTime.getDayOfYear() + 365 - _startTime.getDayOfYear();
+			return _endTime.getDayOfYear() + 366 - _startTime.getDayOfYear();
 		System.err.println("err in numDays in CalendarSlotsImpl");
 		System.exit(1);
 		return -1;
@@ -63,19 +60,19 @@ public class CalendarSlots implements Calendar {
 	@Override
 	public DateTime getEndTime() { return _endTime;	}
 
-	public Owner getOwner() { return _owner; }
+	public When2MeetOwner getOwner() { return _owner; }
 	
 	public int getSlotsInDay() { return _numSlotsInDay; }
 	
 	public int getTotalSlots() { return _numDays * _numSlotsInDay; }
 
 	
-	public CalSlotsFB getAvail(int day, int slot) {
+	public Availability getAvail(int day, int slot) {
 		return _avail[day][slot];
 	}
 
 	
-	public CalSlotsFB getAvail(int slot) {
+	public Availability getAvail(int slot) {
 		int day = slot / _numSlotsInDay;
 		int slotInDay = slot % _numSlotsInDay;
 		return _avail[day][slotInDay];
@@ -83,23 +80,21 @@ public class CalendarSlots implements Calendar {
 
 	
 	
-	public void setAvail(int day, int slot, CalSlotsFB avail) {
+	public void setAvail(int day, int slot, Availability avail) {
 		_avail[day][slot] = avail;
 		return;
 	}
 
 	
-	public void setAvail(int slot, CalSlotsFB avail) {
-		System.out.println("Slot: " + slot);
-		System.out.println("Num slots in day: " + _numSlotsInDay);
+	public void setAvail(int slot, Availability avail) {
 		int day = slot / _numSlotsInDay;
 		int slotInDay = slot % _numSlotsInDay;
-		System.out.println("Day: " + day + "\tSlotInDay:" + slotInDay);
+		// System.out.println("Day: " + day + " Slot in Day: " + slotInDay);
 		_avail[day][slotInDay] = avail;
 	}
 
 	
-	public void setOwner(Owner o) { _owner = o; }
+	public void setOwner(When2MeetOwner o) { _owner = o; }
 
 	
 	public void print() {
@@ -107,7 +102,7 @@ public class CalendarSlots implements Calendar {
 			if(slotInDay % 4 == 0)
 				System.out.println("=========");
 			for(int day = 0; day < _numDays; day++) {
-				if(_avail[day][slotInDay] == CalSlotsFB.busy)
+				if(_avail[day][slotInDay] == Availability.busy)
 					System.out.print("b");
 				else
 					System.out.print("f");
@@ -130,7 +125,7 @@ public class CalendarSlots implements Calendar {
 	
 	//TODO this may fail if endTime is the same as the end of the calendar
 	
-	public void setAvail(DateTime startTime, DateTime endTime, CalSlotsFB avail) {
+	public void setAvail(DateTime startTime, DateTime endTime, Availability avail) {
 		int startSlot = timeToSlot(startTime, true);
 		int endSlot = timeToSlot(endTime, false);
 		
