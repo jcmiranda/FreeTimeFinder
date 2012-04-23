@@ -8,26 +8,83 @@ import org.joda.time.DateTime;
 
 import calendar.Availability;
 import calendar.CalendarGroup;
+import calendar.CalendarResponses;
 import calendar.CalendarSlots;
 import calendar.When2MeetEvent;
 import calendar_exporters.When2MeetExporter;
+import calendar_exporters.When2MeetExporter.NameAlreadyExistsException;
 import calendar_importers.CalendarsImporter;
 import calendar_importers.GCalImporter;
 import calendar_importers.When2MeetImporter;
 
 public class Communicator {
 
-	private CalendarsImporter _calImporter = null;
-	private CalendarGroup _cal = null;
-	private HashSet<String> _w2mEventNames = new HashSet<String>();
+	private CalendarsImporter<CalendarResponses> _userCalImporter = null;
+	
+	private CalendarGroup<CalendarResponses> _userCal = null;
 	private HashMap<String, When2MeetEvent> _w2mEvents = new HashMap<String, When2MeetEvent>();
-	private HashMap<String, When2MeetImporter> _w2mImporters = new HashMap<String, When2MeetImporter>();
+	// TODO only have a single importer
+	// TODO edit 
+	//private HashMap<String, When2MeetImporter> _w2mImporters = new HashMap<String, When2MeetImporter>();
 	private Converter _converter = new Converter();
 	private ProgramOwner _owner = new ProgramOwner();
 	
+	public void startUp() {
+		// If have an index
+		
+		// Pull in index -> list of event IDs with extra letters, 
+		// information for users calendar
+		// Pull in XML and create when2meet events from XML
+		// Pull in XML for user cal, and create user cal
+		
+		// Refresh when2meet events
+		// Refresh calendars -> if no calendar, pull in users calendar	
+	}
 	
-	public void setCalImporter(CalendarsImporter importer){
-		_calImporter = importer;
+	/** SAVING **/
+	
+	public void rebuildIndex() {
+		// Rebuilds the index given the current list of events and calendar
+	}
+	
+	// Saves a when2meet
+	public void saveWhen2Meet(When2MeetEvent w2m) {
+		// Check index to see if it exists
+		// If it does, save over existing
+		// If it does not, create new object and update index
+	}
+	
+	// Saves a users calendar
+	public void saveUserCal() {
+		// Saves updated index and saves user cal
+	}
+	
+	public void saveAll() {
+		// Store XML for when2meet events
+		// Store XML for calendar
+		// Store some form of an update index
+	}
+	
+	public void addWhen2Meet(String url) {
+		// Check if we have this url already
+		// If we do, throw an error
+		
+		// If we don't, check that it's a valid url
+		// If it's a valid url, pull in that when2meet using an importer
+		
+		// If it's not a valid url, error message to user
+	}
+	
+	public void removeWhen2Meet(String eventID) {
+		// Check that we do have an event with this ID
+		// If we do, remove it form our list of events
+		// Save this when2meet, and our new index
+		
+		// If we didn't have it, huh? confused, how did this happen
+	}
+	
+	public void setCalImporter(CalendarsImporter<CalendarResponses> importer){
+		_userCalImporter = importer;
 	}
 	
 	public void setOwnerName(String name){
@@ -35,48 +92,51 @@ public class Communicator {
 	}
 	
 	public void refresh(){
-		//TODO update w2m's and cal by repulling data
-		_cal = _calImporter.importCalendarGroup();
-		for(When2MeetEvent w2me : _w2mEvents.values()){
-			When2MeetImporter importer = _w2mImporters.get(w2me.getName());
-			w2me = (When2MeetEvent) importer.importCalendarGroup();
-		}
+		// Update all when2meet events
+		// Update user calendar
+		// Rebuild index and store all files (saveall)
 	}
 	
-	public void calToW2M(String eventName){
+	public void calToW2M(String eventID){
+		
+	}
+	
+	public When2MeetEvent getW2M(String id){
+		return _w2mEvents.get(id);
+	}
+	
+	public void submitResponse(String eventID, CalendarSlots response){
+		When2MeetEvent w2m = _w2mEvents.get(eventID);
+//		if(w2m != null){
+//			When2MeetExporter exporter = new When2MeetExporter(w2m);
+//			boolean newResponse = true;
+//			for(CalendarSlots c : w2m.getCalendars()){
+//				if(c.getOwner().getName().equalsIgnoreCase(response.getOwner().getName()) || c.getOwner().getID() == response.getOwner().getID()){
+//					exporter.postAllAvailability(response);
+//					newResponse = false;
+//					break;
+//				}
+//			}
+//			if(newResponse) {
+//				try {
+//					exporter.createNewUserNoPassword(response);
+//				} catch (NameAlreadyExistsException e) {
+//					e.printStackTrace();
+//				}
+//			}
+//			
+//		}
+	}
+	
+	
+	public ArrayList<NameIDPair> getNameIDPairs() {
+		// Return the list of name ID pairs associated with this event
+		return null;
+	}
+	
+	public CalendarGroup<CalendarResponses> getCal(){
 		//TODO
-		When2MeetEvent w2m = _w2mEvents.get(eventName);
-		if(_calImporter.getClass() == GCalImporter.class){
-			//w2m = _converter.gCalToSlots(_cal, w2m);
-		}
-	}
-	
-	public When2MeetEvent getW2M(String name){
-		return _w2mEvents.get(name);
-	}
-	
-	public void sendResponse(String eventName, CalendarSlots response, ArrayList<Integer> toBusy, ArrayList<Integer> toFree){
-		When2MeetEvent w2m = _w2mEvents.get(eventName);
-		if(w2m != null){
-			When2MeetExporter exporter = new When2MeetExporter(w2m, response);
-			boolean newResponse = true;
-			for(CalendarSlots c : w2m.getCalendars()){
-				if(c.getOwner().getName().equalsIgnoreCase(response.getOwner().getName()) || c.getOwner().getID() == response.getOwner().getID()){
-					newResponse = false;
-					break;
-				}
-			}
-			if(newResponse){
-				//TODO : "sign in" to event w/ response's owner's name
-			}
-			
-			exporter.postAllAvailability();
-		}
-	}
-	
-	public CalendarGroup getCal(){
-		//TODO
-		return _cal;
+		return _userCal;
 	}
 	
 	public void pullCal(DateTime start, DateTime end){

@@ -21,8 +21,6 @@ public class CalendarSlots implements Calendar {
 	private When2MeetOwner _owner;
 	private Availability[][] _avail;
 	
-	
-	
 	public CalendarSlots(DateTime startTime, DateTime endTime, int minInSlot, Availability initAvail) {
 		_startTime = startTime;
 		_endTime = endTime;
