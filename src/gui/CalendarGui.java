@@ -3,8 +3,9 @@ package gui;
 import java.awt.Graphics;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
-import static gui.GuiConstants.*;
+
 import calendar.*;
+import static gui.GuiConstants.*;
 
 public class CalendarGui {
 

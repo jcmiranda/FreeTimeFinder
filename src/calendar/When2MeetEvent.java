@@ -10,6 +10,7 @@ public class When2MeetEvent extends CalendarGroup<CalendarSlots> {
 	private String _name, _url;
 	private int _id;
 	private ArrayList<Integer> _slotIndexToSlotID = new ArrayList<Integer>();
+
 	
 	
 	public When2MeetEvent(DateTime st, DateTime et, String name, int id, String url,
@@ -56,5 +57,6 @@ public class When2MeetEvent extends CalendarGroup<CalendarSlots> {
 			return -1;
 		}
 	}
+
 
 }

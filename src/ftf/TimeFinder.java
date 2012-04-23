@@ -6,8 +6,8 @@ import org.joda.time.DateTime;
 
 import calendar.CalendarGroup;
 import calendar.CalendarResponses;
-import calendar.CalendarGroup;
 import calendar.Response;
+
 
 public class TimeFinder {
 	private int _numSlotsInDay;
