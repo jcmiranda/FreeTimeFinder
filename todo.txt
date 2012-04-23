@@ -1,0 +1,26 @@
+TODO
+
+COMMUNICATOR
+( ) write startup - Jeanette
+( ) write saveall - Jeanette
+( ) write savewhen2meet - Jeanette
+( ) write saveusercal - Jeanette
+( ) write rebuildIndex - Jeanette
+( ) write addwhen2meet - Liz
+( ) write removewhen2meet - Liz
+( ) write getNameIDPairs - Liz
+( ) write submit - Both leaning towards Liz
+( ) write refresh 
+( ) write calToW2M - Liz
+( ) write pullCal - Liz
+
+INDEX
+(X) enum for type of importers
+(X) enum for types of events
+( ) creating index
+( ) updating index
+- Stores ProgramOwner, When2MeetEvents, Calendar, and types of everything
+
+WHEN2MEETIMPORTER
+( ) change to have one importer, and pass in events - Jeanette
+( ) change other files that this will affect - Jeanette
