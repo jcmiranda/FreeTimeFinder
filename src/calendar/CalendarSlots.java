@@ -1,5 +1,7 @@
 package calendar;
 
+import java.util.ArrayList;
+
 import org.joda.time.DateTime;
 
 public class CalendarSlots implements Calendar {
@@ -70,16 +72,23 @@ public class CalendarSlots implements Calendar {
 	public Availability getAvail(int day, int slot) {
 		return _avail[day][slot];
 	}
-
 	
 	public Availability getAvail(int slot) {
 		int day = slot / _numSlotsInDay;
 		int slotInDay = slot % _numSlotsInDay;
 		return _avail[day][slotInDay];
 	}
+	
+	public ArrayList<Integer> getSlotsForAvail(Availability avail){
+		ArrayList<Integer> toReturn = new ArrayList<Integer>();
 
-	
-	
+		for(int slot = 0; slot < getTotalSlots(); slot++) {
+			if(getAvail(slot) == avail)
+				toReturn.add(new Integer(slot));
+		}
+		return toReturn;
+	}
+
 	public void setAvail(int day, int slot, Availability avail) {
 		_avail[day][slot] = avail;
 		return;
