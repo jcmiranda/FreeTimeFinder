@@ -10,7 +10,6 @@ import java.awt.event.ActionListener;
 
 import javax.swing.JButton;
 import javax.swing.JFrame;
-
 import org.joda.time.DateTime;
 
 import calendar.CalendarGroup;
@@ -90,7 +89,7 @@ public class CalendarGui {
 		this.repaint();
 	}
 
-	
+
 	public void repaint(){
 		_frame.invalidate();
 		_frame.validate();
@@ -100,9 +99,9 @@ public class CalendarGui {
 
 		@Override
 		public void actionPerformed(ActionEvent arg0) {
-//			if (_frame.getContentPane().contains(_when2MeetCal)){
-//				myView();
-//			}
+			//			if (_frame.getContentPane().contains(_when2MeetCal)){
+			//				myView();
+			//			}
 			myView();
 		}
 

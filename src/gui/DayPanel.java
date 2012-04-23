@@ -2,6 +2,7 @@ package gui;
 
 import static gui.GuiConstants.BG_COLOR;
 
+
 import static gui.GuiConstants.GRAY_OUT_COLOR;
 import static gui.GuiConstants.LINE_COLOR;
 
@@ -14,7 +15,7 @@ import javax.swing.JPanel;
 import org.joda.time.DateTime;
 
 import calendar.CalendarSlots;
-import calendar.CalendarSlots.CalSlotsFB;
+import calendar.Availability;
 import calendar.Response;
 
 
@@ -115,10 +116,10 @@ public class DayPanel extends JPanel{
 	
 	
 	public void flipAvail(int slotNum){
-		if (_slots.get(0).getAvail(slotNum) == CalSlotsFB.busy) {
-			_slots.get(0).setAvail(slotNum, CalSlotsFB.free);
+		if (_slots.get(0).getAvail(slotNum) == Availability.busy) {
+			_slots.get(0).setAvail(slotNum, Availability.free);
 		} else {
-			_slots.get(0).setAvail(slotNum, CalSlotsFB.busy);
+			_slots.get(0).setAvail(slotNum, Availability.busy);
 		}
 	}
 

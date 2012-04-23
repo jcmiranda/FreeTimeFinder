@@ -5,7 +5,7 @@ import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionListener;
 import org.joda.time.DateTime;
 
-import calendar.CalendarSlots.CalSlotsFB;
+import calendar.Availability;
 
 public class ClickableDayPanel extends DayPanel{
 
@@ -24,7 +24,7 @@ public class ClickableDayPanel extends DayPanel{
 
 	class calListener implements MouseListener, MouseMotionListener{
 
-		CalSlotsFB flipMode = CalSlotsFB.busy;
+		Availability flipMode = Availability.busy;
 
 		@Override
 		public void mousePressed(MouseEvent arg0) {

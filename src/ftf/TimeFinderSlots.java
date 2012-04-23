@@ -6,9 +6,10 @@ import java.util.PriorityQueue;
 
 import org.joda.time.DateTime;
 
+import calendar.Availability;
 import calendar.CalendarGroup;
 import calendar.CalendarSlots;
-import calendar.CalendarSlots.CalSlotsFB;
+
 
 public class TimeFinderSlots {
 
@@ -84,7 +85,7 @@ public class TimeFinderSlots {
 			}
 		}
 		
-		CalendarSlots toReturn = new CalendarSlots(_start, firstCal.getEndTime(), interval, CalSlotsFB.busy);
+		CalendarSlots toReturn = new CalendarSlots(_start, firstCal.getEndTime(), interval, Availability.busy);
 		int i = 0;
 		int num = Math.min(numToReturn, times.size());
 		//System.out.println("times size: " + times.size());
@@ -94,7 +95,7 @@ public class TimeFinderSlots {
 			int j = 0;
 			while(j<duration/interval){
 				//System.out.println(t.getDay() + ": " + t.getTime() + "," + j);
-				toReturn.setAvail(t.getDay(), t.getTime() + j, CalSlotsFB.free);
+				toReturn.setAvail(t.getDay(), t.getTime() + j, Availability.free);
 				j++;
 			}
 			i++;

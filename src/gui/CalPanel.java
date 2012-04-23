@@ -10,7 +10,6 @@ import org.joda.time.DateTime;
 
 public abstract class CalPanel extends JPanel{
 
-
 	protected int _startHour = 0;
 	protected int _endHour = 24;
 	protected int _numHours = 24;

@@ -18,7 +18,8 @@ public class CalendarGroup<C extends Calendar> {
 	public CalendarGroup(DateTime start, DateTime end, Collection<C> cals){
 		_start = start;
 		_end = end;
-		_calendars = (ArrayList<C>) cals;
+		for(C c : cals)
+			_calendars.add(c);
 	}
 	
 	public DateTime getStartTime(){

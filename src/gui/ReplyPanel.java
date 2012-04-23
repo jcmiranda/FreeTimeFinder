@@ -2,6 +2,7 @@ package gui;
 
 import static gui.GuiConstants.LINE_SPACING;
 
+
 import java.awt.GridLayout;
 import java.util.ArrayList;
 
@@ -12,7 +13,7 @@ import calendar.CalendarGroup;
 import calendar.CalendarResponses;
 import calendar.CalendarSlots;
 import calendar.Response;
-import calendar.CalendarSlots.CalSlotsFB;
+import calendar.Availability;
 
 public class ReplyPanel extends CalPanel{
 
@@ -84,7 +85,7 @@ public class ReplyPanel extends CalPanel{
 		ArrayList<CalendarSlots> slots = new ArrayList<CalendarSlots>();
 		for (Object s: slotCals.getCalendars()){
 			CalendarSlots c = (CalendarSlots) s;
-			CalSlotsFB[][] oneDayAvail = {c.getAvail()[Days.daysBetween(c.getStartTime(), _thisMonday.plusDays(dayOfWeek)).getDays()]};
+			Availability[][] oneDayAvail = {c.getAvail()[Days.daysBetween(c.getStartTime(), _thisMonday.plusDays(dayOfWeek)).getDays()]};
 			CalendarSlots oneDayCal = new CalendarSlots(c.getStartTime(), c.getEndTime(), c.getOwner(), c.getMinInSlot(), oneDayAvail);
 			slots.add(oneDayCal);	
 		}

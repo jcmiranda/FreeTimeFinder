@@ -7,59 +7,60 @@ import org.joda.time.DateTime;
 import calendar.CalendarResponses;
 import calendar.GoogleCalendars;
 import calendar.CalendarSlots;
-import calendar.Owner;
 import calendar.OwnerImpl;
 import calendar.Response;
 import calendar.When2MeetEvent;
-import calendar.CalendarSlots.CalSlotsFB;
+import calendar.Availability;
+import calendar.When2MeetOwner;
+
 
 public class Main {
 
-	public static CalSlotsFB[][] setAvailability(){
+	public static Availability[][] setAvailability(){
 
-		CalSlotsFB[][] availability = {
-				{CalSlotsFB.free, CalSlotsFB.free, CalSlotsFB.free, CalSlotsFB.free,
-					CalSlotsFB.free, CalSlotsFB.free, CalSlotsFB.free, CalSlotsFB.free,
-					CalSlotsFB.free, CalSlotsFB.free, CalSlotsFB.free, CalSlotsFB.free,
-					CalSlotsFB.free, CalSlotsFB.free, CalSlotsFB.free, CalSlotsFB.free,
-					CalSlotsFB.free, CalSlotsFB.free, CalSlotsFB.free, CalSlotsFB.free,
-					CalSlotsFB.free, CalSlotsFB.free, CalSlotsFB.free, CalSlotsFB.free},
-					{CalSlotsFB.free, CalSlotsFB.free, CalSlotsFB.free, CalSlotsFB.free,
-						CalSlotsFB.free, CalSlotsFB.free, CalSlotsFB.free, CalSlotsFB.free,
-						CalSlotsFB.free, CalSlotsFB.free, CalSlotsFB.free, CalSlotsFB.free,
-						CalSlotsFB.free, CalSlotsFB.free, CalSlotsFB.free, CalSlotsFB.free,
-						CalSlotsFB.free, CalSlotsFB.free, CalSlotsFB.free, CalSlotsFB.free,
-						CalSlotsFB.free, CalSlotsFB.free, CalSlotsFB.free, CalSlotsFB.free},
-						{CalSlotsFB.free, CalSlotsFB.free, CalSlotsFB.free, CalSlotsFB.free,
-							CalSlotsFB.free, CalSlotsFB.free, CalSlotsFB.free, CalSlotsFB.free,
-							CalSlotsFB.free, CalSlotsFB.free, CalSlotsFB.free, CalSlotsFB.free,
-							CalSlotsFB.free, CalSlotsFB.free, CalSlotsFB.free, CalSlotsFB.free,
-							CalSlotsFB.free, CalSlotsFB.free, CalSlotsFB.free, CalSlotsFB.free,
-							CalSlotsFB.free, CalSlotsFB.free, CalSlotsFB.free, CalSlotsFB.free},
-							{CalSlotsFB.busy, CalSlotsFB.free, CalSlotsFB.busy, CalSlotsFB.free,
-								CalSlotsFB.busy, CalSlotsFB.free, CalSlotsFB.free, CalSlotsFB.free,
-								CalSlotsFB.busy, CalSlotsFB.free, CalSlotsFB.free, CalSlotsFB.free,
-								CalSlotsFB.busy, CalSlotsFB.free, CalSlotsFB.busy, CalSlotsFB.free,
-								CalSlotsFB.busy, CalSlotsFB.free, CalSlotsFB.free, CalSlotsFB.free,
-								CalSlotsFB.busy, CalSlotsFB.free, CalSlotsFB.busy, CalSlotsFB.free},
-								{CalSlotsFB.busy, CalSlotsFB.free, CalSlotsFB.busy, CalSlotsFB.free,
-									CalSlotsFB.busy, CalSlotsFB.free, CalSlotsFB.busy, CalSlotsFB.free,
-									CalSlotsFB.busy, CalSlotsFB.free, CalSlotsFB.busy, CalSlotsFB.free,
-									CalSlotsFB.busy, CalSlotsFB.free, CalSlotsFB.busy, CalSlotsFB.free,
-									CalSlotsFB.busy, CalSlotsFB.free, CalSlotsFB.busy, CalSlotsFB.free,
-									CalSlotsFB.busy, CalSlotsFB.free, CalSlotsFB.busy, CalSlotsFB.free},
-									{CalSlotsFB.busy, CalSlotsFB.free, CalSlotsFB.busy, CalSlotsFB.free,
-										CalSlotsFB.busy, CalSlotsFB.free, CalSlotsFB.busy, CalSlotsFB.free,
-										CalSlotsFB.busy, CalSlotsFB.free, CalSlotsFB.busy, CalSlotsFB.free,
-										CalSlotsFB.busy, CalSlotsFB.free, CalSlotsFB.busy, CalSlotsFB.free,
-										CalSlotsFB.busy, CalSlotsFB.free, CalSlotsFB.busy, CalSlotsFB.free,
-										CalSlotsFB.busy, CalSlotsFB.free, CalSlotsFB.busy, CalSlotsFB.free},
-										{CalSlotsFB.busy, CalSlotsFB.free, CalSlotsFB.busy, CalSlotsFB.free,
-											CalSlotsFB.busy, CalSlotsFB.free, CalSlotsFB.busy, CalSlotsFB.free,
-											CalSlotsFB.busy, CalSlotsFB.free, CalSlotsFB.busy, CalSlotsFB.free,
-											CalSlotsFB.busy, CalSlotsFB.free, CalSlotsFB.busy, CalSlotsFB.free,
-											CalSlotsFB.busy, CalSlotsFB.free, CalSlotsFB.busy, CalSlotsFB.free,
-											CalSlotsFB.busy, CalSlotsFB.free, CalSlotsFB.busy, CalSlotsFB.free}};
+		Availability[][] availability = {
+				{Availability.free, Availability.free, Availability.free, Availability.free,
+					Availability.free, Availability.free, Availability.free, Availability.free,
+					Availability.free, Availability.free, Availability.free, Availability.free,
+					Availability.free, Availability.free, Availability.free, Availability.free,
+					Availability.free, Availability.free, Availability.free, Availability.free,
+					Availability.free, Availability.free, Availability.free, Availability.free},
+					{Availability.free, Availability.free, Availability.free, Availability.free,
+						Availability.free, Availability.free, Availability.free, Availability.free,
+						Availability.free, Availability.free, Availability.free, Availability.free,
+						Availability.free, Availability.free, Availability.free, Availability.free,
+						Availability.free, Availability.free, Availability.free, Availability.free,
+						Availability.free, Availability.free, Availability.free, Availability.free},
+						{Availability.free, Availability.free, Availability.free, Availability.free,
+							Availability.free, Availability.free, Availability.free, Availability.free,
+							Availability.free, Availability.free, Availability.free, Availability.free,
+							Availability.free, Availability.free, Availability.free, Availability.free,
+							Availability.free, Availability.free, Availability.free, Availability.free,
+							Availability.free, Availability.free, Availability.free, Availability.free},
+							{Availability.busy, Availability.free, Availability.busy, Availability.free,
+								Availability.busy, Availability.free, Availability.free, Availability.free,
+								Availability.busy, Availability.free, Availability.free, Availability.free,
+								Availability.busy, Availability.free, Availability.busy, Availability.free,
+								Availability.busy, Availability.free, Availability.free, Availability.free,
+								Availability.busy, Availability.free, Availability.busy, Availability.free},
+								{Availability.busy, Availability.free, Availability.busy, Availability.free,
+									Availability.busy, Availability.free, Availability.busy, Availability.free,
+									Availability.busy, Availability.free, Availability.busy, Availability.free,
+									Availability.busy, Availability.free, Availability.busy, Availability.free,
+									Availability.busy, Availability.free, Availability.busy, Availability.free,
+									Availability.busy, Availability.free, Availability.busy, Availability.free},
+									{Availability.busy, Availability.free, Availability.busy, Availability.free,
+										Availability.busy, Availability.free, Availability.busy, Availability.free,
+										Availability.busy, Availability.free, Availability.busy, Availability.free,
+										Availability.busy, Availability.free, Availability.busy, Availability.free,
+										Availability.busy, Availability.free, Availability.busy, Availability.free,
+										Availability.busy, Availability.free, Availability.busy, Availability.free},
+										{Availability.busy, Availability.free, Availability.busy, Availability.free,
+											Availability.busy, Availability.free, Availability.busy, Availability.free,
+											Availability.busy, Availability.free, Availability.busy, Availability.free,
+											Availability.busy, Availability.free, Availability.busy, Availability.free,
+											Availability.busy, Availability.free, Availability.busy, Availability.free,
+											Availability.busy, Availability.free, Availability.busy, Availability.free}};
 		return availability;
 	}
 
@@ -73,9 +74,9 @@ public class Main {
 		g.addCalendar(responses);
 
 		ArrayList<CalendarSlots> slotsCals = new ArrayList<CalendarSlots>();
-		CalSlotsFB[][] availability = setAvailability();
-		slotsCals.add(new CalendarSlots(new DateTime(2012,4,16,9,0), new DateTime(2012,4,22,15,0), new OwnerImpl("Tim"), 15, availability));
-		When2MeetEvent w = new When2MeetEvent(new DateTime(2012,4,16,9,0), new DateTime(2012,4,22,15,0), "test", 0, "test_url", slotsCals);
+		Availability[][] availability = setAvailability();
+		slotsCals.add(new CalendarSlots(new DateTime(2012,4,16,9,0), new DateTime(2012,4,22,15,0), new When2MeetOwner("Tim", 0), 15, availability));
+		When2MeetEvent w = new When2MeetEvent(new DateTime(2012,4,16,9,0), new DateTime(2012,4,22,15,0), "test", 0, "test_url", slotsCals, null);
 
 		CalendarGui gui = new CalendarGui(g, w);
 
