@@ -12,4 +12,9 @@ public class OwnerImpl implements Owner {
 		return _name;
 	}
 
+	@Override
+	public void setName(String name) {
+		_name = name;
+	}
+
 }
