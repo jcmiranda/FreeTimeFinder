@@ -8,6 +8,7 @@ import java.net.URL;
 import java.net.URLConnection;
 import java.net.URLEncoder;
 import java.util.ArrayList;
+import java.util.regex.Pattern;
 
 import calendar.Availability;
 import calendar.CalendarSlots;
@@ -105,6 +106,10 @@ public class When2MeetExporter {
 		} catch (Exception e) {
 
 		}
+	}
+	
+	public void signIn(String username, String password){
+		
 	}
 	
 
