@@ -70,10 +70,7 @@ public class Communicator {
 				//TODO : "sign in" to event w/ response's owner's name
 			}
 			
-			exporter.updateAvailability(toBusy, Availability.busy);
-			exporter.updateAvailability(toFree, Availability.free);
-			
-			
+			exporter.postAllAvailability();
 		}
 	}
 	

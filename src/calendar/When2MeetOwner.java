@@ -14,5 +14,15 @@ public class When2MeetOwner implements Owner {
 		return _name;
 	}
 	
+	//TODO check for ID being -1 before posting
+	public void setName(String name) {
+		_name = name; 
+		_id = -1;
+	};
+	
+	public void setID(int id){
+		_id = id;
+	}
+	
 	public int getID() { return _id; };
 }
