@@ -79,7 +79,7 @@ public class GCalImporter implements CalendarsImporter {
 	
 	public GoogleCalendars importCalendarGroup(org.joda.time.DateTime st, org.joda.time.DateTime et) throws IOException, ServiceException {
 		//calendar group
-		GoogleCalendars allCalendars = new GoogleCalendars(st, et);
+		GoogleCalendars allCalendars = new GoogleCalendars(st, et, null);
 		//set URL to get calendars
 		URL feedUrl = new URL("https://www.google.com/calendar/feeds/default/");
 		//write query
