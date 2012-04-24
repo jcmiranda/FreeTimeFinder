@@ -1,16 +1,22 @@
 package gui;
 
 import java.awt.event.MouseEvent;
+
 import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionListener;
 import org.joda.time.DateTime;
+import org.joda.time.Days;
 
 import calendar.Availability;
+import calendar.CalendarSlots;
 
 public class ClickableDayPanel extends DayPanel{
 
 	public ClickableDayPanel(){
 		super();
+		calListener cl = new calListener();
+		this.addMouseListener(cl);
+		this.addMouseMotionListener(cl);
 	}
 	
 	public ClickableDayPanel(int startHour, int numHours, DateTime today,
@@ -21,16 +27,31 @@ public class ClickableDayPanel extends DayPanel{
 		this.addMouseMotionListener(cl);
 	}
 
+	public CalendarSlots exportClicks(){
+		return getSlots().getCalendars().get(0);
+	}
+	
 
+	public void flipAvail(int slotNum){
+		if (getSlots().getCalendars().get(0).getAvail(Days.daysBetween(getSlots().getStartTime(), getDay()).getDays(),
+				slotNum) == Availability.busy) {
+			getSlots().getCalendars().get(0).setAvail(Days.daysBetween(getSlots().getStartTime(), getDay()).getDays(), slotNum, Availability.free);
+		} else {
+			getSlots().getCalendars().get(0).setAvail(Days.daysBetween(getSlots().getStartTime(), getDay()).getDays(), slotNum, Availability.busy);
+		}
+	}
+	
+	
 	class calListener implements MouseListener, MouseMotionListener{
 
-		Availability flipMode = Availability.busy;
-
+		Availability flipMode;
+		int originalSlot;
+		
 		@Override
 		public void mousePressed(MouseEvent arg0) {
-			int slotNum = (int) ((double) arg0.getY()/getHeight()*_numHours*4);
-			flipAvail(slotNum);
-			flipMode = getSlots().getCalendars().get(0).getAvail(slotNum);
+			originalSlot = (int) ((double) arg0.getY()/getHeight()*_numHours*4);
+			flipAvail(originalSlot);
+			flipMode = getSlots().getCalendars().get(0).getAvail(Days.daysBetween(getSlots().getStartTime(), getDay()).getDays(), originalSlot);
 			repaint();
 		}		
 
@@ -39,10 +60,13 @@ public class ClickableDayPanel extends DayPanel{
 
 			int slotNum = (int) ((double) arg0.getY()/getHeight()*_numHours*4);
 
-			if (getSlots().getCalendars().get(0).getAvail(slotNum) != flipMode) {
-				flipAvail(slotNum);
-				repaint();
+			for (int i=Math.min(originalSlot,slotNum); i<=Math.max(originalSlot,slotNum); i++){
+				if (getSlots().getCalendars().get(0).getAvail(Days.daysBetween(getSlots().getStartTime(), getDay()).getDays(), i) != flipMode) {
+					flipAvail(i);
+					repaint();
+				}	
 			}
+			
 		}
 
 		@Override

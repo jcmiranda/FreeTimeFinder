@@ -9,6 +9,7 @@ import java.util.ArrayList;
 import org.joda.time.DateTime;
 import org.joda.time.Days;
 
+import calendar.CalGroupType;
 import calendar.CalendarGroup;
 import calendar.CalendarResponses;
 import calendar.CalendarSlots;
@@ -19,6 +20,8 @@ public class ReplyPanel extends CalPanel{
 
 	private CalendarGroup<CalendarSlots> _slotCals;
 	private CalendarGroup<CalendarResponses> _respCals;
+	private CalendarGroup<CalendarSlots> _clicks;
+
 
 	public ReplyPanel(DateTime thisMonday) {
 		super(thisMonday);
@@ -37,29 +40,29 @@ public class ReplyPanel extends CalPanel{
 		_numHours = _endHour - _startHour;
 		configDays();
 	}
-//TODO fix these
-//
-//	public void setResps(CalendarGroup<CalendarResponses> respCals){
-//
-//		_respCals = respCals;
-//
-//		for (int i=0; i<7; i++){
-//			_days[2*i].setResponses(_respCals);
-//		}
-//		this.repaint();
-//	}
-//
-//
-//	public void setSlots(CalendarGroup<CalendarSlots> slotCals){
-//		_slotCals = slotCals;
-//		configDays();
-//		for (int i=0; i<14; i=i+2){
-//			if (_days[2*i+1].isActive()){
-//				_days[i].setSlots(getDaySlots(i/2,_slotCals));			
-//			}
-//		}
-//		this.repaint();
-//	}
+	//TODO fix these
+	//
+	//	public void setResps(CalendarGroup<CalendarResponses> respCals){
+	//
+	//		_respCals = respCals;
+	//
+	//		for (int i=0; i<7; i++){
+	//			_days[2*i].setResponses(_respCals);
+	//		}
+	//		this.repaint();
+	//	}
+	//
+	//
+	//	public void setSlots(CalendarGroup<CalendarSlots> slotCals){
+	//		_slotCals = slotCals;
+	//		configDays();
+	//		for (int i=0; i<14; i=i+2){
+	//			if (_days[2*i+1].isActive()){
+	//				_days[i].setSlots(getDaySlots(i/2,_slotCals));			
+	//			}
+	//		}
+	//		this.repaint();
+	//	}
 
 	public ArrayList<ArrayList<Response>> getDayResps(int dayOfWeek, CalendarGroup<CalendarResponses> respCals){
 
@@ -116,8 +119,16 @@ public class ReplyPanel extends CalPanel{
 				_days[i].setActive(true);
 				_days[i].setResponses(_respCals);
 				_days[i+1].setActive(true);
-//				_days[i].setSlots(_slotCals);
 				_days[i+1].setSlots(_slotCals);
+
+				if (_clicks==null) {
+					_clicks = new CalendarGroup<CalendarSlots>(_slotCals.getStartTime(), _slotCals.getEndTime(), CalGroupType.When2MeetEvent);
+					_clicks.addCalendar(new CalendarSlots(_slotCals.getStartTime(),
+							_slotCals.getEndTime(),
+							_slotCals.getCalendars().get(0).getMinInSlot(),
+							Availability.free));
+				}
+				_days[i].setSlots(_clicks);
 			}
 		}		
 		repaint();

@@ -85,10 +85,10 @@ public class DayPanel extends JPanel{
 	public void setResponses(CalendarGroup<CalendarResponses> responses){
 		_responses = responses;
 	}
-	//	
-	//	public void addSlotCal(CalendarSlots cal){
-	//		_slots.add(cal);
-	//	}
+
+	public void addSlotCal(CalendarSlots cal){
+		_slots.addCalendar(cal);
+	}
 	//	
 	//	public void addRespCal(ArrayList<Response> cal){
 	//		_responses.add(cal);
@@ -96,7 +96,6 @@ public class DayPanel extends JPanel{
 	//	
 	public void setDay(DateTime today){
 		_today = today;
-		System.out.println(_today);
 	}
 
 	public DateTime getDay(){
@@ -111,13 +110,6 @@ public class DayPanel extends JPanel{
 		_today = _today.minusDays(7);
 	}
 
-	public void flipAvail(int slotNum){
-		if (_slots.getCalendars().get(0).getAvail(slotNum) == Availability.busy) {
-			_slots.getCalendars().get(0).setAvail(slotNum, Availability.free);
-		} else {
-			_slots.getCalendars().get(0).setAvail(slotNum, Availability.busy);
-		}
-	}
 
 	private void drawLines(Graphics2D brush){
 
@@ -135,13 +127,13 @@ public class DayPanel extends JPanel{
 		drawLines(brush);
 		if (_responses!=null){
 			int numCals = _responses.getCalendars().size();
-			for (CalendarResponses c: _responses.getCalendars()){
-				c.paint(brush, this, numCals);
+			for (CalendarResponses r: _responses.getCalendars()){
+				r.paint(brush, this, numCals);
 			}
 		}
 		if (_slots!=null){
-			for (CalendarSlots c: _slots.getCalendars()){
-				c.paint(brush, this);
+			for (CalendarSlots s: _slots.getCalendars()){
+				s.paint(brush, this);
 			}
 		}
 		if (!_active){

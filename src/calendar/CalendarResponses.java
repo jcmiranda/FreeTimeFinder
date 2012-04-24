@@ -140,7 +140,8 @@ public class CalendarResponses implements Calendar {
 		ArrayList<Response> conflictCheck = new ArrayList<Response>();
 		for (Response r: getResponses()){
 			// TODO work on spacing the events
-			if (Days.daysBetween(r.getStartTime(), d.getDay()).getDays()==0){
+			if (r.getStartTime().year().equals(d.getDay().year())
+					&& r.getStartTime().dayOfYear().equals(d.getDay().dayOfYear())){
 				conflictCheck.add(r);
 				r.paint(brush, d, 0, d.getWidth());
 			}
