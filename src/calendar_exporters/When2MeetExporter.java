@@ -135,9 +135,9 @@ public class When2MeetExporter {
 	
 	// When this method is called, this calendar owner has a name unique from
 	// all the other calendar owners
-	public void createNewUser(CalendarSlots cal, String password) throws NameAlreadyExistsException {
+	public void createNewUser(When2MeetEvent event, CalendarSlots cal, String password) throws NameAlreadyExistsException {
 		ArrayList<KeyValue> keyValues = new ArrayList<KeyValue>();
-		keyValues.add(new KeyValue("id", ""+_event.getID()));
+		keyValues.add(new KeyValue("id", ""+event.getID()));
 		keyValues.add(new KeyValue("name", "" + cal.getOwner().getName()));
 		keyValues.add(new KeyValue("password", password));
 		String resp = post(keyValues, "http://www.when2meet.com/ProcessLogin.php");
@@ -145,17 +145,17 @@ public class When2MeetExporter {
 			throw new NameAlreadyExistsException();
 		} else {
 			int id = Integer.parseInt(resp);
-			for(CalendarSlots c : _event.getCalendars()){
+			for(CalendarSlots c : event.getCalendars()){
 				if(id == c.getOwner().getID()){
 					throw new NameAlreadyExistsException();
 				}
 			}
 			cal.getOwner().setID(id);
 		}
-		this.postAllAvailability(_event, cal);
+		//this.postAllAvailability(event, cal);
 	}
-	public void createNewUserNoPassword(CalendarSlots cal) throws NameAlreadyExistsException {
-		createNewUser(cal, "");
+	public void createNewUserNoPassword(When2MeetEvent event, CalendarSlots cal) throws NameAlreadyExistsException {
+		createNewUser(event, cal, "");
 	}
 	
 	private String startTime() {
@@ -181,8 +181,15 @@ public class When2MeetExporter {
 		return ret;
 	}
 	
-	public void postAllAvailability(When2MeetEvent event, CalendarSlots cal) {
-		_event = event;
+	public void postAllAvailability(When2MeetEvent event) throws NameAlreadyExistsException {
+		//_event = event;
+		CalendarSlots cal = event.getUserResponse();
+		if(!event.userHasSubmitted()){
+			String password = "";
+			//TODO: ask user if they want to use password
+			this.createNewUser(event, cal, password);
+			event.setUserSubmitted(true);
+		}
 		ArrayList<Integer> busySlots = cal.getSlotsForAvail(Availability.busy);
 		ArrayList<Integer> freeSlots = cal.getSlotsForAvail(Availability.free);
 		this.postAvailability(cal, busySlots, Availability.busy);

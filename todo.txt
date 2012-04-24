@@ -7,13 +7,15 @@ COMMUNICATOR
 (X) write saveusercal - Jeanette
 (X) write rebuildIndex - Jeanette
 (X) write addwhen2meet - Liz
-( ) write removewhen2meet - Liz
-( ) write getNameIDPairs - Liz
-( ) write submit - Both leaning towards Liz
+(X) write removewhen2meet - Liz
+(X) write getNameIDPairs - Liz
+(X) write submit - Both leaning towards Liz (still need to save to index)
+( ) write getNewUserName (need to actually ask user for new name) - Liz
 ( ) write refresh 
-( ) write calToW2M - Liz
+(X) write calToW2M - Liz
+(X) write getW2M - Liz
 ( ) write pullCal - Liz
-( ) write besttime method headers and what not - Liz
+(X) write besttime method headers and what not - Liz
 
 INDEX
 (X) enum for type of importers

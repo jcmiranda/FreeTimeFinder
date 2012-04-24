@@ -9,6 +9,8 @@ public class When2MeetEvent extends CalendarGroup<CalendarSlots> {
 	
 	private String _name, _url;
 	private int _id;
+	private CalendarSlots _userResponse = null;
+	private boolean _userHasSubmitted = false;
 	private ArrayList<Integer> _slotIndexToSlotID = new ArrayList<Integer>();
 
 	
@@ -25,6 +27,8 @@ public class When2MeetEvent extends CalendarGroup<CalendarSlots> {
 	public void setID(int id) { _id = id; };
 	public void setURL(String url) { _url = url; }
 	public void setName(String name) {_name = name; }
+	public void setUserResponse(CalendarSlots cal) { _userResponse = cal; }
+	public void setUserSubmitted(boolean b) {_userHasSubmitted = b; }
 	
 	public String getURL(){
 		return _url;
@@ -38,6 +42,14 @@ public class When2MeetEvent extends CalendarGroup<CalendarSlots> {
 		return _name;
 	}
 	
+	public CalendarSlots getUserResponse() {
+		return _userResponse;
+	}
+	
+	public boolean userHasSubmitted(){
+		return _userHasSubmitted;
+	}
+	
 	public CalendarSlots getCalByName(String name) {
 		CalendarSlots cal = null;
 		for(int i = 0; i < this.getCalendars().size(); i++) { 
@@ -47,6 +59,10 @@ public class When2MeetEvent extends CalendarGroup<CalendarSlots> {
 			}
 		}
 		return cal;
+	}
+	
+	public void removeCalByName(String name){
+		this.getCalendars().remove(getCalByName(name));
 	}
 	
 	public int getSlotID(int slotIndex) {

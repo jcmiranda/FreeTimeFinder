@@ -167,7 +167,6 @@ public class GCalImporter implements CalendarsImporter {
     	myImporter.importMyGCal(startTime, endTime);
     }
 
-	@Override
 	public CalendarGroup importCalendarGroup() {
 		// TODO Auto-generated method stub
 		return null;
@@ -175,6 +174,13 @@ public class GCalImporter implements CalendarsImporter {
 	
 	public GoogleCalendars refresh(org.joda.time.DateTime st, org.joda.time.DateTime et) throws IOException, ServiceException, com.google.gdata.util.ServiceException {
 		return this.importCalendarGroup(st, et);
+	}
+
+	@Override
+	public CalendarGroup importCalendarGroup(String url)
+			throws MalformedURLException {
+		// TODO Auto-generated method stub
+		return null;
 	}
 	
 	

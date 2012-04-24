@@ -1,10 +1,10 @@
 package cal_master;
 
+import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.Writer;
-import java.io.BufferedWriter;
 import java.net.MalformedURLException;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -13,29 +13,46 @@ import javax.swing.JOptionPane;
 
 import org.joda.time.DateTime;
 
-import com.thoughtworks.xstream.XStream;
-
 import cal_master.Index.IndexType;
-import calendar.*;
+import calendar.Availability;
+import calendar.Calendar;
+import calendar.CalendarGroup;
+import calendar.CalendarResponses;
+import calendar.CalendarSlots;
+import calendar.GoogleCalendars;
+import calendar.When2MeetEvent;
+import calendar.When2MeetOwner;
+import calendar_exporters.When2MeetExporter;
+import calendar_exporters.When2MeetExporter.NameAlreadyExistsException;
 import calendar_importers.CalendarsImporter;
 import calendar_importers.When2MeetImporter;
+
+import com.thoughtworks.xstream.XStream;
+
+import ftf.TimeFinderSlots;
 
 
 public class Communicator {
 
 	private CalendarsImporter<CalendarResponses> _userCalImporter = null;
-	
 	private CalendarGroup<CalendarResponses> _userCal = null;
 	private String _userCalID = "userCal", _indexID = "index";
+	
 	private HashMap<String, When2MeetEvent> _w2mEvents = new HashMap<String, When2MeetEvent>();
 	private When2MeetImporter _importer = new When2MeetImporter();
-	// TODO only have a single importer
+	private When2MeetExporter _exporter = new When2MeetExporter();
+
 	// TODO edit 
 	//private HashMap<String, When2MeetImporter> _w2mImporters = new HashMap<String, When2MeetImporter>();
 	private Converter _converter = new Converter();
+	private TimeFinderSlots _timeFinder = new TimeFinderSlots();
 	private ProgramOwner _owner = new ProgramOwner();
+	
 	private XStream _xstream = new XStream();
 	private Index _index = new Index();
+	
+	private static final double ATTENDEE_PERCENTAGE = .75;
+	private static final int NUM_SUGGESTIONS = 5;
 	
 	
 	private void setUpXStream() {
@@ -157,21 +174,29 @@ public class Communicator {
 				throw new URLAlreadyExistsException();
 			}
 
+		// If we don't, check that it's a valid url
+		// If it's a valid url, pull in that when2meet using an importer
+		// If it's not a valid url, error message to user
+		
 		When2MeetEvent newEvent = _importer.importCalendarGroup(url);
 		String id = newEvent.getID() + "";
 		_w2mEvents.put(id, newEvent);
 		saveOneItem(newEvent, id);
 
-		// If we don't, check that it's a valid url
-		// If it's a valid url, pull in that when2meet using an importer
 		
-		// If it's not a valid url, error message to user
 	}
 	
 	public void removeWhen2Meet(String eventID) {
 		// Check that we do have an event with this ID
+		When2MeetEvent toRemove = _w2mEvents.get(eventID);
+		
 		// If we do, remove it form our list of events
 		// Save this when2meet, and our new index
+		if(toRemove != null){
+			String id = eventID + "";
+			_w2mEvents.remove(id);
+			saveOneItem(toRemove, id);
+		}
 		
 		// If we didn't have it, huh? confused, how did this happen
 	}
@@ -191,40 +216,113 @@ public class Communicator {
 	}
 	
 	public void calToW2M(String eventID){
-		
+		When2MeetEvent w2m = _w2mEvents.get(eventID);
+		if(w2m != null && !w2m.userHasSubmitted()){
+			
+			//check to see that w2m in range of userCal
+			//If it isn't, pullCall before 
+			DateTime wStart = w2m.getStartTime();
+			DateTime wEnd = w2m.getEndTime();
+			DateTime cStart = _userCal.getStartTime();
+			DateTime cEnd = _userCal.getEndTime();
+			
+			if(wStart.isBefore(cStart) || wStart.isAfter(cEnd) || wEnd.isBefore(cStart) || wEnd.isAfter(cEnd)){
+				pullCal(wStart, wEnd);
+			}
+			
+			CalendarSlots cal = _converter.calToSlots(_userCal, w2m);
+			w2m.setUserResponse(cal);
+		}
 	}
 	
 	public When2MeetEvent getW2M(String id){
-		return _w2mEvents.get(id);
+		When2MeetEvent toReturn = _w2mEvents.get(id);
+		if(toReturn.getUserResponse() == null){
+			//ask user if they've responded to the event
+			int resp = JOptionPane.showConfirmDialog(null, "Have you already responded to this When2Meet?", "", JOptionPane.YES_NO_OPTION);
+			//if they have, ask them to select their response from the list of all responses
+			if(resp == JOptionPane.YES_OPTION){
+				Object[] responseNames = new Object[toReturn.getCalendars().size()];
+				for(int i=0; i< toReturn.getCalendars().size(); i++){
+					responseNames[i] = toReturn.getCalendars().get(i).getOwner().getName();
+				}
+				int selected = JOptionPane.showOptionDialog(null, "Please select the name that represents your response from the list below",
+						"", responseNames.length, JOptionPane.INFORMATION_MESSAGE, null,
+						responseNames, responseNames[0]);
+				
+				//take the selected cal, remove it from the list, and set it to be the userResponse
+				CalendarSlots user = toReturn.getCalByName(responseNames[selected].toString());
+				toReturn.removeCalendar(user);
+				toReturn.setUserResponse(user);
+			}
+			//if they haven't, set userResponse to be a new CalendarSlots with them as the owner
+			else{
+				toReturn.setUserResponse(new CalendarSlots(toReturn.getStartTime(), toReturn.getEndTime(), 15, Availability.free));
+				toReturn.getUserResponse().setOwner(new When2MeetOwner(_owner.getName(), -1));
+			}
+			
+		}
+		if(!toReturn.userHasSubmitted()){
+			calToW2M(id);
+		}
+		
+		return toReturn;
 	}
 	
-	public void submitResponse(String eventID, CalendarSlots response){
+	private void getNewUserName(When2MeetEvent event, String currName){
+		//TODO : set newName to something useful (i.e. actually ask for user response)
+		String newName = JOptionPane.showInputDialog("The name '" + currName + "' has already been used. Please enter another name.");
+		boolean isValidName = true;
+		CalendarSlots userResp = event.getUserResponse();
+		for(CalendarSlots c : event.getCalendars()){
+			if(c.getOwner().getName().equalsIgnoreCase(newName)){
+				isValidName = false;
+				getNewUserName(event, newName);
+				break;
+			}
+		}
+		if(isValidName)
+			event.getUserResponse().setOwner(new When2MeetOwner(newName, event.getUserResponse().getOwner().getID()));
+	}
+	
+	public void submitResponse(String eventID, CalendarSlots response) {
+		When2MeetEvent w2m = _w2mEvents.get(eventID);	
+		boolean didNotPost = true;
+		while(didNotPost){
+			try {
+				_exporter.postAllAvailability(w2m);
+				didNotPost = false;
+			} catch (NameAlreadyExistsException e) {
+				getNewUserName(w2m, w2m.getUserResponse().getOwner().getName());
+			}
+		}
+		
+		//save to index
+	}
+	
+	public CalendarSlots getBestTimes(String eventID, int duration){
+		//TODO make more generic (hard-coding 15, limiting to w2m)
+		
 		When2MeetEvent w2m = _w2mEvents.get(eventID);
-//		if(w2m != null){
-//			When2MeetExporter exporter = new When2MeetExporter(w2m);
-//			boolean newResponse = true;
-//			for(CalendarSlots c : w2m.getCalendars()){
-//				if(c.getOwner().getName().equalsIgnoreCase(response.getOwner().getName()) || c.getOwner().getID() == response.getOwner().getID()){
-//					exporter.postAllAvailability(response);
-//					newResponse = false;
-//					break;
-//				}
-//			}
-//			if(newResponse) {
-//				try {
-//					exporter.createNewUserNoPassword(response);
-//				} catch (NameAlreadyExistsException e) {
-//					e.printStackTrace();
-//				}
-//			}
-//			
-//		}
+		CalendarSlots toReturn = null;
+		
+		if(w2m != null){
+			int minAttendees = (int) (w2m.getCalendars().size() * ATTENDEE_PERCENTAGE);
+			toReturn = _timeFinder.findBestTimes(w2m, 15, duration, NUM_SUGGESTIONS, minAttendees);
+		}
+		
+		return toReturn;
 	}
 	
 	
 	public ArrayList<NameIDPair> getNameIDPairs() {
-		// Return the list of name ID pairs associated with this event
-		return null;
+		// Return the list of name ID pairs associated with all events
+		ArrayList<NameIDPair> toReturn = new ArrayList<NameIDPair>();
+		
+		for(When2MeetEvent e : _w2mEvents.values())
+			toReturn.add(new NameIDPair(e.getName(), String.valueOf(e.getID())));
+	
+		return toReturn;
 	}
 	
 	public CalendarGroup<CalendarResponses> getCal(){
