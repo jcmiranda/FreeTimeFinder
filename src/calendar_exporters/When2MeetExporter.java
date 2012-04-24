@@ -18,11 +18,12 @@ import calendar.CalendarSlots;
 import calendar.When2MeetEvent;
 
 public class When2MeetExporter {
-	private When2MeetEvent _event;
+	private When2MeetEvent _event = null;
 	
-	public When2MeetExporter(When2MeetEvent event) {
-		_event = event;
-	}
+	/*
+	public When2MeetExporter() { //When2MeetEvent event) {
+		//_event = event;
+	}*/
 	
 	private String encode(String s) {
 		try {
@@ -151,7 +152,7 @@ public class When2MeetExporter {
 			}
 			cal.getOwner().setID(id);
 		}
-		this.postAllAvailability(cal);
+		this.postAllAvailability(_event, cal);
 	}
 	public void createNewUserNoPassword(CalendarSlots cal) throws NameAlreadyExistsException {
 		createNewUser(cal, "");
@@ -180,14 +181,16 @@ public class When2MeetExporter {
 		return ret;
 	}
 	
-	public void postAllAvailability(CalendarSlots cal) {
+	public void postAllAvailability(When2MeetEvent event, CalendarSlots cal) {
+		_event = event;
 		ArrayList<Integer> busySlots = cal.getSlotsForAvail(Availability.busy);
 		ArrayList<Integer> freeSlots = cal.getSlotsForAvail(Availability.free);
 		this.postAvailability(cal, busySlots, Availability.busy);
 		this.postAvailability(cal, freeSlots, Availability.free);
 	}
 	
-	public void postNewEvent() {
+	public void postNewEvent(When2MeetEvent event) {
+		_event = event;
 		ArrayList<KeyValue> keyValues = new ArrayList<KeyValue>();
 		keyValues.add(new KeyValue("NewEventName", _event.getName()));
 		keyValues.add(new KeyValue("DateTypes", "SpecificDates"));
