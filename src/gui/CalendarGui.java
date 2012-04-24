@@ -5,11 +5,16 @@ import static gui.GuiConstants.FRAME_WIDTH;
 
 import java.awt.BorderLayout;
 import java.awt.Component;
+import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
 import javax.swing.JButton;
 import javax.swing.JFrame;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+import javax.swing.SwingConstants;
+
 import org.joda.time.DateTime;
 
 import calendar.CalendarGroup;
@@ -20,10 +25,16 @@ public class CalendarGui {
 
 	private CalendarGroup<CalendarResponses> _responseGroup;
 	private CalendarGroup<CalendarSlots> _slotGroup;
+	private int _startHour = 0;
+	private int _endHour = 24;
 	private JFrame _frame;
 	private JButton _switch;
 	private CalPanel _myCal;
 	private CalPanel _when2MeetCal;
+	private JPanel _dayOfWeekLabels;
+	private JPanel _hourOfDayLabels;
+
+	public static enum DaysOfWeek {Monday, Tuesday, Wednesday, Thursday, Friday, Saturday, Sunday};
 
 	// Represents the monday of the current week
 	private DateTime _thisMonday;
@@ -42,18 +53,52 @@ public class CalendarGui {
 
 		_myCal = new MyPanel(_thisMonday, _responseGroup);
 		_when2MeetCal = new ReplyPanel(_thisMonday, _responseGroup, _slotGroup);
-		_when2MeetCal.setName("w2m");
-		_myCal.setName("mc");
+
+		_startHour = slotGroup.getStartTime().getHourOfDay();
+		_endHour = slotGroup.getEndTime().getHourOfDay();
+
+		makeDayLabels();
+		makeHourLabels();
 		buildFrame();
 	}
 
+	public void makeDayLabels(){
+
+		_dayOfWeekLabels = new JPanel();
+		_dayOfWeekLabels.setBackground(GuiConstants.LINE_COLOR);
+		_dayOfWeekLabels.setLayout(new GridLayout(1, 7, GuiConstants.LINE_SPACING, 0));
+
+		for (DaysOfWeek d: DaysOfWeek.values()){
+			JPanel dayLabel = new JPanel();
+			dayLabel.add(new JLabel(d.name(), SwingConstants.CENTER));
+			dayLabel.setBackground(GuiConstants.LABEL_COLOR);
+			_dayOfWeekLabels.add(dayLabel);
+		}
+	}
+
+	public void makeHourLabels(){
+		_hourOfDayLabels = new JPanel();
+		_hourOfDayLabels.setBackground(GuiConstants.LINE_COLOR);
+		_hourOfDayLabels.setLayout(new GridLayout(_endHour - _startHour, 1, 0, GuiConstants.LINE_SPACING));
+
+		for (int i=_startHour; i<_endHour; i++){
+			JPanel hourLabel = new JPanel();
+			hourLabel.add(new JLabel(i+ ":00", SwingConstants.CENTER), SwingConstants.CENTER);
+			hourLabel.setBackground(GuiConstants.LABEL_COLOR);
+			_hourOfDayLabels.add(hourLabel);
+		}
+	}
+
+
+
 	public void buildFrame(){
 		_frame = new JFrame("Kairos");
-		//		_frame.add(_myCal, BorderLayout.CENTER);
+		_frame.add(_dayOfWeekLabels, BorderLayout.NORTH);
+		_frame.add(_hourOfDayLabels, BorderLayout.WEST);
 		_frame.add(_when2MeetCal, BorderLayout.CENTER);
 		_switch = new JButton("SWITCH");
 		_switch.addActionListener(new MainListener());
-		_frame.add(_switch, BorderLayout.EAST);
+		//		_frame.add(_switch, BorderLayout.EAST);
 		_frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		_frame.setSize(FRAME_WIDTH, FRAME_HEIGHT);
 		_frame.setVisible(true);
@@ -96,9 +141,6 @@ public class CalendarGui {
 
 		@Override
 		public void actionPerformed(ActionEvent arg0) {
-			//			if (_frame.getContentPane().contains(_when2MeetCal)){
-			//				myView();
-			//			}
 			myView();
 		}
 

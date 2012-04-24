@@ -18,7 +18,7 @@ public class ClickableDayPanel extends DayPanel{
 		this.addMouseListener(cl);
 		this.addMouseMotionListener(cl);
 	}
-	
+
 	public ClickableDayPanel(int startHour, int numHours, DateTime today,
 			boolean active) {
 		super(startHour, numHours, today, active);
@@ -30,7 +30,7 @@ public class ClickableDayPanel extends DayPanel{
 	public CalendarSlots exportClicks(){
 		return getSlots().getCalendars().get(0);
 	}
-	
+
 
 	public void flipAvail(int slotNum){
 		if (getSlots().getCalendars().get(0).getAvail(Days.daysBetween(getSlots().getStartTime(), getDay()).getDays(),
@@ -40,19 +40,22 @@ public class ClickableDayPanel extends DayPanel{
 			getSlots().getCalendars().get(0).setAvail(Days.daysBetween(getSlots().getStartTime(), getDay()).getDays(), slotNum, Availability.busy);
 		}
 	}
-	
-	
+
+
 	class calListener implements MouseListener, MouseMotionListener{
 
 		Availability flipMode;
 		int originalSlot;
-		
+
 		@Override
 		public void mousePressed(MouseEvent arg0) {
+			//			if (!(arg0.getY()<0 || arg0.getY()>ClickableDayPanel.this.getHeight() ||
+			//					arg0.getX()<0 || arg0.getX()>ClickableDayPanel.this.getWidth())){
 			originalSlot = (int) ((double) arg0.getY()/getHeight()*_numHours*4);
 			flipAvail(originalSlot);
 			flipMode = getSlots().getCalendars().get(0).getAvail(Days.daysBetween(getSlots().getStartTime(), getDay()).getDays(), originalSlot);
 			repaint();
+			//		}
 		}		
 
 		@Override
@@ -66,7 +69,7 @@ public class ClickableDayPanel extends DayPanel{
 					repaint();
 				}	
 			}
-			
+
 		}
 
 		@Override

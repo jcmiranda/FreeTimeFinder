@@ -40,29 +40,18 @@ public class ReplyPanel extends CalPanel{
 		_numHours = _endHour - _startHour;
 		configDays();
 	}
-	//TODO fix these
-	//
-	//	public void setResps(CalendarGroup<CalendarResponses> respCals){
-	//
-	//		_respCals = respCals;
-	//
-	//		for (int i=0; i<7; i++){
-	//			_days[2*i].setResponses(_respCals);
-	//		}
-	//		this.repaint();
-	//	}
-	//
-	//
-	//	public void setSlots(CalendarGroup<CalendarSlots> slotCals){
-	//		_slotCals = slotCals;
-	//		configDays();
-	//		for (int i=0; i<14; i=i+2){
-	//			if (_days[2*i+1].isActive()){
-	//				_days[i].setSlots(getDaySlots(i/2,_slotCals));			
-	//			}
-	//		}
-	//		this.repaint();
-	//	}
+
+	public void setResps(CalendarGroup<CalendarResponses> respCals){
+
+		_respCals = respCals;
+		configDays();
+	}
+
+
+	public void setSlots(CalendarGroup<CalendarSlots> slotCals){
+		_slotCals = slotCals;
+		configDays();
+	}
 
 	public ArrayList<ArrayList<Response>> getDayResps(int dayOfWeek, CalendarGroup<CalendarResponses> respCals){
 

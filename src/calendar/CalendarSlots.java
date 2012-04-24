@@ -18,9 +18,6 @@ public class CalendarSlots implements Calendar {
 	private int _minInSlot;
 	private int _numSlotsInDay;
 	private int _numDays;
-	//	// Graphical information
-	//	private int _panelWidth;
-	//	private int _panelHeight;
 	private When2MeetOwner _owner;
 	private Availability[][] _avail;
 
@@ -159,27 +156,8 @@ public class CalendarSlots implements Calendar {
 	public int getMinInSlot() {
 		return _minInSlot;
 	}
-
-	//	public void setGfxParams(int panelWidth, int panelHeight){
-	//		_panelWidth = panelWidth;
-	//		_panelHeight= panelHeight;
-	//	}
-
-	//
-	//	public void paint(Graphics2D brush){
-	//		Rectangle2D.Double rect;
-	//		for (int i=0; i< _avail[0].length; i++){
-	//			if (_avail[0][i]==Availability.busy){
-	//				rect = new Rectangle2D.Double();
-	//				int startY = (int) ((double) i*_panelHeight/_numSlotsInDay);
-	//				rect.setFrame(0, startY, _panelWidth, _panelHeight/_numSlotsInDay);
-	//				brush.setColor(SLOT_COLOR);
-	//				brush.draw(rect);
-	//				brush.fill(rect);
-	//			}
-	//		}
-	//	}
-
+	
+	
 	public void paint(Graphics2D brush, DayPanel d){
 		Rectangle2D.Double rect;
 
