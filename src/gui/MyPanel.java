@@ -18,8 +18,6 @@ public class MyPanel extends CalPanel{
 
 	public MyPanel(DateTime thisMonday) {
 		super(thisMonday);
-		//		_respCals = new CalendarGroup<CalendarResponses>(_thisMonday.toLocalDate().toDateTimeAtStartOfDay(),
-		//				_thisMonday.toLocalDate().toDateTimeAtStartOfDay().plusDays(7));
 		this.setLayout(new GridLayout(1,7,LINE_SPACING,0));
 	}
 	public MyPanel(DateTime thisMonday,
@@ -43,12 +41,11 @@ public class MyPanel extends CalPanel{
 
 	public ArrayList<ArrayList<Response>> getDayResps(int dayOfWeek, CalendarGroup<CalendarResponses> respCals){
 
-		// How would I do this without typecasting?
 		ArrayList<ArrayList<Response>> responses = new ArrayList<ArrayList<Response>>();
-		for (Object resp: respCals.getCalendars()){
+		for (CalendarResponses resp: respCals.getCalendars()){
+			
 			ArrayList<Response> resps = new ArrayList<Response>();
-			CalendarResponses c = (CalendarResponses) resp;
-			for (Response r: c.getResponses()){
+			for (Response r: resp.getResponses()){
 				if (Days.daysBetween(_thisMonday.plusDays(dayOfWeek), r.getStartTime()).getDays()==0){
 					resps.add(r);
 				}
@@ -70,7 +67,7 @@ public class MyPanel extends CalPanel{
 				_days[i].setActive(false);
 			} else {
 				_days[i].setActive(true);
-				_days[i].setResponses(getDayResps(i, _respCals));
+				_days[i].setResponses(_respCals);
 			}
 		}
 		repaint();

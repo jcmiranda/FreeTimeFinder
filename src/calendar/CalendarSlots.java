@@ -3,11 +3,14 @@ package calendar;
 import static gui.GuiConstants.SLOT_COLOR;
 
 
+import gui.DayPanel;
+
 import java.awt.Graphics2D;
 import java.awt.geom.Rectangle2D;
 import java.util.ArrayList;
 
 import org.joda.time.DateTime;
+import org.joda.time.Days;
 
 public class CalendarSlots implements Calendar {
 	private DateTime _startTime;
@@ -15,12 +18,12 @@ public class CalendarSlots implements Calendar {
 	private int _minInSlot;
 	private int _numSlotsInDay;
 	private int _numDays;
-	// Graphical information
-	private int _panelWidth;
-	private int _panelHeight;
+	//	// Graphical information
+	//	private int _panelWidth;
+	//	private int _panelHeight;
 	private When2MeetOwner _owner;
 	private Availability[][] _avail;
-	
+
 	public CalendarSlots(DateTime startTime, DateTime endTime, int minInSlot, Availability initAvail) {
 		_startTime = startTime;
 		_endTime = endTime;
@@ -32,7 +35,7 @@ public class CalendarSlots implements Calendar {
 			for(int slot = 0; slot < _numSlotsInDay; slot++)
 				_avail[day][slot] = initAvail;
 	}
-	
+
 	public CalendarSlots(DateTime startTime, DateTime endTime, When2MeetOwner owner, int minInSlot, Availability[][] availability){
 		_startTime = startTime;
 		_endTime = endTime;
@@ -68,7 +71,7 @@ public class CalendarSlots implements Calendar {
 	public DateTime getEndTime() { return _endTime;	}
 
 	public When2MeetOwner getOwner() { return _owner; }
-	
+
 	public int getSlotsInDay() { return _numSlotsInDay; }
 
 	public int getTotalSlots() { return _numDays * _numSlotsInDay; }
@@ -76,7 +79,7 @@ public class CalendarSlots implements Calendar {
 	public Availability[][] getAvail() {
 		return _avail;
 	}
-	
+
 	public Availability getAvail(int day, int slot) {
 		return _avail[day][slot];
 	}
@@ -100,7 +103,7 @@ public class CalendarSlots implements Calendar {
 		_avail[day][slot] = avail;
 		return;
 	}
-	
+
 	public void setAvail(int slot, Availability avail) {
 		int day = slot / _numSlotsInDay;
 		int slotInDay = slot % _numSlotsInDay;
@@ -137,7 +140,7 @@ public class CalendarSlots implements Calendar {
 	}
 
 	//TODO this may fail if endTime is the same as the end of the calendar
-	
+
 	public void setAvail(DateTime startTime, DateTime endTime, Availability avail) {
 		int startSlot = timeToSlot(startTime, true);
 		int endSlot = timeToSlot(endTime, false);
@@ -157,26 +160,40 @@ public class CalendarSlots implements Calendar {
 		return _minInSlot;
 	}
 
-	public void setGfxParams(int panelWidth, int panelHeight){
-		_panelWidth = panelWidth;
-		_panelHeight= panelHeight;
-	}
+	//	public void setGfxParams(int panelWidth, int panelHeight){
+	//		_panelWidth = panelWidth;
+	//		_panelHeight= panelHeight;
+	//	}
 
+	//
+	//	public void paint(Graphics2D brush){
+	//		Rectangle2D.Double rect;
+	//		for (int i=0; i< _avail[0].length; i++){
+	//			if (_avail[0][i]==Availability.busy){
+	//				rect = new Rectangle2D.Double();
+	//				int startY = (int) ((double) i*_panelHeight/_numSlotsInDay);
+	//				rect.setFrame(0, startY, _panelWidth, _panelHeight/_numSlotsInDay);
+	//				brush.setColor(SLOT_COLOR);
+	//				brush.draw(rect);
+	//				brush.fill(rect);
+	//			}
+	//		}
+	//	}
 
-	public void paint(Graphics2D brush){
+	public void paint(Graphics2D brush, DayPanel d){
 		Rectangle2D.Double rect;
+
 		for (int i=0; i< _avail[0].length; i++){
-			if (_avail[0][i]==Availability.busy){
+			//May be some bugs here
+			if (_avail[Days.daysBetween(getStartTime(), d.getDay()).getDays()][i]==Availability.busy){
 				rect = new Rectangle2D.Double();
-				int startY = (int) ((double) i*_panelHeight/_numSlotsInDay);
-				rect.setFrame(0, startY, _panelWidth, _panelHeight/_numSlotsInDay);
+				int startY = (int) ((double) i*d.getHeight()/_numSlotsInDay);
+				rect.setFrame(0, startY, d.getWidth(), d.getHeight()/_numSlotsInDay);
 				brush.setColor(SLOT_COLOR);
 				brush.draw(rect);
 				brush.fill(rect);
 			}
 		}
-
-
 	}
 
 
