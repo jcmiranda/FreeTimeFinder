@@ -22,6 +22,8 @@ import com.google.gdata.client.calendar.CalendarService;
 import com.google.gdata.data.*;
 import com.google.gdata.data.calendar.*;
 import com.google.gdata.data.extensions.When;
+import com.google.gdata.util.AuthenticationException;
+import com.google.gdata.util.ServiceException;
 //import com.google.gdata.util.AuthenticationException;
 //import com.google.gdata.util.ServiceException;
 import com.google.gdata.client.*;

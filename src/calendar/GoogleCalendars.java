@@ -10,7 +10,7 @@ public class GoogleCalendars extends CalendarGroup<CalendarResponses>{
 	private ArrayList<CalendarResponses> _cals = new ArrayList<CalendarResponses>();
 	
 	public GoogleCalendars(DateTime st, DateTime et, Owner o) {
-		super(st, et);
+		super(st, et, CalGroupType.GCal);
 		_owner = o;
 	}
 	

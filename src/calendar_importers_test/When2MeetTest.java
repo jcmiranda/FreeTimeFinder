@@ -35,6 +35,7 @@ public class When2MeetTest {
 		When2MeetEvent specs = wtmi.importCalendarGroup();
 		ArrayList<CalendarSlots> calsBefore = specs.getCalendars();
 		
+		/*
 		XStream xstream = new XStream();
 		xstream.alias("calendarslots", CalendarSlots.class);
 		xstream.alias("when2meetevent", When2MeetEvent.class);
@@ -45,6 +46,7 @@ public class When2MeetTest {
 		System.out.println(xml);
 		
 		When2MeetEvent specsRecreated = (When2MeetEvent) xstream.fromXML(xml);
+		*/
 		/*
 		ArrayList<CalendarSlots> calsAfter = specsRecreated.getCalendars();
 		for(int i = 0; i < calsAfter.size(); i++) {
@@ -55,6 +57,7 @@ public class When2MeetTest {
 		
 		//wtmi = new When2MeetImporter("http://www.when2meet.com/?408906-BySEr");
 		//w2me = wtmi.importCalendarGroup();
+		
 		
 		/*
 		CalendarSlots cal1 = w2me.getCalByName("Password");

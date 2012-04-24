@@ -1,12 +1,12 @@
 TODO
 
 COMMUNICATOR
-( ) write startup - Jeanette
-( ) write saveall - Jeanette
-( ) write savewhen2meet - Jeanette
-( ) write saveusercal - Jeanette
-( ) write rebuildIndex - Jeanette
-( ) write addwhen2meet - Liz
+(X) write startup - Jeanette
+(X) write saveall - Jeanette
+(X) write savewhen2meet - Jeanette
+(X) write saveusercal - Jeanette
+(X) write rebuildIndex - Jeanette
+(X) write addwhen2meet - Liz
 ( ) write removewhen2meet - Liz
 ( ) write getNameIDPairs - Liz
 ( ) write submit - Both leaning towards Liz
@@ -18,8 +18,8 @@ COMMUNICATOR
 INDEX
 (X) enum for type of importers
 (X) enum for types of events
-( ) creating index
-( ) updating index
+(X) creating index
+(X) updating index
 - Stores ProgramOwner, When2MeetEvents, Calendar, and types of everything
 
 WHEN2MEETIMPORTER
