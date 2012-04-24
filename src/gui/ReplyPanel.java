@@ -37,38 +37,36 @@ public class ReplyPanel extends CalPanel{
 		_numHours = _endHour - _startHour;
 		configDays();
 	}
-
-
-	public void setResps(CalendarGroup<CalendarResponses> respCals){
-
-		_respCals = respCals;
-
-		for (int i=0; i<14; i=i+2){
-			_days[i].setResponses(getDayResps(i/2, _respCals));
-		}
-		this.repaint();
-	}
-
-
-	public void setSlots(CalendarGroup<CalendarSlots> slotCals){
-		_slotCals = slotCals;
-		configDays();
-		for (int i=0; i<14; i=i+2){
-			if (_days[i].isActive()){
-				_days[i].setSlots(getDaySlots(i/2,_slotCals));			
-			}
-		}
-		this.repaint();
-	}
+//TODO fix these
+//
+//	public void setResps(CalendarGroup<CalendarResponses> respCals){
+//
+//		_respCals = respCals;
+//
+//		for (int i=0; i<7; i++){
+//			_days[2*i].setResponses(_respCals);
+//		}
+//		this.repaint();
+//	}
+//
+//
+//	public void setSlots(CalendarGroup<CalendarSlots> slotCals){
+//		_slotCals = slotCals;
+//		configDays();
+//		for (int i=0; i<14; i=i+2){
+//			if (_days[2*i+1].isActive()){
+//				_days[i].setSlots(getDaySlots(i/2,_slotCals));			
+//			}
+//		}
+//		this.repaint();
+//	}
 
 	public ArrayList<ArrayList<Response>> getDayResps(int dayOfWeek, CalendarGroup<CalendarResponses> respCals){
 
-		// How would I do this without typecasting?
 		ArrayList<ArrayList<Response>> responses = new ArrayList<ArrayList<Response>>();
-		for (Object resp: respCals.getCalendars()){
+		for (CalendarResponses resp: respCals.getCalendars()){
 			ArrayList<Response> resps = new ArrayList<Response>();
-			CalendarResponses c = (CalendarResponses) resp;
-			for (Response r: c.getResponses()){
+			for (Response r: resp.getResponses()){
 				if (Days.daysBetween(_thisMonday.plusDays(dayOfWeek), r.getStartTime()).getDays()==0){
 					resps.add(r);
 				}
@@ -81,12 +79,10 @@ public class ReplyPanel extends CalPanel{
 
 	public ArrayList<CalendarSlots> getDaySlots(int dayOfWeek, CalendarGroup<CalendarSlots> slotCals){
 
-		// How would I do this without typecasting?
 		ArrayList<CalendarSlots> slots = new ArrayList<CalendarSlots>();
-		for (Object s: slotCals.getCalendars()){
-			CalendarSlots c = (CalendarSlots) s;
-			Availability[][] oneDayAvail = {c.getAvail()[Days.daysBetween(c.getStartTime(), _thisMonday.plusDays(dayOfWeek)).getDays()]};
-			CalendarSlots oneDayCal = new CalendarSlots(c.getStartTime(), c.getEndTime(), c.getOwner(), c.getMinInSlot(), oneDayAvail);
+		for (CalendarSlots s: slotCals.getCalendars()){
+			Availability[][] oneDayAvail = {s.getAvail()[Days.daysBetween(s.getStartTime(), _thisMonday.plusDays(dayOfWeek)).getDays()]};
+			CalendarSlots oneDayCal = new CalendarSlots(s.getStartTime(), s.getEndTime(), s.getOwner(), s.getMinInSlot(), oneDayAvail);
 			slots.add(oneDayCal);	
 		}
 		return slots;
@@ -118,10 +114,10 @@ public class ReplyPanel extends CalPanel{
 				_days[i+1].setActive(false);	
 			} else {
 				_days[i].setActive(true);
-				_days[i].setResponses(getDayResps(i/2, _respCals));
+				_days[i].setResponses(_respCals);
 				_days[i+1].setActive(true);
-				_days[i].setSlots(getDaySlots(i/2, _slotCals));
-				_days[i+1].setSlots(getDaySlots(i/2, _slotCals));
+//				_days[i].setSlots(_slotCals);
+				_days[i+1].setSlots(_slotCals);
 			}
 		}		
 		repaint();

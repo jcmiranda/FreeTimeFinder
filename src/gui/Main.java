@@ -68,8 +68,8 @@ public class Main {
 
 		GoogleCalendars g = new GoogleCalendars(new DateTime(2012,4,16,9,0), new DateTime(2012,4,22,15,0), new OwnerImpl("Tim"));
 		CalendarResponses responses = new CalendarResponses(new DateTime(2012,4,16,9,0), new DateTime(2012,4,22,15,0), "test");
-		responses.addResponse(new Response(new DateTime(2012,4,16,9,0), new DateTime(2012,4,16,15,0)));
-		responses.addResponse(new Response(new DateTime(2012,4,17,10,0), new DateTime(2012,4,17,12,0)));
+//		responses.addResponse(new Response(new DateTime(2012,4,16,9,0), new DateTime(2012,4,16,15,0), "test1"));
+		responses.addResponse(new Response(new DateTime(2012,4,17,10,0), new DateTime(2012,4,17,12,0), "test2"));
 //		responses.addResponse(new Response(new DateTime(2012,4,17,9,0), new DateTime(2012,4,17,14,0)));
 		g.addCalendar(responses);
 

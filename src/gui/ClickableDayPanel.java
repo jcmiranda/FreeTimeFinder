@@ -30,7 +30,7 @@ public class ClickableDayPanel extends DayPanel{
 		public void mousePressed(MouseEvent arg0) {
 			int slotNum = (int) ((double) arg0.getY()/getHeight()*_numHours*4);
 			flipAvail(slotNum);
-			flipMode = getSlots().get(0).getAvail(slotNum);
+			flipMode = getSlots().getCalendars().get(0).getAvail(slotNum);
 			repaint();
 		}		
 
@@ -39,7 +39,7 @@ public class ClickableDayPanel extends DayPanel{
 
 			int slotNum = (int) ((double) arg0.getY()/getHeight()*_numHours*4);
 
-			if (getSlots().get(0).getAvail(slotNum) != flipMode) {
+			if (getSlots().getCalendars().get(0).getAvail(slotNum) != flipMode) {
 				flipAvail(slotNum);
 				repaint();
 			}

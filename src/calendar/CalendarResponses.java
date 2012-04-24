@@ -1,9 +1,15 @@
 package calendar;
 
+import static gui.GuiConstants.SLOT_COLOR;
+import gui.DayPanel;
+
+import java.awt.Graphics2D;
+import java.awt.geom.Rectangle2D;
 import java.util.ArrayList;
 import java.util.Collections;
 
 import org.joda.time.DateTime;
+import org.joda.time.Days;
 
 public class CalendarResponses implements Calendar {
 
@@ -12,13 +18,13 @@ public class CalendarResponses implements Calendar {
 	private String _name;
 
 	private ArrayList<Response> _responses = new ArrayList<Response>();
-	
+
 	public CalendarResponses(DateTime st, DateTime et, String name) {
 		_startTime = st;
 		_endTime = et;
 		_name = name;
 	}
-	
+
 	public DateTime getStartTime() {
 		return _startTime;
 	}
@@ -29,19 +35,19 @@ public class CalendarResponses implements Calendar {
 	public String getName() {
 		return _name;
 	}
-	
+
 	public ArrayList<Response> getResponses() {
 		return _responses;
 	}
 	public void addResponse(Response r) {
 		_responses.add(r);
 	}
-	
+
 	private boolean sameTimeOfDay(DateTime dt1, DateTime dt2) {
 		return dt1.getHourOfDay() == dt2.getHourOfDay() &&
 				dt1.getMinuteOfHour() == dt2.getMinuteOfHour();
 	}
-	
+
 	private DateTime toEndPrevDay(DateTime dt) {
 		DateTime ret = dt.minusDays(1);
 		ret = ret.plusHours(_endTime.getHourOfDay() - _startTime.getHourOfDay());
@@ -54,10 +60,10 @@ public class CalendarResponses implements Calendar {
 		ret = ret.minusMinutes(_endTime.getMinuteOfHour() - _startTime.getMinuteOfHour());
 		return ret;	
 	}
-	
+
 	public CalendarResponses invert(String newName) {
 		CalendarResponses ret = new CalendarResponses(_startTime, _endTime, newName);
-		
+
 		DateTime st = _startTime;
 		DateTime et = _responses.get(0).getStartTime();
 		for(int i = 0; i < _responses.size(); i++) {
@@ -71,7 +77,7 @@ public class CalendarResponses implements Calendar {
 					DateTime splitEndFirstDay = st;
 					splitEndFirstDay = splitEndFirstDay.plusHours( _endTime.getHourOfDay() - splitEndFirstDay.getHourOfDay());
 					splitEndFirstDay = splitEndFirstDay.plusMinutes( _endTime.getMinuteOfHour() - splitEndFirstDay.getMinuteOfHour());
-					
+
 					DateTime splitStartSecondDay = et;
 					splitStartSecondDay = splitStartSecondDay.minusHours(splitStartSecondDay.getHourOfDay() - _startTime.getHourOfDay());
 					splitStartSecondDay = splitStartSecondDay.minusMinutes(splitStartSecondDay.getMinuteOfHour() - _startTime.getMinuteOfHour());
@@ -88,15 +94,15 @@ public class CalendarResponses implements Calendar {
 			}
 
 		}
-		
+
 		return ret;
 	}
-	
+
 	public void sort() {
 		Collections.sort(_responses);
 		return;
 	}
-	
+
 	public void flatten() {
 		Collections.sort(_responses);
 		ArrayList<Response> newResp = new ArrayList<Response>();
@@ -115,7 +121,7 @@ public class CalendarResponses implements Calendar {
 		newResp.add(new Response(st, et));
 		_responses = newResp; 
 	}
-	
+
 	public void print() {
 		System.out.println("CALENDAR IMPL: ");
 		System.out.println("Name: " + _name);
@@ -123,9 +129,26 @@ public class CalendarResponses implements Calendar {
 			r.print();
 		}
 	}
-	
+
 	public void setResponses(ArrayList<Response> responses) {
 		_responses = responses;
 	}
+
+
+	public void paint(Graphics2D brush, DayPanel d, int numCals){
+
+		ArrayList<Response> conflictCheck = new ArrayList<Response>();
+		for (Response r: getResponses()){
+			// TODO work on spacing the events
+			if (Days.daysBetween(r.getStartTime(), d.getDay()).getDays()==0){
+				conflictCheck.add(r);
+				r.paint(brush, d, 0, d.getWidth());
+			}
+		}
+
+
+
+	}
+
 
 }

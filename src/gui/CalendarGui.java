@@ -72,9 +72,6 @@ public class CalendarGui {
 	}
 
 	public void myView(){
-		for (Component c: _frame.getContentPane().getComponents()){
-			System.out.println(c.getName());
-		}
 		_frame.getContentPane().remove(_when2MeetCal);
 		_frame.getContentPane().remove(_myCal);
 		_frame.add(_myCal, BorderLayout.CENTER);
