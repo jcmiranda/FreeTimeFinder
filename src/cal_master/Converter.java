@@ -8,6 +8,7 @@ import org.joda.time.DateTime;
 import com.google.gdata.util.ServiceException;
 
 import calendar.Availability;
+import calendar.CalendarGroup;
 import calendar.CalendarResponses;
 import calendar.CalendarSlots;
 import calendar.GoogleCalendars;
@@ -55,9 +56,9 @@ public class Converter {
 		return minutesOff / INTERVAL + offset;
 	}
 	
-	public CalendarSlots gCalToSlots(GoogleCalendars gCal, When2MeetEvent w2m){
+	public CalendarSlots gCalToSlots(CalendarGroup<CalendarResponses> userCal, When2MeetEvent w2m){
 		
-		ArrayList<CalendarResponses> calendars = gCal.getCalendars();
+		ArrayList<CalendarResponses> calendars = userCal.getCalendars();
 		if(calendars.size() <= 0){
 			return null;
 		}
@@ -119,9 +120,8 @@ public class Converter {
 			}
 		}
 		System.out.println("num rows = "+availability.length+" num cols = "+availability[0].length);
-		When2MeetOwner owner = new When2MeetOwner(gCal.getOwner().getName(), -1);
 		
-		return new CalendarSlots(_eventStart, _eventEnd, owner, INTERVAL, availability);
+		return new CalendarSlots(_eventStart, _eventEnd, null, INTERVAL, availability);
 		
 	}
 	

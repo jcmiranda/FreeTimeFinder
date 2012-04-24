@@ -3,6 +3,7 @@ package calendar_importers;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -22,7 +23,7 @@ import calendar.When2MeetOwner;
 
 public class When2MeetImporter implements CalendarsImporter {
 
-	private String _urlString, _eventName = null;
+	private String _urlString = null, _eventName = null;
 	private int _eventID;
 	private HashMap<Integer, CalendarSlots> _IDsToCals = new HashMap<Integer, CalendarSlots>();
 	private HashMap<String, Integer> _months = new HashMap<String, Integer>();
@@ -44,8 +45,7 @@ public class When2MeetImporter implements CalendarsImporter {
 	private int _minInSlot = 15; // Minutes in a time slot
 	private int _year = 2012;
 	
-	public When2MeetImporter(String url) throws IOException {
-			_urlString = url;
+	public When2MeetImporter() {
 			initializeMonths();		
 	}
 	
@@ -116,7 +116,7 @@ public class When2MeetImporter implements CalendarsImporter {
 		}
 	}
 	
-	private void parseHTML() throws IOException {
+	private void parseHTML() throws IOException, MalformedURLException {
 		// BufferedReader page = new BufferedReader(new InputStreamReader(new FileInputStream(_urlString)));
 		//TODO error handling
 		URL url = new URL(_urlString);
@@ -233,7 +233,8 @@ public class When2MeetImporter implements CalendarsImporter {
 	
 	
 	@Override
-	public When2MeetEvent importCalendarGroup() {
+	public When2MeetEvent importCalendarGroup(String url) throws MalformedURLException{
+		_urlString = url;
 		try {
 			parseHTML();
 		} catch (IOException e) {

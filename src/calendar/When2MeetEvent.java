@@ -15,7 +15,7 @@ public class When2MeetEvent extends CalendarGroup<CalendarSlots> {
 	
 	public When2MeetEvent(DateTime st, DateTime et, String name, int id, String url,
 			Collection<CalendarSlots> cals, ArrayList<Integer> slotIndToID){
-		super(st, et, cals);
+		super(st, et, cals, CalGroupType.When2MeetEvent);
 		_name = name;
 		_id = id;
 		_url = url;
