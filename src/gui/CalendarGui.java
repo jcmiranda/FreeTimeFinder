@@ -30,7 +30,7 @@ public class CalendarGui {
 	private JFrame _frame;
 	private JButton _switch;
 	private CalPanel _myCal;
-	private CalPanel _when2MeetCal;
+	private ReplyPanel _when2MeetCal;
 	private JPanel _dayOfWeekLabels;
 	private JPanel _hourOfDayLabels;
 
@@ -62,6 +62,11 @@ public class CalendarGui {
 		buildFrame();
 	}
 
+	public void setSlots(CalendarGroup<CalendarSlots> slotGroup){
+		_slotGroup= slotGroup;
+		_when2MeetCal.setSlots(_slotGroup);
+	}
+	
 	public void makeDayLabels(){
 
 		_dayOfWeekLabels = new JPanel();

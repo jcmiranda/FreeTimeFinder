@@ -165,7 +165,7 @@ public class Communicator {
 		
 	}
 	
-	public void addWhen2Meet(String url) throws URLAlreadyExistsException, MalformedURLException {
+	public When2MeetEvent addWhen2Meet(String url) throws URLAlreadyExistsException, MalformedURLException {
 		// Check if we have this url already
 		// If we do, throw an error
 		for(When2MeetEvent w2me : _w2mEvents.values())
@@ -182,6 +182,8 @@ public class Communicator {
 		String id = newEvent.getID() + "";
 		_w2mEvents.put(id, newEvent);
 		saveOneItem(newEvent, id);
+		
+		return newEvent;
 
 		
 	}
@@ -209,10 +211,20 @@ public class Communicator {
 		_owner.setName(name);
 	}
 	
-	public void refresh(){
+	public void refresh() {
+		//TODO: deal with URL exception
 		// Update all when2meet events
+		When2MeetEvent temp = null;
+		for(When2MeetEvent w2m : _w2mEvents.values()){
+			//repull info
+		}
 		// Update user calendar
-		// Rebuild index and store all files (saveall)
+		if(_userCal != null){
+			pullCal(_userCal.getStartTime(), _userCal.getEndTime());
+		}
+		
+		// Rebuild index and store all files
+		saveAll();
 	}
 	
 	public void calToW2M(String eventID){
@@ -226,8 +238,20 @@ public class Communicator {
 			DateTime cStart = _userCal.getStartTime();
 			DateTime cEnd = _userCal.getEndTime();
 			
-			if(wStart.isBefore(cStart) || wStart.isAfter(cEnd) || wEnd.isBefore(cStart) || wEnd.isAfter(cEnd)){
-				pullCal(wStart, wEnd);
+			if(wStart.isBefore(cStart) || wEnd.isAfter(cEnd)){
+				DateTime start, end;
+				
+				if(wStart.isBefore(cStart))
+					start = wStart;
+				else
+					start = cStart;
+				
+				if(wEnd.isAfter(cEnd))
+					end = wEnd;
+				else
+					end = cEnd;
+				
+				pullCal(start, end);
 			}
 			
 			CalendarSlots cal = _converter.calToSlots(_userCal, w2m);
@@ -235,25 +259,35 @@ public class Communicator {
 		}
 	}
 	
+	public When2MeetEvent getW2MByID(String id){
+		return _w2mEvents.get(id);
+	}
+	
 	public When2MeetEvent getW2M(String id){
 		When2MeetEvent toReturn = _w2mEvents.get(id);
 		if(toReturn.getUserResponse() == null){
+			
 			//ask user if they've responded to the event
 			int resp = JOptionPane.showConfirmDialog(null, "Have you already responded to this When2Meet?", "", JOptionPane.YES_NO_OPTION);
+			
 			//if they have, ask them to select their response from the list of all responses
 			if(resp == JOptionPane.YES_OPTION){
+				
 				Object[] responseNames = new Object[toReturn.getCalendars().size()];
+				
 				for(int i=0; i< toReturn.getCalendars().size(); i++){
 					responseNames[i] = toReturn.getCalendars().get(i).getOwner().getName();
 				}
+				
 				int selected = JOptionPane.showOptionDialog(null, "Please select the name that represents your response from the list below",
 						"", responseNames.length, JOptionPane.INFORMATION_MESSAGE, null,
 						responseNames, responseNames[0]);
 				
 				//take the selected cal, remove it from the list, and set it to be the userResponse
 				CalendarSlots user = toReturn.getCalByName(responseNames[selected].toString());
-				toReturn.removeCalendar(user);
+				//toReturn.removeCalendar(user);
 				toReturn.setUserResponse(user);
+				
 			}
 			//if they haven't, set userResponse to be a new CalendarSlots with them as the owner
 			else{
@@ -331,6 +365,6 @@ public class Communicator {
 	}
 	
 	public void pullCal(DateTime start, DateTime end){
-		
+		_userCal = _userCalImporter.refresh(start, end);
 	}
 }

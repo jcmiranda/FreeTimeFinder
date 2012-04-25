@@ -50,7 +50,7 @@ public class GCalImporter implements CalendarsImporter {
 		_client = new CalendarService("yourCompany-yourAppName-v1");
 	}
 	
-	public GoogleCalendars importMyGCal(org.joda.time.DateTime startTime, org.joda.time.DateTime endTime) throws IOException, ServiceException, com.google.gdata.util.ServiceException {
+	public CalendarGroup<CalendarResponses> importMyGCal(org.joda.time.DateTime startTime, org.joda.time.DateTime endTime) throws IOException, ServiceException, com.google.gdata.util.ServiceException {
 		//authenticate user
 		this.setAuth();
 		//import calendars -- make calendar group
@@ -90,7 +90,7 @@ public class GCalImporter implements CalendarsImporter {
 		client_id=812741506391-h38jh0j4fv0ce1krdkiq0hfvt6n5amrf.apps.googleusercontent.com
 	}*/
 	
-	public GoogleCalendars importCalendarGroup(org.joda.time.DateTime st, org.joda.time.DateTime et) throws IOException, ServiceException, com.google.gdata.util.ServiceException {
+	public CalendarGroup<CalendarResponses> importCalendarGroup(org.joda.time.DateTime st, org.joda.time.DateTime et) throws IOException, ServiceException, com.google.gdata.util.ServiceException {
 		//calendar group
 		GoogleCalendars allCalendars = new GoogleCalendars(st, et, _owner);
 		//set URL to get calendars
@@ -166,14 +166,19 @@ public class GCalImporter implements CalendarsImporter {
 		org.joda.time.DateTime endTime = new org.joda.time.DateTime(2011, 7, 15, 23, 0);
     	myImporter.importMyGCal(startTime, endTime);
     }
-
-	public CalendarGroup importCalendarGroup() {
-		// TODO Auto-generated method stub
-		return null;
-	}
 	
-	public GoogleCalendars refresh(org.joda.time.DateTime st, org.joda.time.DateTime et) throws IOException, ServiceException, com.google.gdata.util.ServiceException {
-		return this.importCalendarGroup(st, et);
+    @Override
+	public CalendarGroup<CalendarResponses> refresh(org.joda.time.DateTime st, org.joda.time.DateTime et) {
+		try {
+			return this.importCalendarGroup(st, et);
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (ServiceException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return null;
 	}
 
 	@Override
