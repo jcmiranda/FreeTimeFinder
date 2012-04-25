@@ -312,4 +312,10 @@ public class When2MeetImporter implements CalendarsImporter {
 		return w2me;
 	}
 
+	@Override
+	public CalendarGroup refresh(DateTime st, DateTime et) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
 }
