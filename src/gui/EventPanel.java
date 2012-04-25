@@ -1,7 +1,10 @@
 package gui;
 
+import java.awt.Graphics;
+import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.io.IOException;
 import java.net.MalformedURLException;
 import java.util.ArrayList;
 
@@ -25,17 +28,27 @@ public class EventPanel extends JPanel {
 		_gui = gui;
 		_addButton = new JButton("Add Event");
 		_addButton.addActionListener(new AddEventListener());
+		JPanel buttonPanel = new JPanel();
+		buttonPanel.add(_addButton);
+		this.setLayout(new GridLayout(0,1));
+		this.add(buttonPanel);
 	}
 	
 	public void addEvent(EventLabel label){
+		System.out.println("ADDING LABEL");
 		_eventLabels.add(label);
-		this.add(label);
+		JPanel labelPanel = new JPanel();
+		labelPanel.add(label);
+		this.add(labelPanel);
+		System.out.println(_eventLabels.size());
 	}
 	
 	public void addEvents(ArrayList<EventLabel> events){
 		_eventLabels.addAll(events);
 		for(EventLabel label : events){
-			this.add(label);
+			JPanel labelPanel = new JPanel();
+			labelPanel.add(label);
+			this.add(labelPanel);
 		}
 	}
 	
@@ -49,6 +62,14 @@ public class EventPanel extends JPanel {
 		}
 	}
 	
+	public void paintComponent(Graphics g){
+		super.paintComponent(g);
+		for(EventLabel label: _eventLabels){
+			System.out.println(label.getName());
+			label.repaint();
+		}
+	}
+	
 	private class AddEventListener implements ActionListener {
 
 		@Override
@@ -59,18 +80,30 @@ public class EventPanel extends JPanel {
 			boolean noEvent = true;
 			while(noEvent){
 				try {
+					if(url == null)
+						break;
 					newEvent = _communicator.addWhen2Meet(url);
 					noEvent = false;
 				} catch (MalformedURLException e) {
 					url = JOptionPane.showInputDialog("Invalid URL. Try Again.");
 				} catch (URLAlreadyExistsException e) {
 					url = JOptionPane.showInputDialog("That event is already stored. Try Again.");
+				} catch (IOException e) {
+					url = JOptionPane.showInputDialog("Invalid URL. Try Again.");
 				}
 			}
 			
 			if(newEvent != null){
+				System.out.println("ADDED EVENT");
+				System.out.println(newEvent.getName());
+				if(newEvent.getName() == null){
+					newEvent.setName("BLOOP");
+				}
 				EventLabel newLabel = new EventLabel(newEvent.getName(), String.valueOf(newEvent.getID()), _communicator, _gui);
 				addEvent(newLabel);
+				//repaint();
+				_gui.repaint();
+				System.out.println("ADDED LABEL");
 			}
 			
 			

@@ -1,5 +1,6 @@
 package gui;
 
+import java.awt.Color;
 import java.awt.Font;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
@@ -21,6 +22,7 @@ public class EventLabel extends JLabel implements MouseListener{
 		_communicator = communicator;
 		_gui = gui;
 		setName(name);
+		this.addMouseListener(this);
 	}
 	
 	public void setName(String name){
@@ -32,14 +34,18 @@ public class EventLabel extends JLabel implements MouseListener{
 		return _id;
 	}
 	
+	public String getName(){
+		return _name;
+	}
+	
 	public void refresh(){
 		When2MeetEvent event = _communicator.getW2MByID(_id);
-		if(event != null && event.hasUpdates()){
-			this.setFont(new Font(this.getFont().getName(), Font.BOLD, this.getFont().getSize()));
-		}
-		else{
-			this.setFont(new Font(this.getFont().getName(), Font.PLAIN, this.getFont().getSize()));
-		}
+//		if(event != null && event.hasUpdates()){
+//			this.setFont(new Font(this.getFont().getName(), Font.BOLD, this.getFont().getSize()));
+//		}
+//		else{
+//			this.setFont(new Font(this.getFont().getName(), Font.PLAIN, this.getFont().getSize()));
+//		}
 	}
 	
 	@Override
@@ -56,12 +62,13 @@ public class EventLabel extends JLabel implements MouseListener{
 	@Override
 	public void mouseEntered(MouseEvent arg0) {
 		//TODO: figure out underlining or change color
+		this.setForeground(Color.GREEN);
 	}
 
 	@Override
 	public void mouseExited(MouseEvent arg0) {
 		// TODO undo whatever we do in mouseEntered
-		
+		this.setForeground(Color.BLACK);
 	}
 
 	@Override

@@ -165,7 +165,7 @@ public class Communicator {
 		
 	}
 	
-	public When2MeetEvent addWhen2Meet(String url) throws URLAlreadyExistsException, MalformedURLException {
+	public When2MeetEvent addWhen2Meet(String url) throws URLAlreadyExistsException, IOException {
 		// Check if we have this url already
 		// If we do, throw an error
 		for(When2MeetEvent w2me : _w2mEvents.values())
@@ -186,6 +186,10 @@ public class Communicator {
 		return newEvent;
 
 		
+	}
+	
+	public void setUserCal(CalendarGroup<CalendarResponses> userCal){
+		_userCal = userCal;
 	}
 	
 	public void removeWhen2Meet(String eventID) {

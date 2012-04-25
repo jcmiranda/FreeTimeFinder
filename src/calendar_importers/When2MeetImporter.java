@@ -233,19 +233,22 @@ public class When2MeetImporter implements CalendarsImporter {
 	
 	
 	@Override
-	public When2MeetEvent importCalendarGroup(String url) throws MalformedURLException{
+	public When2MeetEvent importCalendarGroup(String url) throws IOException{
 		_urlString = url;
-		try {
-			parseHTML();
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
+		parseHTML();
+		
 		System.out.println("Event ID: " + _eventID);
 		System.out.println("Event Name: " + _eventName);
 		When2MeetEvent w2me = new When2MeetEvent(_startTime, _endTime, _eventName, 
 				_eventID, _urlString, _IDsToCals.values(), _slotIndexToSlotID);
 
 		return w2me;
+	}
+
+	@Override
+	public CalendarGroup refresh(DateTime st, DateTime et) {
+		// TODO Auto-generated method stub
+		return null;
 	}
 
 }
