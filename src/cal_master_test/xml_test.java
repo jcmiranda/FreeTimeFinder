@@ -9,14 +9,14 @@ public class xml_test {
 	public static void main(String[] args) {
 		Communicator com = new Communicator();
 		com.startUp();
-		try {
-			com.addWhen2Meet("http://www.when2meet.com/?421831-IVgET");
-		} catch (URLAlreadyExistsException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (MalformedURLException e) {
-			e.printStackTrace();
-		}
+//		try {
+//			com.addWhen2Meet("http://www.when2meet.com/?421831-IVgET");
+//		} catch (URLAlreadyExistsException e) {
+//			// TODO Auto-generated catch block
+//			e.printStackTrace();
+//		} catch (MalformedURLException e) {
+//			e.printStackTrace();
+//		}
 		com.saveAll();
 	}
 }

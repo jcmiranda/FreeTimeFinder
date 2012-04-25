@@ -6,4 +6,8 @@ public class EventUpdate {
 	public EventUpdate(String msg) {
 		_updateString = msg;
 	}
+	
+	public String getMessage(){
+		return _updateString;
+	}
 }

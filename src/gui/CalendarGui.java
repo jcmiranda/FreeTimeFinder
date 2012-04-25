@@ -35,6 +35,7 @@ public class CalendarGui {
 	private JPanel _hourOfDayLabels;
 	private Communicator _communicator = new Communicator();
 	private EventPanel _eventPanel = new EventPanel(_communicator, this);
+	private UpdatesPanel _updatesPanel = new UpdatesPanel();
 
 	public static enum DaysOfWeek {Monday, Tuesday, Wednesday, Thursday, Friday, Saturday, Sunday};
 
@@ -61,7 +62,7 @@ public class CalendarGui {
 		_endHour = slotGroup.getEndTime().getHourOfDay();
 
 		_eventPanel.addEvent(new EventLabel("TESTING TESTING", "1234", _communicator, this));
-		//_communicator.
+		_communicator.startUp();
 		
 		makeDayLabels();
 		makeHourLabels();
@@ -107,7 +108,14 @@ public class CalendarGui {
 		_frame.add(_dayOfWeekLabels, BorderLayout.NORTH);
 		_frame.add(_hourOfDayLabels, BorderLayout.WEST);
 		_frame.add(_when2MeetCal, BorderLayout.CENTER);
-		_frame.add(_eventPanel, BorderLayout.EAST);
+		
+		JPanel eastPanel = new JPanel(new GridLayout(0,1));
+		eastPanel.add(_eventPanel);
+		eastPanel.add(_updatesPanel);
+		_frame.add(eastPanel, BorderLayout.EAST);
+		
+		//_frame.add(_eventPanel, BorderLayout.EAST);
+		//_frame.add(_updatesPanel, BorderLayout.EAST);
 		_switch = new JButton("SWITCH");
 		_switch.addActionListener(new MainListener());
 		//		_frame.add(_switch, BorderLayout.EAST);
