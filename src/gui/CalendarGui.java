@@ -61,6 +61,7 @@ public class CalendarGui {
 		_endHour = slotGroup.getEndTime().getHourOfDay();
 
 		_eventPanel.addEvent(new EventLabel("TESTING TESTING", "1234", _communicator, this));
+		//_communicator.
 		
 		makeDayLabels();
 		makeHourLabels();
