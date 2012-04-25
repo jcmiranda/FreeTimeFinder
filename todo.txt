@@ -10,11 +10,11 @@ COMMUNICATOR
 (X) write removewhen2meet - Liz
 (X) write getNameIDPairs - Liz
 (X) write submit - Both leaning towards Liz (still need to save to index)
-( ) write getNewUserName (need to actually ask user for new name) - Liz
-( ) write refresh 
+(X) write getNewUserName (need to actually ask user for new name) - Liz
+(X) write refresh -- still need to deal with MalformedURLException (in that right now it prints a stack trace when caught)
 (X) write calToW2M - Liz
 (X) write getW2M - Liz
-( ) write pullCal - Liz
+(X) write pullCal - Liz
 (X) write besttime method headers and what not - Liz
 
 INDEX

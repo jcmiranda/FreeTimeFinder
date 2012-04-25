@@ -81,10 +81,6 @@ public class When2MeetEvent extends CalendarGroup<CalendarSlots> {
 		return cal;
 	}
 	
-	public void removeCalByName(String name){
-		this.getCalendars().remove(getCalByName(name));
-	}
-	
 	public int getSlotID(int slotIndex) {
 		try {
 			return _slotIndexToSlotID.get(slotIndex);
