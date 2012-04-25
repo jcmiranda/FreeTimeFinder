@@ -147,8 +147,8 @@ public class When2MeetImporter implements CalendarsImporter {
 				Matcher eventNameMatcher = _eventNamePattern.matcher(inputLine);
 				if(eventNameMatcher.find()) {
 					_eventName = eventNameMatcher.group(1);
+					nextIsEventName = false;
 				}
-				nextIsEventName = false;
 			}
 			
 			if(timeMatcher.find())
