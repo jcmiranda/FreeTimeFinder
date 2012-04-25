@@ -70,7 +70,14 @@ public class Main {
 		CalendarResponses responses = new CalendarResponses(new DateTime(2012,4,16,9,0), new DateTime(2012,4,22,15,0), "test");
 		responses.addResponse(new Response(new DateTime(2012,4,16,9,0), new DateTime(2012,4,16,15,0), "Fishing"));
 		responses.addResponse(new Response(new DateTime(2012,4,17,10,0), new DateTime(2012,4,17,12,0), "Swimming"));
-		responses.addResponse(new Response(new DateTime(2012,4,18,9,0), new DateTime(2012,4,18,14,0), "Living"));
+		responses.addResponse(new Response(new DateTime(2012,4,18,9,0), new DateTime(2012,4,18,15,0), "thing1"));
+		responses.addResponse(new Response(new DateTime(2012,4,18,10,0), new DateTime(2012,4,18,12,0), "thing2"));
+		responses.addResponse(new Response(new DateTime(2012,4,18,12,0), new DateTime(2012,4,18,15,0), "thing3"));
+		responses.addResponse(new Response(new DateTime(2012,4,18,11,0), new DateTime(2012,4,18,14,0), "thing4"));
+		responses.addResponse(new Response(new DateTime(2012,4,19,9,0), new DateTime(2012,4,19,15,0), "test"));
+		responses.addResponse(new Response(new DateTime(2012,4,20,10,0), new DateTime(2012,4,20,12,0), "test"));
+		responses.addResponse(new Response(new DateTime(2012,4,21,9,0), new DateTime(2012,4,21,14,0), "test"));		
+		
 		g.addCalendar(responses);
 
 		ArrayList<CalendarSlots> slotsCals = new ArrayList<CalendarSlots>();

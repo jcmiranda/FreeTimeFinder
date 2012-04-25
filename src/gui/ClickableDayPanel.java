@@ -49,13 +49,13 @@ public class ClickableDayPanel extends DayPanel{
 
 		@Override
 		public void mousePressed(MouseEvent arg0) {
-			//			if (!(arg0.getY()<0 || arg0.getY()>ClickableDayPanel.this.getHeight() ||
-			//					arg0.getX()<0 || arg0.getX()>ClickableDayPanel.this.getWidth())){
-			originalSlot = (int) ((double) arg0.getY()/getHeight()*_numHours*4);
-			flipAvail(originalSlot);
-			flipMode = getSlots().getCalendars().get(0).getAvail(Days.daysBetween(getSlots().getStartTime(), getDay()).getDays(), originalSlot);
-			repaint();
-			//		}
+			if (!(arg0.getY()<0 || arg0.getY()>ClickableDayPanel.this.getHeight() ||
+					arg0.getX()<0 || arg0.getX()>ClickableDayPanel.this.getWidth())){
+				originalSlot = (int) ((double) arg0.getY()/getHeight()*_numHours*4);
+				flipAvail(originalSlot);
+				flipMode = getSlots().getCalendars().get(0).getAvail(Days.daysBetween(getSlots().getStartTime(), getDay()).getDays(), originalSlot);
+				repaint();
+			}
 		}		
 
 		@Override
@@ -69,7 +69,6 @@ public class ClickableDayPanel extends DayPanel{
 					repaint();
 				}	
 			}
-
 		}
 
 		@Override

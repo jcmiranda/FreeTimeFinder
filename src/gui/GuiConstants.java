@@ -9,6 +9,7 @@ public class GuiConstants {
 	public static final int RESPONSE_SPACING = 2;	
 	public static final int LINE_SPACING = 2;	
 	public static final int RESPONSE_NAME_SPACING = 3;	
+	public static final int RESPONSE_CONFLICT_SPACING = 30;	
 	
 	
 	public static final Color RESPONSE_COLOR = new Color(160, 50, 80, 170);

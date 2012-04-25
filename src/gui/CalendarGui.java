@@ -29,7 +29,7 @@ public class CalendarGui {
 	private int _endHour = 24;
 	private JFrame _frame;
 	private JButton _switch;
-	private CalPanel _myCal;
+//	private CalPanel _myCal;
 	private CalPanel _when2MeetCal;
 	private JPanel _dayOfWeekLabels;
 	private JPanel _hourOfDayLabels;
@@ -41,7 +41,7 @@ public class CalendarGui {
 
 	public CalendarGui(){
 		_thisMonday = new DateTime();
-		_myCal = new MyPanel(_thisMonday, _responseGroup);
+//		_myCal = new MyPanel(_thisMonday, _responseGroup);
 		_when2MeetCal = new ReplyPanel(_thisMonday);
 		buildFrame();
 	}
@@ -51,7 +51,7 @@ public class CalendarGui {
 		_responseGroup=responseGroup;
 		_thisMonday = _slotGroup.getStartTime().minusDays(_slotGroup.getStartTime().getDayOfWeek()-1);
 
-		_myCal = new MyPanel(_thisMonday, _responseGroup);
+//		_myCal = new MyPanel(_thisMonday, _responseGroup);
 		_when2MeetCal = new ReplyPanel(_thisMonday, _responseGroup, _slotGroup);
 
 		_startHour = slotGroup.getStartTime().getHourOfDay();
@@ -106,30 +106,30 @@ public class CalendarGui {
 
 	public void nextWeek(){
 		_thisMonday = _thisMonday.plusDays(7);
-		_myCal.nextWeek();
+//		_myCal.nextWeek();
 		_when2MeetCal.nextWeek();
 	}
 
 	public void lastWeek(){
 		_thisMonday = _thisMonday.minusDays(7);
-		_myCal.lastWeek();
+//		_myCal.lastWeek();
 		_when2MeetCal.lastWeek();
 	}
-
-	public void myView(){
-		_frame.getContentPane().remove(_when2MeetCal);
-		_frame.getContentPane().remove(_myCal);
-		_frame.add(_myCal, BorderLayout.CENTER);
-
-		this.repaint();
-	}
-
-	public void replyView(){
-		_frame.remove(_when2MeetCal);
-		_frame.remove(_myCal);
-		_frame.add(_when2MeetCal);
-		this.repaint();
-	}
+//
+//	public void myView(){
+//		_frame.getContentPane().remove(_when2MeetCal);
+//		_frame.getContentPane().remove(_myCal);
+//		_frame.add(_myCal, BorderLayout.CENTER);
+//
+//		this.repaint();
+//	}
+//
+//	public void replyView(){
+//		_frame.remove(_when2MeetCal);
+//		_frame.remove(_myCal);
+//		_frame.add(_when2MeetCal);
+//		this.repaint();
+//	}
 
 
 	public void repaint(){
@@ -141,7 +141,7 @@ public class CalendarGui {
 
 		@Override
 		public void actionPerformed(ActionEvent arg0) {
-			myView();
+//			myView();
 		}
 
 	}
