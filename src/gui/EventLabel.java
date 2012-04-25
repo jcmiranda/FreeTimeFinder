@@ -1,5 +1,6 @@
 package gui;
 
+import java.awt.Color;
 import java.awt.Font;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
@@ -21,6 +22,7 @@ public class EventLabel extends JLabel implements MouseListener{
 		_communicator = communicator;
 		_gui = gui;
 		setName(name);
+		this.addMouseListener(this);
 	}
 	
 	public void setName(String name){
@@ -30,6 +32,10 @@ public class EventLabel extends JLabel implements MouseListener{
 	
 	public String getID(){
 		return _id;
+	}
+	
+	public String getName(){
+		return _name;
 	}
 	
 	public void refresh(){
@@ -47,6 +53,7 @@ public class EventLabel extends JLabel implements MouseListener{
 		When2MeetEvent toReturn = _communicator.getW2M(_id);
 		if(toReturn != null){
 			_gui.setSlots(toReturn);
+			toReturn.updatesViewed();
 		}
 		
 		//TODO : deal with null (which should never happen)
@@ -55,25 +62,20 @@ public class EventLabel extends JLabel implements MouseListener{
 
 	@Override
 	public void mouseEntered(MouseEvent arg0) {
-		//TODO: figure out underlining or change color
+		//TODO: figure out underlining?
+		this.setForeground(Color.GREEN);
 	}
 
 	@Override
 	public void mouseExited(MouseEvent arg0) {
-		// TODO undo whatever we do in mouseEntered
-		
+		//undo whatever we do in mouseEntered
+		this.setForeground(Color.BLACK);
 	}
 
 	@Override
-	public void mousePressed(MouseEvent arg0) {
-		// TODO Auto-generated method stub
-		
-	}
+	public void mousePressed(MouseEvent arg0) {}
 
 	@Override
-	public void mouseReleased(MouseEvent arg0) {
-		// TODO Auto-generated method stub
-		
-	}
+	public void mouseReleased(MouseEvent arg0) {}
 	
 }

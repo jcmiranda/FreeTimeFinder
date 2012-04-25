@@ -5,7 +5,6 @@ import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.Writer;
-import java.net.MalformedURLException;
 import java.util.ArrayList;
 import java.util.HashMap;
 
@@ -14,18 +13,10 @@ import javax.swing.JOptionPane;
 import org.joda.time.DateTime;
 
 import cal_master.Index.IndexType;
-import calendar.Availability;
-import calendar.Calendar;
-import calendar.CalendarGroup;
-import calendar.CalendarResponses;
-import calendar.CalendarSlots;
-import calendar.GoogleCalendars;
-import calendar.When2MeetEvent;
-import calendar.When2MeetOwner;
-import calendar_exporters.When2MeetExporter;
+import calendar.*;
+import calendar_exporters.*;
 import calendar_exporters.When2MeetExporter.NameAlreadyExistsException;
-import calendar_importers.CalendarsImporter;
-import calendar_importers.When2MeetImporter;
+import calendar_importers.*;
 
 import com.thoughtworks.xstream.XStream;
 
@@ -110,6 +101,17 @@ public class Communicator {
 			if(n == 0) {
 				// TODO import the users calendar
 				JOptionPane.showMessageDialog(null, "Now I should import a calendar");
+				
+				// from where would you like to import?
+				Object[] calOptions = {"Google Calendar" };
+				Object selectedValue = JOptionPane.showInputDialog(null, "Choose a calendar type to import.", "", 
+						JOptionPane.INFORMATION_MESSAGE, null, calOptions, calOptions[0]);
+				
+				// switch on user response
+				if(selectedValue == "Google Calendar"){
+					this.setCalImporter(new GCalImporter());
+					this.pullCal(DateTime.now(), DateTime.now().plusDays(30));
+				}
 			}
 		}
 		
@@ -165,7 +167,7 @@ public class Communicator {
 		
 	}
 	
-	public When2MeetEvent addWhen2Meet(String url) throws URLAlreadyExistsException, MalformedURLException {
+	public When2MeetEvent addWhen2Meet(String url) throws URLAlreadyExistsException, IOException {
 		// Check if we have this url already
 		// If we do, throw an error
 		for(When2MeetEvent w2me : _w2mEvents.values())
@@ -186,6 +188,10 @@ public class Communicator {
 		return newEvent;
 
 		
+	}
+	
+	public void setUserCal(CalendarGroup<CalendarResponses> userCal){
+		_userCal = userCal;
 	}
 	
 	public void removeWhen2Meet(String eventID) {
@@ -217,6 +223,7 @@ public class Communicator {
 		When2MeetEvent temp = null;
 		for(When2MeetEvent w2m : _w2mEvents.values()){
 			//repull info
+			_importer.refreshEvent(w2m);
 		}
 		// Update user calendar
 		if(_userCal != null){
@@ -360,7 +367,6 @@ public class Communicator {
 	}
 	
 	public CalendarGroup<CalendarResponses> getCal(){
-		//TODO
 		return _userCal;
 	}
 	

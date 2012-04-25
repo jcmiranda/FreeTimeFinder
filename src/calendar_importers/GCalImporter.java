@@ -40,7 +40,7 @@ import com.google.gdata.client.*;
 
 //make interface??
 
-public class GCalImporter implements CalendarsImporter {
+public class GCalImporter implements CalendarsImporter<CalendarResponses> {
 	private CalendarService _client;
 	int MAX_RESPONSES = 100;
 	private Owner _owner;
