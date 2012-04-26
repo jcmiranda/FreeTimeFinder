@@ -26,11 +26,7 @@ public class ClickableDayPanel extends DayPanel{
 		this.addMouseListener(cl);
 		this.addMouseMotionListener(cl);
 	}
-
-	public CalendarSlots exportClicks(){
-		return getSlots().getCalendars().get(0);
-	}
-
+	
 	private int getDaysBetween(DateTime start, DateTime end){
 		if(end.getYear() == start.getYear())
 			return end.getDayOfYear() - start.getDayOfYear();

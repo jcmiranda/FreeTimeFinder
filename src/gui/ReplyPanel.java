@@ -2,19 +2,19 @@ package gui;
 
 import static gui.GuiConstants.LINE_SPACING;
 
-
 import java.awt.GridLayout;
 import java.util.ArrayList;
 
 import org.joda.time.DateTime;
 import org.joda.time.Days;
 
+import calendar.Availability;
 import calendar.CalGroupType;
 import calendar.CalendarGroup;
 import calendar.CalendarResponses;
 import calendar.CalendarSlots;
 import calendar.Response;
-import calendar.Availability;
+import calendar.When2MeetEvent;
 
 public class ReplyPanel extends CalPanel{
 
@@ -122,10 +122,14 @@ public class ReplyPanel extends CalPanel{
 
 				_clicks = new CalendarGroup<CalendarSlots>(_slotCals.getStartTime(), _slotCals.getEndTime(), CalGroupType.When2MeetEvent);
 
-				_clicks.addCalendar(new CalendarSlots(_slotCals.getStartTime(),
-						_slotCals.getEndTime(),
-						_slotCals.getCalendars().get(0).getMinInSlot(),
-						Availability.busy));
+
+				if(((When2MeetEvent) _slotCals).getUserResponse() != null)
+					_clicks.addCalendar(((When2MeetEvent) _slotCals).getUserResponse());
+				else
+					_clicks.addCalendar(new CalendarSlots(_slotCals.getStartTime(),
+					_slotCals.getEndTime(),
+					_slotCals.getCalendars().get(0).getMinInSlot(),
+					Availability.busy));
 				_days[i].setSlots(_clicks);
 			}
 		}		
