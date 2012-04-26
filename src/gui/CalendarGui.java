@@ -74,7 +74,6 @@ public class CalendarGui {
 		
 		 assert _responseGroup != null;
 		assert _slotGroup != null;
-		System.out.println("User Cal Name" + _responseGroup.getCalGroupType());
 		
 		_when2MeetCal = new ReplyPanel(_thisMonday, _responseGroup, _slotGroup);
 		
