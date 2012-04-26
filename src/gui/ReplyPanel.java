@@ -41,7 +41,10 @@ public class ReplyPanel extends CalPanel{
 		configDays();
 	}
 
-
+	public CalendarSlots getClicks(){
+		return _clicks.getCalendars().get(0);
+	}
+	
 	public void setResps(CalendarGroup<CalendarResponses> respCals){
 
 		_respCals = respCals;

@@ -163,14 +163,10 @@ public class CalendarResponses implements Calendar {
 					&& r.getStartTime().dayOfYear().equals(d.getDay().dayOfYear())){
 				r.paint(brush,
 						d,
-						(int) ((double) r.getIndentation()/(maxIndent+1)*d.getWidth()),
-						d.getWidth()-(maxIndent - r.getIndentation())*3);
+						(int) ((double) r.getIndentation()/(maxIndent+1)*d.getWidth()/2),
+						(int) ((double) d.getWidth() - d.getWidth()*(maxIndent - r.getIndentation())/(maxIndent+1)/2));
 			}
 		}
-
-
-
-
 	}
 
 
