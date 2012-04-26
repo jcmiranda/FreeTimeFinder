@@ -4,7 +4,6 @@ import static gui.GuiConstants.FRAME_HEIGHT;
 import static gui.GuiConstants.FRAME_WIDTH;
 
 import java.awt.BorderLayout;
-import java.awt.Component;
 import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -17,6 +16,7 @@ import javax.swing.SwingConstants;
 
 import org.joda.time.DateTime;
 
+import cal_master.Communicator;
 import calendar.CalendarGroup;
 import calendar.CalendarResponses;
 import calendar.CalendarSlots;
@@ -29,10 +29,12 @@ public class CalendarGui {
 	private int _endHour = 24;
 	private JFrame _frame;
 	private JButton _switch;
-//	private CalPanel _myCal;
-	private CalPanel _when2MeetCal;
+	private CalPanel _myCal;
+	private ReplyPanel _when2MeetCal;
 	private JPanel _dayOfWeekLabels;
 	private JPanel _hourOfDayLabels;
+	private Communicator _communicator = new Communicator();
+	private EventPanel _eventPanel = new EventPanel(_communicator, this);
 
 	public static enum DaysOfWeek {Monday, Tuesday, Wednesday, Thursday, Friday, Saturday, Sunday};
 
@@ -43,6 +45,7 @@ public class CalendarGui {
 		_thisMonday = new DateTime();
 //		_myCal = new MyPanel(_thisMonday, _responseGroup);
 		_when2MeetCal = new ReplyPanel(_thisMonday);
+		_eventPanel.addEvent(new EventLabel("TESTING TESTING", "1234", _communicator, this));
 		buildFrame();
 	}
 
@@ -57,11 +60,18 @@ public class CalendarGui {
 		_startHour = slotGroup.getStartTime().getHourOfDay();
 		_endHour = slotGroup.getEndTime().getHourOfDay();
 
+		_eventPanel.addEvent(new EventLabel("TESTING TESTING", "1234", _communicator, this));
+		
 		makeDayLabels();
 		makeHourLabels();
 		buildFrame();
 	}
 
+	public void setSlots(CalendarGroup<CalendarSlots> slotGroup){
+		_slotGroup= slotGroup;
+		_when2MeetCal.setSlots(_slotGroup);
+	}
+	
 	public void makeDayLabels(){
 
 		_dayOfWeekLabels = new JPanel();
@@ -96,6 +106,7 @@ public class CalendarGui {
 		_frame.add(_dayOfWeekLabels, BorderLayout.NORTH);
 		_frame.add(_hourOfDayLabels, BorderLayout.WEST);
 		_frame.add(_when2MeetCal, BorderLayout.CENTER);
+		_frame.add(_eventPanel, BorderLayout.EAST);
 		_switch = new JButton("SWITCH");
 		_switch.addActionListener(new MainListener());
 		//		_frame.add(_switch, BorderLayout.EAST);

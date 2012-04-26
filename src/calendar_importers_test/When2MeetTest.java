@@ -40,6 +40,7 @@ public class When2MeetTest {
 		When2MeetEvent bDemo = wtmi.importCalendarGroup("http://www.when2meet.com/?426631-GoPHt");
 		CalendarSlots jeanetteCal = bDemo.getCalByName("Jeanette");
 		
+		/*
 		for(int i = 0; i < jeanetteCal.getTotalSlots(); i++) 
 			jeanetteCal.setAvail(i, Availability.free);
 		
@@ -47,7 +48,8 @@ public class When2MeetTest {
 			jeanetteCal.setAvail(i, Availability.busy);
 		
 		When2MeetExporter exporter = new When2MeetExporter();
-		exporter.postAllAvailability(bDemo, jeanetteCal);
+		exporter.postAllAvailability(bDemo);
+		*/
 
 		
 		/*

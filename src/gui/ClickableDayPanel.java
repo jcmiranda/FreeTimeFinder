@@ -62,8 +62,9 @@ public class ClickableDayPanel extends DayPanel{
 		public void mouseDragged(MouseEvent arg0) {
 
 			int slotNum = (int) ((double) arg0.getY()/getHeight()*_numHours*4);
+			slotNum = Math.max(0, slotNum);
 
-			for (int i=Math.min(originalSlot,slotNum); i<=Math.max(originalSlot,slotNum); i++){
+			for (int i=Math.min(originalSlot,slotNum); i<=Math.min(Math.max(originalSlot,slotNum), getSlots().getCalendars().get(0).getSlotsInDay()-1); i++){
 				if (getSlots().getCalendars().get(0).getAvail(Days.daysBetween(getSlots().getStartTime(), getDay()).getDays(), i) != flipMode) {
 					flipAvail(i);
 					repaint();
