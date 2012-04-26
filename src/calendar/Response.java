@@ -2,8 +2,10 @@ package calendar;
 import gui.DayPanel;
 
 
+import java.awt.Color;
 import java.awt.Graphics2D;
 
+import java.awt.geom.Rectangle2D;
 import java.awt.geom.RoundRectangle2D;
 
 import static gui.GuiConstants.RESPONSE_NAME_COLOR;
@@ -68,12 +70,15 @@ public class Response implements Comparable<Response>{
 
 	public void paint(Graphics2D brush, DayPanel d, int startX, int endX){
 
-		RoundRectangle2D.Double rect = new RoundRectangle2D.Double();
+//		RoundRectangle2D.Double rect = new RoundRectangle2D.Double();
+		Rectangle2D.Double rect = new Rectangle2D.Double();
+		
 		int startY = (int) ((double) (_startTime.getMinuteOfHour()/60 + _startTime.getHourOfDay() - d.getStartHour())/d.getNumHours()*d.getHeight());
 		int endY = (int) ((double) (_endTime.getMinuteOfHour()/60 + _endTime.getHourOfDay() - d.getStartHour())/d.getNumHours()*d.getHeight());
-		rect.setRoundRect(startX+RESPONSE_SPACING, startY, (int) ((double) endX-startX-2*RESPONSE_SPACING), endY - startY, RECT_ARC_DIM, RECT_ARC_DIM);		
+//		rect.setRoundRect(startX+RESPONSE_SPACING, startY, (int) ((double) endX-startX-2*RESPONSE_SPACING), endY - startY, RECT_ARC_DIM, RECT_ARC_DIM);		
+		rect.setRect(startX+RESPONSE_SPACING, startY, (int) ((double) endX-startX-2*RESPONSE_SPACING), endY - startY);		
 
-		brush.setColor(LINE_COLOR);
+		brush.setColor(Color.BLACK);
 		brush.draw(rect);
 		brush.setColor(RESPONSE_COLOR);
 		brush.fill(rect);
