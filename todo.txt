@@ -16,6 +16,9 @@ COMMUNICATOR
 (X) write getW2M - Liz
 (X) write pullCal - Liz
 (X) write besttime method headers and what not - Liz
+( ) set userCal
+		-- import from dialog box?
+
 
 INDEX
 (X) enum for type of importers

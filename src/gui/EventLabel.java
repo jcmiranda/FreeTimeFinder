@@ -40,12 +40,12 @@ public class EventLabel extends JLabel implements MouseListener{
 	
 	public void refresh(){
 		When2MeetEvent event = _communicator.getW2MByID(_id);
-//		if(event != null && event.hasUpdates()){
-//			this.setFont(new Font(this.getFont().getName(), Font.BOLD, this.getFont().getSize()));
-//		}
-//		else{
-//			this.setFont(new Font(this.getFont().getName(), Font.PLAIN, this.getFont().getSize()));
-//		}
+		if(event != null && event.hasUpdates()){
+			this.setFont(new Font(this.getFont().getName(), Font.BOLD, this.getFont().getSize()));
+		}
+		else{
+			this.setFont(new Font(this.getFont().getName(), Font.PLAIN, this.getFont().getSize()));
+		}
 	}
 	
 	@Override
@@ -53,6 +53,7 @@ public class EventLabel extends JLabel implements MouseListener{
 		When2MeetEvent toReturn = _communicator.getW2M(_id);
 		if(toReturn != null){
 			_gui.setSlots(toReturn);
+			toReturn.updatesViewed();
 		}
 		
 		//TODO : deal with null (which should never happen)
@@ -61,26 +62,20 @@ public class EventLabel extends JLabel implements MouseListener{
 
 	@Override
 	public void mouseEntered(MouseEvent arg0) {
-		//TODO: figure out underlining or change color
+		//TODO: figure out underlining?
 		this.setForeground(Color.GREEN);
 	}
 
 	@Override
 	public void mouseExited(MouseEvent arg0) {
-		// TODO undo whatever we do in mouseEntered
+		//undo whatever we do in mouseEntered
 		this.setForeground(Color.BLACK);
 	}
 
 	@Override
-	public void mousePressed(MouseEvent arg0) {
-		// TODO Auto-generated method stub
-		
-	}
+	public void mousePressed(MouseEvent arg0) {}
 
 	@Override
-	public void mouseReleased(MouseEvent arg0) {
-		// TODO Auto-generated method stub
-		
-	}
+	public void mouseReleased(MouseEvent arg0) {}
 	
 }
