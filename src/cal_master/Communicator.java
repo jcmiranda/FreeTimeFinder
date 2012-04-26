@@ -93,11 +93,14 @@ public class Communicator {
 			}
 			case ProgramOwner: {
 				_owner = (ProgramOwner) o;
+				break;
 			} 
 			case GCalImporter: {
 				_userCalImporter = (GCalImporter) o;
+				break;
 			}
 			default: {
+				
 				System.out.println("Default condition triggered on recreating index.");
 			}
 			}
@@ -158,6 +161,12 @@ public class Communicator {
 		System.out.println("Num events: " + _w2mEvents.values().size());
 		for(CalendarGroup<CalendarSlots> cal : _w2mEvents.values())
 			return cal;
+		return null;
+	}
+	
+	public String getFirstEventID() {
+		for(String id : _w2mEvents.keySet())
+			return id;
 		return null;
 	}
 	

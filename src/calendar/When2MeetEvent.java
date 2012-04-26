@@ -1,11 +1,15 @@
 package calendar;
 
+import gui.DayPanel;
+
+import java.awt.Graphics2D;
+import java.awt.Polygon;
 import java.util.ArrayList;
 import java.util.Collection;
 
 import org.joda.time.DateTime;
 
-public class When2MeetEvent extends CalendarGroup<CalendarSlots> {
+public class When2MeetEvent extends Event {
 	
 	private String _name, _url;
 	private int _id;
@@ -15,7 +19,6 @@ public class When2MeetEvent extends CalendarGroup<CalendarSlots> {
 	private ArrayList<EventUpdate> _updates = new ArrayList<EventUpdate>();
 	private boolean _hasUpdates = false;
 	
-	
 	public When2MeetEvent(DateTime st, DateTime et, String name, int id, String url,
 			Collection<CalendarSlots> cals, ArrayList<Integer> slotIndToID){
 		super(st, et, cals, CalGroupType.When2MeetEvent);
@@ -23,6 +26,8 @@ public class When2MeetEvent extends CalendarGroup<CalendarSlots> {
 		_id = id;
 		_url = url;
 		_slotIndexToSlotID = slotIndToID;
+		
+		
 	}
 	
 	public void setID(int id) { _id = id; };
@@ -92,6 +97,6 @@ public class When2MeetEvent extends CalendarGroup<CalendarSlots> {
 			return -1;
 		}
 	}
-
-
+	
+	
 }

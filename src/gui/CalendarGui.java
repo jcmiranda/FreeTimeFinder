@@ -29,6 +29,7 @@ import cal_master.NameIDPair;
 import calendar.CalendarGroup;
 import calendar.CalendarResponses;
 import calendar.CalendarSlots;
+import calendar.When2MeetEvent;
 
 public class CalendarGui {
 
@@ -55,7 +56,10 @@ public class CalendarGui {
 		_communicator.startUp();
 		
 		if(_communicator.hasEvent())  {
-			_slotGroup=_communicator.getFirstEvent();
+			
+			When2MeetEvent toReturn = _communicator.getW2M(_communicator.getFirstEventID());
+			_slotGroup = toReturn;
+			//_slotGroup=_communicator.getFirstEvent();
 			_thisMonday = _slotGroup.getStartTime().minusDays(_slotGroup.getStartTime().getDayOfWeek()-1);
 			_startHour = _slotGroup.getStartTime().getHourOfDay();
 			_endHour = _slotGroup.getEndTime().getHourOfDay();

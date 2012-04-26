@@ -19,9 +19,9 @@ public class ClickableDayPanel extends DayPanel{
 		this.addMouseMotionListener(cl);
 	}
 
-	public ClickableDayPanel(int startHour, int numHours, DateTime today,
+	public ClickableDayPanel(int startHour, int numHours, DateTime today, int day, 
 			boolean active) {
-		super(startHour, numHours, today, active);
+		super(startHour, numHours, today, day, active);
 		calListener cl = new calListener();
 		this.addMouseListener(cl);
 		this.addMouseMotionListener(cl);

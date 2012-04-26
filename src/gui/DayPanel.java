@@ -11,6 +11,7 @@ import java.awt.Graphics2D;
 import java.util.ArrayList;
 
 import javax.swing.JPanel;
+import javax.swing.border.LineBorder;
 
 import org.joda.time.DateTime;
 
@@ -18,13 +19,17 @@ import calendar.CalendarGroup;
 import calendar.CalendarResponses;
 import calendar.CalendarSlots;
 import calendar.Availability;
+import calendar.Event;
 import calendar.Response;
+import calendar.When2MeetEvent;
 
 public class DayPanel extends JPanel{
 
 	DateTime _today;
+	int _day = 0;
 	int _startHour = 0;
 	int _numHours = 24;
+	private Event _event;
 	private CalendarGroup<CalendarSlots> _slots;
 	private CalendarGroup<CalendarResponses> _responses;
 	private Boolean _active = true;
@@ -33,16 +38,19 @@ public class DayPanel extends JPanel{
 	public DayPanel(){
 		super();
 		this.setBackground(BG_COLOR);
+		//this.setBorder(new LineBorder(LINE_COLOR, 4, true));
 		this.repaint();
+		System.out.println("Default day panel created");
 	}
 
-	public DayPanel(int startHour, int numHours, DateTime today, boolean active){
+	public DayPanel(int startHour, int numHours, DateTime today, int day, boolean active){
 		this();
 		_startHour = startHour;
 		_numHours = numHours;
 		_today = today;
 		_active = active;
 		this.repaint();
+		System.out.println("Special Day Panel Created");
 	}
 
 	public int getStartHour() {
@@ -70,6 +78,12 @@ public class DayPanel extends JPanel{
 	}
 
 
+	public void setEvent(Event event, int day) {
+		System.out.println("Event set");
+		_event = event;
+		_day = day;
+	}
+	
 	public CalendarGroup<CalendarSlots> getSlots() {
 		return _slots;
 	}
@@ -132,15 +146,23 @@ public class DayPanel extends JPanel{
 				r.paint(brush, this, numCals);
 			}
 		}
-		if (_slots!=null){
-			for (CalendarSlots s: _slots.getCalendars()){
-				s.paint(brush, this);
-			}
-		}
 		if (!_active){
 			brush.setColor(GRAY_OUT_COLOR);
 			brush.fillRect(0, 0, getWidth(), getHeight());
+		} 
+		if (_slots!=null && _event != null){
+			//When2MeetEvent event = (When2MeetEvent) _slots;
+			assert _event != null;
+			assert brush != null;
+			assert this != null;
+			_event.paint(brush, this, _day);
+			/*
+			for (CalendarSlots s: _slots.getCalendars()){
+				s.paint(brush, this);
+			}
+			*/
 		}
+		
 
 	}
 

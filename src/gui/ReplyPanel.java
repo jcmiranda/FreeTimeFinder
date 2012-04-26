@@ -13,6 +13,7 @@ import calendar.CalGroupType;
 import calendar.CalendarGroup;
 import calendar.CalendarResponses;
 import calendar.CalendarSlots;
+import calendar.Event;
 import calendar.Response;
 import calendar.When2MeetEvent;
 
@@ -103,6 +104,7 @@ public class ReplyPanel extends CalPanel{
 	}
 
 	public void configDays(){
+		int ctr = 0;
 		for (int i=0; i<14; i+=2){
 			_days[i].setStartHour(_startHour);
 			_days[i+1].setStartHour(_startHour);
@@ -119,18 +121,23 @@ public class ReplyPanel extends CalPanel{
 				_days[i].setResponses(_respCals);
 				_days[i+1].setActive(true);
 				_days[i+1].setSlots(_slotCals);
+				System.out.println("Setting i+1 event" + (i+1));
+				_days[i+1].setEvent((Event) _slotCals, ctr);
+				
 
 				_clicks = new CalendarGroup<CalendarSlots>(_slotCals.getStartTime(), _slotCals.getEndTime(), CalGroupType.When2MeetEvent);
 
-
-				if(((When2MeetEvent) _slotCals).getUserResponse() != null)
+				if(((When2MeetEvent) _slotCals).getUserResponse() != null) {
 					_clicks.addCalendar(((When2MeetEvent) _slotCals).getUserResponse());
-				else
+				}
+				else {
 					_clicks.addCalendar(new CalendarSlots(_slotCals.getStartTime(),
 					_slotCals.getEndTime(),
 					_slotCals.getCalendars().get(0).getMinInSlot(),
 					Availability.busy));
+				}
 				_days[i].setSlots(_clicks);
+				ctr++;
 			}
 		}		
 		repaint();
