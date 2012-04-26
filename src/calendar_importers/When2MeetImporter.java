@@ -91,7 +91,7 @@ public class When2MeetImporter implements CalendarsImporter {
 				id = Integer.parseInt(nameIDMatcher.group(_IDGroupIndex));
 
 				if(_IDsToCals.containsKey(id)) {
-					System.err.println("cal already found for id");
+					System.err.println("cal already found for id: " + id);
 					System.exit(1);
 				} else {
 					CalendarSlots cal = new CalendarSlots(_startTime, _endTime, _minInSlot, Availability.busy);
@@ -240,6 +240,8 @@ public class When2MeetImporter implements CalendarsImporter {
 	@Override
 	public When2MeetEvent importCalendarGroup(String url) throws IOException{
 		_urlString = url;
+		_IDsToCals.clear();
+		_slotIndexToSlotID.clear();
 		parseHTML();
 		
 		System.out.println("Event ID: " + _eventID);
@@ -258,6 +260,8 @@ public class When2MeetImporter implements CalendarsImporter {
 	
 	public When2MeetEvent refreshEvent(When2MeetEvent w2me) {
 		_urlString = w2me.getURL();
+		_IDsToCals.clear();
+		_slotIndexToSlotID.clear();
 		
 		try {
 			parseHTML();

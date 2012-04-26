@@ -146,7 +146,12 @@ public class GCalImporter implements CalendarsImporter<CalendarResponses> {
 		myQuery.setStringCustomParameter("singleevents", "true");
 		myQuery.setMaxResults(100);
 		//send request and get result feed
-		CalendarEventFeed resultFeed = _client.query(myQuery, CalendarEventFeed.class);
+		CalendarEventFeed resultFeed = null;
+		try {
+		 resultFeed = _client.query(myQuery, CalendarEventFeed.class);
+		} catch (ServiceException e) {
+			System.out.println("AHa service exception");
+		}
 		
 		//go through feed and get events to make responses
 		for (int i = 0; i < resultFeed.getEntries().size(); i++) {

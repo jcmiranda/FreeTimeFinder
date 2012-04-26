@@ -13,6 +13,7 @@ import calendar.CalGroupType;
 import calendar.CalendarGroup;
 import calendar.CalendarResponses;
 import calendar.CalendarSlots;
+import calendar.Event;
 import calendar.Response;
 import calendar.When2MeetEvent;
 
@@ -106,6 +107,7 @@ public class ReplyPanel extends CalPanel{
 	}
 
 	public void configDays(){
+		int ctr = 0;
 		for (int i=0; i<14; i+=2){
 			_days[i].setStartHour(_startHour);
 			_days[i+1].setStartHour(_startHour);
@@ -116,27 +118,31 @@ public class ReplyPanel extends CalPanel{
 			if (_thisMonday.plusDays(i/2).isAfter(_slotCals.getEndTime())
 					|| _thisMonday.plusDays(i/2).isBefore(_slotCals.getStartTime())){
 				_days[i].setActive(false);
-				_days[i+1].setActive(false);	
+				_days[i+1].setActive(false);
 			} else {
 				_days[i].setActive(true);
 				_days[i].setResponses(_respCals);
 				_days[i+1].setActive(true);
-				_days[i+1].setSlots(_slotCals);
+				// TODO to change back to when2meet style display, change to setSlots and get rid of set Event
+				_days[i+1].setEvent((Event) _slotCals, ctr);
+				
 
 				_clicks = new CalendarGroup<CalendarSlots>(_slotCals.getStartTime(), _slotCals.getEndTime(), CalGroupType.When2MeetEvent);
 
-
-				if(((When2MeetEvent) _slotCals).getUserResponse() != null)
+				if(((When2MeetEvent) _slotCals).getUserResponse() != null) {
 					_clicks.addCalendar(((When2MeetEvent) _slotCals).getUserResponse());
-				else
+				}
+				else {
 					_clicks.addCalendar(new CalendarSlots(_slotCals.getStartTime(),
 					_slotCals.getEndTime(),
 					_slotCals.getCalendars().get(0).getMinInSlot(),
 					Availability.busy));
+				}
 				_days[i].setSlots(_clicks);
+				ctr++;
 			}
 		}		
-		repaint();
+		//repaint();
 	}
 
 }

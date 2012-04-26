@@ -34,6 +34,10 @@ public class CalendarSlots implements Calendar {
 				_avail[day][slot] = initAvail;
 	}
 
+	public int getDays() {
+		return _numDays;
+	}
+	
 	public CalendarSlots(DateTime startTime, DateTime endTime, When2MeetOwner owner, int minInSlot, Availability[][] availability){
 		_startTime = startTime;
 		_endTime = endTime;
