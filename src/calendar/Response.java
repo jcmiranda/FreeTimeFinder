@@ -19,7 +19,17 @@ public class Response implements Comparable<Response>{
 	private DateTime _startTime;
 	private DateTime _endTime;
 	private String _name;
+	
+	private int _indentation = 0;
 
+	public int getIndentation(){
+		return _indentation;
+	}
+	
+	public void setIndentation(int indentation){
+		_indentation = indentation;
+	}
+	
 	public Response(DateTime st, DateTime et) {
 		_startTime = st;
 		_endTime = et;
@@ -61,7 +71,7 @@ public class Response implements Comparable<Response>{
 		RoundRectangle2D.Double rect = new RoundRectangle2D.Double();
 		int startY = (int) ((double) (_startTime.getMinuteOfHour()/60 + _startTime.getHourOfDay() - d.getStartHour())/d.getNumHours()*d.getHeight());
 		int endY = (int) ((double) (_endTime.getMinuteOfHour()/60 + _endTime.getHourOfDay() - d.getStartHour())/d.getNumHours()*d.getHeight());
-		rect.setRoundRect(startX+RESPONSE_SPACING, startY, endX-2*RESPONSE_SPACING, endY - startY, RECT_ARC_DIM, RECT_ARC_DIM);		
+		rect.setRoundRect(startX+RESPONSE_SPACING, startY, (int) ((double) endX-startX-2*RESPONSE_SPACING), endY - startY, RECT_ARC_DIM, RECT_ARC_DIM);		
 
 		brush.setColor(LINE_COLOR);
 		brush.draw(rect);
@@ -69,7 +79,7 @@ public class Response implements Comparable<Response>{
 		brush.fill(rect);
 		brush.setColor(RESPONSE_NAME_COLOR);
 		if (getName()!=null){
-			brush.drawString(this.getName(), RESPONSE_SPACING+RESPONSE_NAME_SPACING, startY + brush.getFont().getSize() + RESPONSE_NAME_SPACING);
+			brush.drawString(this.getName(), startX + RESPONSE_SPACING+RESPONSE_NAME_SPACING, startY + brush.getFont().getSize() + RESPONSE_NAME_SPACING);
 		}
 
 	}

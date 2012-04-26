@@ -20,6 +20,7 @@ public class CalendarSlots implements Calendar {
 	private int _numDays;
 	private When2MeetOwner _owner;
 	private Availability[][] _avail;
+	private boolean _isVisible = true;
 
 	public CalendarSlots(DateTime startTime, DateTime endTime, int minInSlot, Availability initAvail) {
 		_startTime = startTime;
@@ -59,6 +60,14 @@ public class CalendarSlots implements Calendar {
 		System.err.println("err in numDays in CalendarSlotsImpl");
 		System.exit(1);
 		return -1;
+	}
+	
+	public void setVisible(boolean b){
+		_isVisible = b;
+	}
+	
+	public boolean isVisible(){
+		return _isVisible;
 	}
 
 	@Override
@@ -157,19 +166,33 @@ public class CalendarSlots implements Calendar {
 		return _minInSlot;
 	}
 	
+	private int getDaysBetween(DateTime start, DateTime end){
+		if(end.getYear() == start.getYear())
+			return end.getDayOfYear() - start.getDayOfYear();
+		else if(end.getYear() == start.getYear() + 1)
+			return end.getDayOfYear() + 366 - start.getDayOfYear();
+		return -1;
+	}
+	
 	
 	public void paint(Graphics2D brush, DayPanel d){
 		Rectangle2D.Double rect;
 
-		for (int i=0; i< _avail[0].length; i++){
-			//May be some bugs here
-			if (_avail[Days.daysBetween(getStartTime(), d.getDay()).getDays()][i]==Availability.busy){
-				rect = new Rectangle2D.Double();
-				int startY = (int) ((double) i*d.getHeight()/_numSlotsInDay);
-				rect.setFrame(0, startY, d.getWidth(), d.getHeight()/_numSlotsInDay);
-				brush.setColor(SLOT_COLOR);
-				brush.draw(rect);
-				brush.fill(rect);
+		if(_isVisible){
+			int numDays = this.getDaysBetween(_startTime, d.getDay());
+			if(numDays >= 0 && numDays < _numDays){
+				for (int i=0; i< _numSlotsInDay; i++){
+					//May be some bugs here
+					
+					if (_avail[numDays][i]==Availability.free){
+						rect = new Rectangle2D.Double();
+						int startY = (int) ((double) i*d.getHeight()/_numSlotsInDay);
+						rect.setFrame(0, startY, d.getWidth(), d.getHeight()/_numSlotsInDay);
+						brush.setColor(SLOT_COLOR);
+						brush.draw(rect);
+						brush.fill(rect);
+					}
+				}
 			}
 		}
 	}

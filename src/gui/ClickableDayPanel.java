@@ -31,13 +31,26 @@ public class ClickableDayPanel extends DayPanel{
 		return getSlots().getCalendars().get(0);
 	}
 
+	private int getDaysBetween(DateTime start, DateTime end){
+		if(end.getYear() == start.getYear())
+			return end.getDayOfYear() - start.getDayOfYear();
+		else if(end.getYear() == start.getYear() + 1)
+			return end.getDayOfYear() + 366 - start.getDayOfYear();
+		return -1;
+	}
+
 
 	public void flipAvail(int slotNum){
-		if (getSlots().getCalendars().get(0).getAvail(Days.daysBetween(getSlots().getStartTime(), getDay()).getDays(),
-				slotNum) == Availability.busy) {
-			getSlots().getCalendars().get(0).setAvail(Days.daysBetween(getSlots().getStartTime(), getDay()).getDays(), slotNum, Availability.free);
-		} else {
-			getSlots().getCalendars().get(0).setAvail(Days.daysBetween(getSlots().getStartTime(), getDay()).getDays(), slotNum, Availability.busy);
+		int day = getDaysBetween(getSlots().getStartTime(), getDay());
+
+		CalendarSlots cal = getSlots().getCalendars().get(0);
+		if(day >=0 && day < cal.numDays()){
+			Availability avail = cal.getAvail(day, slotNum);
+			if (avail == Availability.busy) {
+				cal.setAvail(day, slotNum, Availability.free);
+			} else {
+				cal.setAvail(day, slotNum, Availability.busy);
+			}
 		}
 	}
 
@@ -49,28 +62,33 @@ public class ClickableDayPanel extends DayPanel{
 
 		@Override
 		public void mousePressed(MouseEvent arg0) {
-			if (!(arg0.getY()<0 || arg0.getY()>ClickableDayPanel.this.getHeight() ||
-					arg0.getX()<0 || arg0.getX()>ClickableDayPanel.this.getWidth())){
-				originalSlot = (int) ((double) arg0.getY()/getHeight()*_numHours*4);
-				flipAvail(originalSlot);
-				flipMode = getSlots().getCalendars().get(0).getAvail(Days.daysBetween(getSlots().getStartTime(), getDay()).getDays(), originalSlot);
-				repaint();
+			if (isActive()){
+				if (!(arg0.getY()<0 || arg0.getY()>ClickableDayPanel.this.getHeight() ||
+						arg0.getX()<0 || arg0.getX()>ClickableDayPanel.this.getWidth())){
+					originalSlot = (int) ((double) arg0.getY()/getHeight()*_numHours*4);
+					flipAvail(originalSlot);
+					System.out.println("today: " + getDay().getDayOfMonth());
+					System.out.println("start: " + getSlots().getStartTime().getDayOfMonth());
+					System.out.println("days between: " + getDaysBetween(getSlots().getStartTime(), getDay()));
+					flipMode = getSlots().getCalendars().get(0).getAvail(getDaysBetween(getSlots().getStartTime(), getDay()), originalSlot);
+					repaint();
+				}
 			}
 		}		
 
 		@Override
 		public void mouseDragged(MouseEvent arg0) {
+			if (isActive()){
+				int slotNum = (int) ((double) arg0.getY()/getHeight()*_numHours*4);
+				slotNum = Math.max(0, slotNum);
 
-			int slotNum = (int) ((double) arg0.getY()/getHeight()*_numHours*4);
-			slotNum = Math.max(0, slotNum);
-
-			for (int i=Math.min(originalSlot,slotNum); i<=Math.min(Math.max(originalSlot,slotNum), getSlots().getCalendars().get(0).getSlotsInDay()-1); i++){
-				if (getSlots().getCalendars().get(0).getAvail(Days.daysBetween(getSlots().getStartTime(), getDay()).getDays(), i) != flipMode) {
-					flipAvail(i);
-					repaint();
-				}	
+				for (int i=Math.min(originalSlot,slotNum); i<=Math.min(Math.max(originalSlot,slotNum), getSlots().getCalendars().get(0).getSlotsInDay()-1); i++){
+					if (getSlots().getCalendars().get(0).getAvail(getDaysBetween(getSlots().getStartTime(), getDay()), i) != flipMode) {
+						flipAvail(i);
+						repaint();
+					}	
+				}
 			}
-
 		}
 
 		@Override

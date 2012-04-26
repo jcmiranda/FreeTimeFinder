@@ -75,6 +75,7 @@ public class DayPanel extends JPanel{
 	}
 
 	public void setSlots(CalendarGroup<CalendarSlots> slots){
+		
 		_slots = slots;
 	}
 

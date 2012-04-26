@@ -1,15 +1,13 @@
 package calendar;
 
-import static gui.GuiConstants.SLOT_COLOR;
+import static gui.GuiConstants.RESPONSE_CONFLICT_SPACING;
 import gui.DayPanel;
 
 import java.awt.Graphics2D;
-import java.awt.geom.Rectangle2D;
 import java.util.ArrayList;
 import java.util.Collections;
 
 import org.joda.time.DateTime;
-import org.joda.time.Days;
 
 public class CalendarResponses implements Calendar {
 
@@ -139,13 +137,37 @@ public class CalendarResponses implements Calendar {
 
 		ArrayList<Response> conflictCheck = new ArrayList<Response>();
 		for (Response r: getResponses()){
-			// TODO work on spacing the events
 			if (r.getStartTime().year().equals(d.getDay().year())
 					&& r.getStartTime().dayOfYear().equals(d.getDay().dayOfYear())){
+				r.setIndentation(0);
 				conflictCheck.add(r);
-				r.paint(brush, d, 0, d.getWidth());
 			}
 		}
+
+		int maxIndent=1;
+		
+		for (int i=0; i<conflictCheck.size(); i++){
+			for (int j=i+1; j<conflictCheck.size(); j++){
+				if ((conflictCheck.get(i).getStartTime().isAfter(conflictCheck.get(j).getStartTime()) && conflictCheck.get(i).getStartTime().isBefore(conflictCheck.get(j).getEndTime()))
+						|| (conflictCheck.get(j).getStartTime().isAfter(conflictCheck.get(i).getStartTime()) && conflictCheck.get(j).getStartTime().isBefore(conflictCheck.get(i).getEndTime()))
+						|| (conflictCheck.get(i).getStartTime().equals(conflictCheck.get(j).getStartTime()))
+						|| (conflictCheck.get(i).getEndTime().equals(conflictCheck.get(j).getEndTime()))){
+					conflictCheck.get(j).setIndentation(conflictCheck.get(i).getIndentation()+1);
+					maxIndent = Math.max(maxIndent, conflictCheck.get(j).getIndentation());
+				}
+			}
+		}
+
+		for (Response r: getResponses()){
+			if (r.getStartTime().year().equals(d.getDay().year())
+					&& r.getStartTime().dayOfYear().equals(d.getDay().dayOfYear())){
+				r.paint(brush,
+						d,
+						(int) ((double) r.getIndentation()/(maxIndent+1)*d.getWidth()),
+						d.getWidth()-(maxIndent - r.getIndentation())*3);
+			}
+		}
+
 
 
 

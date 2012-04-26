@@ -160,7 +160,9 @@ public class Communicator {
 			writeToFile(id, _w2mEvents.get(id));
 		
 		// Store XML for calendar
+		System.out.println("CALLING WRITE USER CAL");
 		writeToFile(_userCalID, _userCal);
+		System.out.println("WROTE USER CAL");
 	}
 	
 	public class URLAlreadyExistsException extends Exception {
@@ -304,7 +306,7 @@ public class Communicator {
 			
 		}
 		if(!toReturn.userHasSubmitted()){
-			calToW2M(id);
+			//calToW2M(id);
 		}
 		
 		return toReturn;
@@ -372,5 +374,6 @@ public class Communicator {
 	
 	public void pullCal(DateTime start, DateTime end){
 		_userCal = _userCalImporter.refresh(start, end);
+		
 	}
 }

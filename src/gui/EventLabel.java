@@ -52,8 +52,10 @@ public class EventLabel extends JLabel implements MouseListener{
 	public void mouseClicked(MouseEvent arg0) {
 		When2MeetEvent toReturn = _communicator.getW2M(_id);
 		if(toReturn != null){
+			System.out.println("GOT IT!");
 			_gui.setSlots(toReturn);
 			toReturn.updatesViewed();
+			_gui.repaint();
 		}
 		
 		//TODO : deal with null (which should never happen)
@@ -63,7 +65,7 @@ public class EventLabel extends JLabel implements MouseListener{
 	@Override
 	public void mouseEntered(MouseEvent arg0) {
 		//TODO: figure out underlining?
-		this.setForeground(Color.GREEN);
+		this.setForeground(new Color(238,99,99));
 	}
 
 	@Override
