@@ -134,12 +134,14 @@ public class DayPanel extends JPanel{
 	public void paintComponent(Graphics g){
 		super.paintComponent(g);
 		Graphics2D brush = (Graphics2D) g;
-		drawLines(brush);
 		if (!_active){
 			brush.setColor(GRAY_OUT_COLOR);
 			brush.fillRect(0, 0, getWidth(), getHeight());
+			drawLines(brush);
+			return; 
 		} 
 		else {
+			drawLines(brush);
 			if (_responses!=null){
 				int numCals = _responses.getCalendars().size();
 				for (CalendarResponses r: _responses.getCalendars()){
