@@ -40,7 +40,6 @@ public class DayPanel extends JPanel{
 		this.setBackground(BG_COLOR);
 		//this.setBorder(new LineBorder(LINE_COLOR, 4, true));
 		this.repaint();
-		System.out.println("Default day panel created");
 	}
 
 	public DayPanel(int startHour, int numHours, DateTime today, int day, boolean active){

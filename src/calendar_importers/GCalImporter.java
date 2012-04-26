@@ -187,7 +187,7 @@ public class GCalImporter implements CalendarsImporter<CalendarResponses> {
 	}
 
 	@Override
-	public CalendarGroup importCalendarGroup(String url)
+	public CalendarGroup importNewEvent(String url)
 			throws MalformedURLException {
 		// TODO Auto-generated method stub
 		return null;

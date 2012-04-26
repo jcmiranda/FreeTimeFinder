@@ -69,6 +69,11 @@ public class When2MeetImporter implements CalendarsImporter {
 		_months.put("Dec", 12);
 	}
 	
+	public boolean isWhen2MeetURL(String url) {
+		Matcher eventIDMatcher = _eventIDPattern.matcher(url);
+		return eventIDMatcher.matches();
+	}
+	
 	private void parseEventID() {
 		Matcher eventIDMatcher = _eventIDPattern.matcher(_urlString);
 		if(eventIDMatcher.find()) {
@@ -238,7 +243,7 @@ public class When2MeetImporter implements CalendarsImporter {
 	
 	
 	@Override
-	public When2MeetEvent importCalendarGroup(String url) throws IOException{
+	public When2MeetEvent importNewEvent(String url) throws IOException{
 		_urlString = url;
 		_IDsToCals.clear();
 		_slotIndexToSlotID.clear();
