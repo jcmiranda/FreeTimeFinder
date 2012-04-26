@@ -41,15 +41,25 @@ public class ReplyPanel extends CalPanel{
 		configDays();
 	}
 
+
 	public void setResps(CalendarGroup<CalendarResponses> respCals){
 
 		_respCals = respCals;
+		for (DayPanel d: _days){
+			d.setResponses(_respCals);
+		}
 		configDays();
 	}
 
 
 	public void setSlots(CalendarGroup<CalendarSlots> slotCals){
 		_slotCals = slotCals;
+
+		_startHour = _slotCals.getStartTime().getHourOfDay();
+		_endHour = _slotCals.getEndTime().getHourOfDay();
+		_numHours = _endHour - _startHour;
+
+		_thisMonday = _slotCals.getStartTime().minusDays(_slotCals.getStartTime().getDayOfWeek()-1);
 		configDays();
 	}
 
@@ -110,13 +120,12 @@ public class ReplyPanel extends CalPanel{
 				_days[i+1].setActive(true);
 				_days[i+1].setSlots(_slotCals);
 
-				if (_clicks==null) {
-					_clicks = new CalendarGroup<CalendarSlots>(_slotCals.getStartTime(), _slotCals.getEndTime(), CalGroupType.When2MeetEvent);
-					_clicks.addCalendar(new CalendarSlots(_slotCals.getStartTime(),
-							_slotCals.getEndTime(),
-							_slotCals.getCalendars().get(0).getMinInSlot(),
-							Availability.free));
-				}
+				_clicks = new CalendarGroup<CalendarSlots>(_slotCals.getStartTime(), _slotCals.getEndTime(), CalGroupType.When2MeetEvent);
+
+				_clicks.addCalendar(new CalendarSlots(_slotCals.getStartTime(),
+						_slotCals.getEndTime(),
+						_slotCals.getCalendars().get(0).getMinInSlot(),
+						Availability.busy));
 				_days[i].setSlots(_clicks);
 			}
 		}		
