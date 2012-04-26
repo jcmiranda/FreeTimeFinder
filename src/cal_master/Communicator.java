@@ -288,15 +288,17 @@ public class Communicator {
 					responseNames[i] = toReturn.getCalendars().get(i).getOwner().getName();
 				}
 				
-				int selected = JOptionPane.showOptionDialog(null, "Please select the name that represents your response from the list below",
-						"", responseNames.length, JOptionPane.INFORMATION_MESSAGE, null,
+				Object selected = JOptionPane.showInputDialog(null, "Please select the name that represents your response from the list below",
+						"", JOptionPane.INFORMATION_MESSAGE, null,
 						responseNames, responseNames[0]);
 				
+				System.out.println("SELECTED: " + selected);
 				//take the selected cal, remove it from the list, and set it to be the userResponse
-				CalendarSlots user = toReturn.getCalByName(responseNames[selected].toString());
-				//toReturn.removeCalendar(user);
-				toReturn.setUserResponse(user);
-				
+				if(selected != null){
+					CalendarSlots user = toReturn.getCalByName(selected.toString());
+					//toReturn.removeCalendar(user);
+					toReturn.setUserResponse(user);
+				}
 			}
 			//if they haven't, set userResponse to be a new CalendarSlots with them as the owner
 			else{
