@@ -4,10 +4,12 @@ import static gui.GuiConstants.FRAME_HEIGHT;
 import static gui.GuiConstants.FRAME_WIDTH;
 
 import java.awt.BorderLayout;
+import java.awt.Dimension;
 import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
+import javax.swing.GroupLayout;
 import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
@@ -62,7 +64,7 @@ public class CalendarGui {
 		_endHour = slotGroup.getEndTime().getHourOfDay();
 
 		_eventPanel.addEvent(new EventLabel("TESTING TESTING", "1234", _communicator, this));
-		_communicator.startUp();
+		//_communicator.startUp();
 		
 		makeDayLabels();
 		makeHourLabels();
@@ -105,13 +107,43 @@ public class CalendarGui {
 
 	public void buildFrame(){
 		_frame = new JFrame("Kairos");
-		_frame.add(_dayOfWeekLabels, BorderLayout.NORTH);
-		_frame.add(_hourOfDayLabels, BorderLayout.WEST);
-		_frame.add(_when2MeetCal, BorderLayout.CENTER);
+		
+		JPanel calPanel = new JPanel();
+		GroupLayout calLayout = new GroupLayout(calPanel);
+		calPanel.setLayout(calLayout);
+		
+		calLayout.setHorizontalGroup(
+				calLayout.createSequentialGroup()
+					.addComponent(_hourOfDayLabels, GroupLayout.PREFERRED_SIZE, _hourOfDayLabels.getPreferredSize().width,
+					          GroupLayout.PREFERRED_SIZE)
+					.addGroup(calLayout.createParallelGroup(GroupLayout.Alignment.LEADING)
+							.addComponent(_dayOfWeekLabels, GroupLayout.PREFERRED_SIZE, (int) (FRAME_WIDTH*.75),
+							          GroupLayout.PREFERRED_SIZE)
+							.addComponent(_when2MeetCal, GroupLayout.PREFERRED_SIZE, (int) (FRAME_WIDTH*.75),
+							          GroupLayout.PREFERRED_SIZE))
+		);
+		
+		calLayout.setVerticalGroup(
+			calLayout.createSequentialGroup()
+				.addComponent(_dayOfWeekLabels, GroupLayout.PREFERRED_SIZE, _dayOfWeekLabels.getPreferredSize().height,
+				          GroupLayout.PREFERRED_SIZE)
+				.addGroup(calLayout.createParallelGroup(GroupLayout.Alignment.BASELINE)
+						.addComponent(_hourOfDayLabels, GroupLayout.PREFERRED_SIZE, 700,
+						          GroupLayout.PREFERRED_SIZE)
+						.addComponent(_when2MeetCal, GroupLayout.PREFERRED_SIZE, 700,
+						          GroupLayout.PREFERRED_SIZE))
+		);
+		
+//		_frame.add(_dayOfWeekLabels, BorderLayout.NORTH);
+//		_frame.add(_hourOfDayLabels, BorderLayout.WEST);
+//		_frame.add(_when2MeetCal, BorderLayout.CENTER);
+		
+		_frame.add(calPanel, BorderLayout.CENTER);
 		
 		JPanel eastPanel = new JPanel(new GridLayout(0,1));
 		eastPanel.add(_eventPanel);
 		eastPanel.add(_updatesPanel);
+		eastPanel.setPreferredSize(new Dimension((int) (FRAME_WIDTH*.25 - _hourOfDayLabels.getPreferredSize().width), 700));
 		_frame.add(eastPanel, BorderLayout.EAST);
 		
 		//_frame.add(_eventPanel, BorderLayout.EAST);

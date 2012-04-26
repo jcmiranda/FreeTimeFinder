@@ -170,7 +170,7 @@ public class GCalImporter implements CalendarsImporter<CalendarResponses> {
     @Override
 	public CalendarGroup<CalendarResponses> refresh(org.joda.time.DateTime st, org.joda.time.DateTime et) {
 		try {
-			return this.importCalendarGroup(st, et);
+			return this.importMyGCal(st, et);
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
