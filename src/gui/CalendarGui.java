@@ -39,7 +39,6 @@ public class CalendarGui {
 	private int _startHour = 0;
 	private int _endHour = 24;
 	private JFrame _frame;
-	private JButton _switch;
 	private ReplyPanel _when2MeetCal;
 	private JPanel _dayOfWeekLabels;
 	private JPanel _hourOfDayLabels;
@@ -255,8 +254,6 @@ public class CalendarGui {
 
 		//_frame.add(_eventPanel, BorderLayout.EAST);
 		//_frame.add(_updatesPanel, BorderLayout.EAST);
-		_switch = new JButton("SWITCH");
-		_switch.addActionListener(new MainListener());
 		//		_frame.add(_switch, BorderLayout.EAST);
 		_frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		_frame.setSize(FRAME_WIDTH, FRAME_HEIGHT);
@@ -299,15 +296,6 @@ public class CalendarGui {
 		_frame.invalidate();
 		_frame.validate();
 		_frame.repaint();
-	}
-
-	class MainListener implements ActionListener{
-
-		@Override
-		public void actionPerformed(ActionEvent arg0) {
-			//			myView();
-		}
-
 	}
 
 }
