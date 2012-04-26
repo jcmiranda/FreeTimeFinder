@@ -116,12 +116,11 @@ public class ReplyPanel extends CalPanel{
 					|| _thisMonday.plusDays(i/2).isBefore(_slotCals.getStartTime())){
 				_days[i].setActive(false);
 				_days[i+1].setActive(false);
-				System.out.println("Day " + i + "inactive");
 			} else {
 				_days[i].setActive(true);
 				_days[i].setResponses(_respCals);
 				_days[i+1].setActive(true);
-				_days[i+1].setSlots(_slotCals);
+				//_days[i+1].setSlots(_slotCals);
 				System.out.println("Setting i+1 event" + (i+1));
 				_days[i+1].setEvent((Event) _slotCals, ctr);
 				
