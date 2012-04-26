@@ -6,7 +6,7 @@ import java.util.HashMap;
 import calendar.CalGroupType;
 
 public class Index {
-	public enum IndexType {When2MeetEvent, ProgramOwner, GCal};
+	public enum IndexType {When2MeetEvent, ProgramOwner, GCal, GCalImporter};
 	private HashMap<String, IndexType> _calGroups = new HashMap<String, IndexType>();
 	
 	public void addItem(String uniqueID, IndexType type) {

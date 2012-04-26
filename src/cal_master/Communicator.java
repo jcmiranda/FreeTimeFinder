@@ -26,9 +26,11 @@ import ftf.TimeFinderSlots;
 
 public class Communicator {
 
-	private CalendarsImporter<CalendarResponses> _userCalImporter = null;
+	private CalendarsImporter<CalendarResponses> _userCalImporter;
+	private IndexType _userCalImporterType = IndexType.GCalImporter;
+	// = null;
 	private CalendarGroup<CalendarResponses> _userCal = null;
-	private String _userCalID = "userCal", _indexID = "index";
+	private String _userCalID = "userCal", _indexID = "index", _importerID = "userCalImporter";
 	
 	private HashMap<String, When2MeetEvent> _w2mEvents = new HashMap<String, When2MeetEvent>();
 	private When2MeetImporter _importer = new When2MeetImporter();
@@ -45,6 +47,10 @@ public class Communicator {
 	
 	private static final double ATTENDEE_PERCENTAGE = .75;
 	private static final int NUM_SUGGESTIONS = 5;
+	
+	public Communicator() {
+		_userCalImporter = null;
+	}
 	
 	
 	private void setUpXStream() {
@@ -72,6 +78,7 @@ public class Communicator {
 		// Pull in XML for user cal, and create user cal
 		for(String id : _index.getFiles()) {
 			IndexType type = _index.getType(id);
+			assert type != null;
 			Object o = _xstream.fromXML(new File(id + ".xml"));
 			switch(type) {
 			case When2MeetEvent: {
@@ -86,6 +93,9 @@ public class Communicator {
 			}
 			case ProgramOwner: {
 				_owner = (ProgramOwner) o;
+			} 
+			case GCalImporter: {
+				_userCalImporter = (GCalImporter) o;
 			}
 			default: {
 				System.out.println("Default condition triggered on recreating index.");
@@ -112,16 +122,47 @@ public class Communicator {
 				// switch on user response
 				if(selectedValue == "Google Calendar"){
 					this.setCalImporter(new GCalImporter());
+					_userCalImporterType = IndexType.GCalImporter;
 					this.pullCal(DateTime.now(), DateTime.now().plusDays(30));
 				}
 			}
 		}
+		
+		if(this.hasEvent() == false)
+			try {
+				this.addWhen2Meet("http://www.when2meet.com/?426631-GoPHt");
+			} catch (URLAlreadyExistsException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
 		
 		// TODO
 		// Refresh when2meet events
 		// Refresh calendars -> if no calendar, pull in users calendar	
 		refresh();
 			
+	}
+	
+	public boolean hasEvent() {
+		return _w2mEvents != null && _w2mEvents.size() > 0;
+	}
+	
+	public boolean hasUserCal() {
+		return _userCal != null;
+	}
+	
+	public CalendarGroup<CalendarSlots> getFirstEvent() {
+		System.out.println("Num events: " + _w2mEvents.values().size());
+		for(CalendarGroup<CalendarSlots> cal : _w2mEvents.values())
+			return cal;
+		return null;
+	}
+	
+	public CalendarGroup<CalendarResponses> getUserCal() {
+		return _userCal;
 	}
 	
 	/** SAVING **/
@@ -131,7 +172,7 @@ public class Communicator {
 		for(String id : _w2mEvents.keySet())
 			_index.addItem(id, IndexType.When2MeetEvent);
 		_index.addItem(_userCalID, IndexType.GCal);
-
+		_index.addItem(_importerID, _userCalImporterType);
 		writeToFile(_indexID, _index);
 	}
 	
@@ -214,7 +255,9 @@ public class Communicator {
 	}
 	
 	public void setCalImporter(CalendarsImporter<CalendarResponses> importer){
+		System.out.println("Cal importer set");
 		_userCalImporter = importer;
+		this.saveOneItem(_userCalImporter, _importerID);
 	}
 	
 	public void setOwnerName(String name){
@@ -310,7 +353,7 @@ public class Communicator {
 			
 		}
 		if(!toReturn.userHasSubmitted()){
-			//calToW2M(id);
+			calToW2M(id);
 		}
 		
 		return toReturn;
