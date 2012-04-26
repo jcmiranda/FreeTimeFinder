@@ -12,7 +12,7 @@ public class When2MeetEvent extends CalendarGroup<CalendarSlots> {
 	private CalendarSlots _userResponse = null;
 	private boolean _userHasSubmitted = false;
 	private ArrayList<Integer> _slotIndexToSlotID = new ArrayList<Integer>();
-	private ArrayList<EventUpdate> _updates = null;
+	private ArrayList<EventUpdate> _updates = new ArrayList<EventUpdate>();
 	private boolean _hasUpdates = false;
 	
 	
@@ -43,6 +43,9 @@ public class When2MeetEvent extends CalendarGroup<CalendarSlots> {
 	public boolean hasUpdates() { return _hasUpdates; }
 	public ArrayList<EventUpdate> getUpdates() { return _updates; }
 	public void addUpdates(ArrayList<EventUpdate> newUpdates) {
+		assert newUpdates != null;
+		assert _updates != null;
+		
 		if(newUpdates.size() == 0)
 			return;
 		_hasUpdates = true;

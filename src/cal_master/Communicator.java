@@ -6,6 +6,7 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.io.Writer;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
 
 import javax.swing.JOptionPane;
@@ -55,6 +56,7 @@ public class Communicator {
 		_xstream.alias("calendar", Calendar.class);
 		_xstream.alias("when2meetevent", When2MeetEvent.class);
 		_xstream.alias("when2meetowner", When2MeetOwner.class);
+		_xstream.alias("eventupdate", EventUpdate.class);
 		_xstream.alias("avail", Availability.class);
 	}
 	
@@ -156,13 +158,13 @@ public class Communicator {
 		updateIndex();
 		
 		// Store XML for when2meet events
-		for(String id : _w2mEvents.keySet())
+		for(String id : _w2mEvents.keySet()) {
+			System.out.println("Saving " + id);
 			writeToFile(id, _w2mEvents.get(id));
+		}
 		
 		// Store XML for calendar
-		System.out.println("CALLING WRITE USER CAL");
 		writeToFile(_userCalID, _userCal);
-		System.out.println("WROTE USER CAL");
 	}
 	
 	public class URLAlreadyExistsException extends Exception {
@@ -368,6 +370,10 @@ public class Communicator {
 			toReturn.add(new NameIDPair(e.getName(), String.valueOf(e.getID())));
 	
 		return toReturn;
+	}
+	
+	public Collection<String> getEventIDs() {
+		return _w2mEvents.keySet();
 	}
 	
 	public CalendarGroup<CalendarResponses> getCal(){

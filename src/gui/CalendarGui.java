@@ -9,7 +9,10 @@ import java.awt.Dimension;
 import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
 import java.util.ArrayList;
+import java.util.Collection;
 
 import javax.swing.GroupLayout;
 import javax.swing.JButton;
@@ -20,7 +23,9 @@ import javax.swing.SwingConstants;
 
 import org.joda.time.DateTime;
 
+
 import cal_master.Communicator;
+import cal_master.NameIDPair;
 import calendar.CalendarGroup;
 import calendar.CalendarResponses;
 import calendar.CalendarSlots;
@@ -66,9 +71,15 @@ public class CalendarGui {
 		_startHour = slotGroup.getStartTime().getHourOfDay();
 		_endHour = slotGroup.getEndTime().getHourOfDay();
 
+		_communicator.startUp();
+		ArrayList<NameIDPair> pairs = _communicator.getNameIDPairs();
+		for(NameIDPair pair : pairs) {
+			_eventPanel.addEvent(new EventLabel(pair.getName(), pair.getID(), _communicator, this));
+		}
+		
+		
 		_eventPanel.addEvent(new EventLabel("TESTING TESTING", "1234", _communicator, this));
-		//_communicator.startUp();
-
+		
 		makeDayLabels();
 		makeHourLabels();
 		buildFrame();
@@ -150,9 +161,17 @@ public class CalendarGui {
 	}
 
 
-
+	private class InnerWindowListener extends WindowAdapter {
+		@Override
+		public void windowClosing(WindowEvent e) {
+			System.out.println("Window closing triggered");
+			_communicator.saveAll();
+		}
+	}
+	
 	public void buildFrame(){
 		_frame = new JFrame("Kairos");
+		_frame.addWindowListener(new InnerWindowListener());
 
 		JPanel calPanel = new JPanel();
 		GroupLayout calLayout = new GroupLayout(calPanel);
