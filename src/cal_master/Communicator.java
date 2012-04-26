@@ -32,7 +32,7 @@ public class Communicator {
 	private CalendarGroup<CalendarResponses> _userCal = null;
 	private String _userCalID = "userCal", _indexID = "index", _importerID = "userCalImporter";
 	
-	private HashMap<String, When2MeetEvent> _w2mEvents = new HashMap<String, When2MeetEvent>();
+	private HashMap<String, Event> _w2mEvents = new HashMap<String, Event>();
 	private When2MeetImporter _importer = new When2MeetImporter();
 	private When2MeetExporter _exporter = new When2MeetExporter();
 
@@ -133,7 +133,7 @@ public class Communicator {
 		
 		if(this.hasEvent() == false)
 			try {
-				this.addWhen2Meet("http://www.when2meet.com/?426631-GoPHt");
+				this.addEvent("http://www.when2meet.com/?426631-GoPHt");
 			} catch (URLAlreadyExistsException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
@@ -221,11 +221,11 @@ public class Communicator {
 		
 	}
 	
-	public When2MeetEvent addWhen2Meet(String url) throws URLAlreadyExistsException, IOException {
+	public Event addEvent(String url) throws URLAlreadyExistsException, IOException {
 		// Check if we have this url already
 		// If we do, throw an error
-		for(When2MeetEvent w2me : _w2mEvents.values())
-			if(w2me.getURL().equals(url)) {
+		for(Event event : _w2mEvents.values())
+			if(event.getURL().equals(url)) {
 				System.out.println("URL already found");
 				throw new URLAlreadyExistsException();
 			}
@@ -234,7 +234,7 @@ public class Communicator {
 		// If it's a valid url, pull in that when2meet using an importer
 		// If it's not a valid url, error message to user
 		
-		When2MeetEvent newEvent = _importer.importCalendarGroup(url);
+		Event newEvent = _importer.importCalendarGroup(url);
 		String id = newEvent.getID() + "";
 		_w2mEvents.put(id, newEvent);
 		saveOneItem(newEvent, id);
@@ -250,7 +250,7 @@ public class Communicator {
 	
 	public void removeWhen2Meet(String eventID) {
 		// Check that we do have an event with this ID
-		When2MeetEvent toRemove = _w2mEvents.get(eventID);
+		Event toRemove = _w2mEvents.get(eventID);
 		
 		// If we do, remove it form our list of events
 		// Save this when2meet, and our new index
@@ -277,9 +277,12 @@ public class Communicator {
 		//TODO: deal with URL exception
 		// Update all when2meet events
 		When2MeetEvent temp = null;
-		for(When2MeetEvent w2m : _w2mEvents.values()){
+		for(Event event : _w2mEvents.values()){
 			//repull info
-			_importer.refreshEvent(w2m);
+			if(event.getCalGroupType() == CalGroupType.When2MeetEvent)
+				_importer.refreshEvent((When2MeetEvent) event);
+			else
+				System.out.println("Invalid event type - not when2meet");
 		}
 		// Update user calendar
 		if(_userCal != null){
@@ -291,7 +294,7 @@ public class Communicator {
 	}
 	
 	public void calToW2M(String eventID){
-		When2MeetEvent w2m = _w2mEvents.get(eventID);
+		Event w2m = _w2mEvents.get(eventID);
 		if(w2m != null && !w2m.userHasSubmitted()){
 			
 			//check to see that w2m in range of userCal
@@ -322,12 +325,12 @@ public class Communicator {
 		}
 	}
 	
-	public When2MeetEvent getW2MByID(String id){
+	public Event getEventByID(String id){
 		return _w2mEvents.get(id);
 	}
 	
-	public When2MeetEvent getW2M(String id){
-		When2MeetEvent toReturn = _w2mEvents.get(id);
+	public Event getW2M(String id){
+		Event toReturn = _w2mEvents.get(id);
 		if(toReturn.getUserResponse() == null){
 			
 			//ask user if they've responded to the event
@@ -385,15 +388,19 @@ public class Communicator {
 	}
 	
 	public void submitResponse(String eventID, CalendarSlots response) {
-		When2MeetEvent w2m = _w2mEvents.get(eventID);	
-		boolean didNotPost = true;
-		while(didNotPost){
-			try {
-				_exporter.postAllAvailability(w2m);
-				didNotPost = false;
-			} catch (NameAlreadyExistsException e) {
-				getNewUserName(w2m, w2m.getUserResponse().getOwner().getName());
+		Event event = _w2mEvents.get(eventID);	
+		if(event.getCalGroupType() == CalGroupType.When2MeetEvent) {
+			boolean didNotPost = true;
+			while(didNotPost){
+				try {
+					_exporter.postAllAvailability((When2MeetEvent) event);
+					didNotPost = false;
+				} catch (NameAlreadyExistsException e) {
+					getNewUserName((When2MeetEvent) event, event.getUserResponse().getOwner().getName());
+				}
 			}
+		} else {
+			System.out.println("Tried to submit a response for event type not when2meet");
 		}
 		
 		//save to index
@@ -402,7 +409,7 @@ public class Communicator {
 	public CalendarSlots getBestTimes(String eventID, int duration){
 		//TODO make more generic (hard-coding 15, limiting to w2m)
 		
-		When2MeetEvent w2m = _w2mEvents.get(eventID);
+		Event w2m = _w2mEvents.get(eventID);
 		CalendarSlots toReturn = null;
 		
 		if(w2m != null){
@@ -418,7 +425,7 @@ public class Communicator {
 		// Return the list of name ID pairs associated with all events
 		ArrayList<NameIDPair> toReturn = new ArrayList<NameIDPair>();
 		
-		for(When2MeetEvent e : _w2mEvents.values())
+		for(Event e : _w2mEvents.values())
 			toReturn.add(new NameIDPair(e.getName(), String.valueOf(e.getID())));
 	
 		return toReturn;

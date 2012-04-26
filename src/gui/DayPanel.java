@@ -136,25 +136,21 @@ public class DayPanel extends JPanel{
 
 
 	public void paintComponent(Graphics g){
-
 		super.paintComponent(g);
 		Graphics2D brush = (Graphics2D) g;
 		drawLines(brush);
-		if (_responses!=null){
+		if (!_active){
+			System.out.println("Painting gray out");
+			brush.setColor(GRAY_OUT_COLOR);
+			brush.fillRect(0, 0, getWidth(), getHeight());
+		}  else if (_responses!=null){
 			int numCals = _responses.getCalendars().size();
 			for (CalendarResponses r: _responses.getCalendars()){
 				r.paint(brush, this, numCals);
 			}
-		}
-		if (!_active){
-			brush.setColor(GRAY_OUT_COLOR);
-			brush.fillRect(0, 0, getWidth(), getHeight());
-		} 
-		if (_slots!=null && _event != null){
+		} else if (_slots!=null && _event != null){
 			//When2MeetEvent event = (When2MeetEvent) _slots;
-			assert _event != null;
-			assert brush != null;
-			assert this != null;
+			System.out.println("Painting day from within day panel");
 			_event.paint(brush, this, _day);
 			/*
 			for (CalendarSlots s: _slots.getCalendars()){

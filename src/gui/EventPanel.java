@@ -17,6 +17,7 @@ import javax.swing.LayoutStyle;
 
 import cal_master.Communicator;
 import cal_master.Communicator.URLAlreadyExistsException;
+import calendar.Event;
 import calendar.When2MeetEvent;
 
 public class EventPanel extends JPanel {
@@ -62,7 +63,6 @@ public class EventPanel extends JPanel {
 	}
 	
 	public void addEvent(EventLabel label){
-		System.out.println("ADDING LABEL");
 		_eventLabels.add(label);
 		setUp();
 //		JPanel labelPanel = new JPanel();
@@ -105,13 +105,13 @@ public class EventPanel extends JPanel {
 		public void actionPerformed(ActionEvent arg0) {
 			//TODO: cancel option
 			String url = JOptionPane.showInputDialog("Please enter the URL of the When2Meet you would like to add");
-			When2MeetEvent newEvent = null;
+			Event newEvent = null;
 			boolean noEvent = true;
 			while(noEvent){
 				try {
 					if(url == null)
 						break;
-					newEvent = _communicator.addWhen2Meet(url);
+					newEvent = _communicator.addEvent(url);
 					noEvent = false;
 				} catch (MalformedURLException e) {
 					url = JOptionPane.showInputDialog("Invalid URL. Try Again.");

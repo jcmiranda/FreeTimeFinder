@@ -29,12 +29,13 @@ import cal_master.NameIDPair;
 import calendar.CalendarGroup;
 import calendar.CalendarResponses;
 import calendar.CalendarSlots;
+import calendar.Event;
 import calendar.When2MeetEvent;
 
 public class CalendarGui {
 
 	private CalendarGroup<CalendarResponses> _responseGroup;
-	private CalendarGroup<CalendarSlots> _slotGroup;
+	private Event _slotGroup;
 	private int _startHour = 0;
 	private int _endHour = 24;
 	private JFrame _frame;
@@ -57,7 +58,7 @@ public class CalendarGui {
 		
 		if(_communicator.hasEvent())  {
 			
-			When2MeetEvent toReturn = _communicator.getW2M(_communicator.getFirstEventID());
+			Event toReturn = _communicator.getW2M(_communicator.getFirstEventID());
 			_slotGroup = toReturn;
 			//_slotGroup=_communicator.getFirstEvent();
 			_thisMonday = _slotGroup.getStartTime().minusDays(_slotGroup.getStartTime().getDayOfWeek()-1);
@@ -91,6 +92,7 @@ public class CalendarGui {
 		buildFrame();
 	}
 
+	/*
 	public CalendarGui(CalendarGroup<CalendarResponses> responseGroup, CalendarGroup<CalendarSlots> slotGroup){
 		_slotGroup=slotGroup;
 		_responseGroup=responseGroup;
@@ -114,14 +116,14 @@ public class CalendarGui {
 		makeDayLabels();
 		makeHourLabels();
 		buildFrame();
-	}
+	}*/
 
-	public void setSlots(CalendarGroup<CalendarSlots> slotGroup){
-		_slotGroup= slotGroup;
-		_when2MeetCal.setSlots(_slotGroup);
-		_startHour = slotGroup.getStartTime().getHourOfDay();
-		_endHour = slotGroup.getEndTime().getHourOfDay();
-		_thisMonday = slotGroup.getStartTime().minusDays(slotGroup.getStartTime().getDayOfWeek()-1);
+	public void setEvent(Event event){
+		_slotGroup= event;
+		_when2MeetCal.setSlots(event);
+		_startHour = event.getStartTime().getHourOfDay();
+		_endHour = event.getEndTime().getHourOfDay();
+		_thisMonday = event.getStartTime().minusDays(event.getStartTime().getDayOfWeek()-1);
 		updateHourLabels();
 		updateDayLabels();
 

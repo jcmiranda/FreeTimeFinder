@@ -115,7 +115,8 @@ public class ReplyPanel extends CalPanel{
 			if (_thisMonday.plusDays(i/2).isAfter(_slotCals.getEndTime())
 					|| _thisMonday.plusDays(i/2).isBefore(_slotCals.getStartTime())){
 				_days[i].setActive(false);
-				_days[i+1].setActive(false);	
+				_days[i+1].setActive(false);
+				System.out.println("Day " + i + "inactive");
 			} else {
 				_days[i].setActive(true);
 				_days[i].setResponses(_respCals);
@@ -140,7 +141,7 @@ public class ReplyPanel extends CalPanel{
 				ctr++;
 			}
 		}		
-		repaint();
+		//repaint();
 	}
 
 }
