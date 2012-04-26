@@ -120,8 +120,7 @@ public class ReplyPanel extends CalPanel{
 				_days[i].setActive(true);
 				_days[i].setResponses(_respCals);
 				_days[i+1].setActive(true);
-				//_days[i+1].setSlots(_slotCals);
-				System.out.println("Setting i+1 event" + (i+1));
+				// TODO to change back to when2meet style display, change to setSlots and get rid of set Event
 				_days[i+1].setEvent((Event) _slotCals, ctr);
 				
 

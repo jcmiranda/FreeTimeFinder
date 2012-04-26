@@ -104,11 +104,7 @@ public class DayPanel extends JPanel{
 	public void addSlotCal(CalendarSlots cal){
 		_slots.addCalendar(cal);
 	}
-	//	
-	//	public void addRespCal(ArrayList<Response> cal){
-	//		_responses.add(cal);
-	//	}
-	//	
+
 	public void setDay(DateTime today){
 		_today = today;
 	}
