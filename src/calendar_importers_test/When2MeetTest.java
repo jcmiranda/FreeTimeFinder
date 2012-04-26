@@ -17,6 +17,7 @@ import ftf.TimeFinderSlots;
 
 public class When2MeetTest {
 	
+	/*
 	public void postToWeb() throws IOException {
 		When2MeetImporter wtmi = new When2MeetImporter("http://www.when2meet.com/?353066-BlwWl");
 
@@ -26,15 +27,32 @@ public class When2MeetTest {
 		When2MeetExporter exporter = new When2MeetExporter(w2me);
 		exporter.postNewEvent();
 	}
+	*/
 	
 	public static void main(String[] args) throws IOException, NameAlreadyExistsException {
 		//String str = JOptionPane.showInputDialog(null, "Enter When2Meet URL: ", 
 		//		"http://www.when2meet.com/?353066-BlwWl", 1);
 		//String url = "http://www.when2meet.com/?353066-BlwWl";
-		When2MeetImporter wtmi = new When2MeetImporter("http://www.when2meet.com/?353066-BlwWl");
-		When2MeetEvent specs = wtmi.importCalendarGroup();
-		ArrayList<CalendarSlots> calsBefore = specs.getCalendars();
+		//"http://www.when2meet.com/?353066-BlwWl");
 		
+		
+		When2MeetImporter wtmi = new When2MeetImporter(); 
+		When2MeetEvent bDemo = wtmi.importCalendarGroup("http://www.when2meet.com/?426631-GoPHt");
+		CalendarSlots jeanetteCal = bDemo.getCalByName("Jeanette");
+		
+		/*
+		for(int i = 0; i < jeanetteCal.getTotalSlots(); i++) 
+			jeanetteCal.setAvail(i, Availability.free);
+		
+		for(int i = 8; i < 14; i++)
+			jeanetteCal.setAvail(i, Availability.busy);
+		
+		When2MeetExporter exporter = new When2MeetExporter();
+		exporter.postAllAvailability(bDemo);
+		*/
+
+		
+		/*
 		XStream xstream = new XStream();
 		xstream.alias("calendarslots", CalendarSlots.class);
 		xstream.alias("when2meetevent", When2MeetEvent.class);
@@ -45,6 +63,7 @@ public class When2MeetTest {
 		System.out.println(xml);
 		
 		When2MeetEvent specsRecreated = (When2MeetEvent) xstream.fromXML(xml);
+		*/
 		/*
 		ArrayList<CalendarSlots> calsAfter = specsRecreated.getCalendars();
 		for(int i = 0; i < calsAfter.size(); i++) {
@@ -56,19 +75,14 @@ public class When2MeetTest {
 		//wtmi = new When2MeetImporter("http://www.when2meet.com/?408906-BySEr");
 		//w2me = wtmi.importCalendarGroup();
 		
+		
 		/*
 		CalendarSlots cal1 = w2me.getCalByName("Password");
 		cal1.getOwner().setName("Test");
 		System.out.println("Name: " + cal1.getOwner().getName());
 		*/
 		
-		/*
-		ArrayList<Integer> slotIDs = new ArrayList<Integer>();
-		slotIDs.add(4);
-		slotIDs.add(5);
-		slotIDs.add(6);
-		slotIDs.add(7);
-		*/
+	
 		/*
 		for(int i = 0; i < cal1.getTotalSlots(); i++) {
 			if(i%3 == 0)

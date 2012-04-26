@@ -1,24 +1,23 @@
 package cal_master;
 
+import java.util.Collection;
 import java.util.HashMap;
 
-import calendar.CalType;
-import calendar.CalendarGroup;
-import calendar.CalendarResponses;
-import calendar.CalendarSlots;
-import calendar.EventType;
+import calendar.CalGroupType;
 
 public class Index {
-	private HashMap<String, EventType> _events = new HashMap<String, EventType>();
-	private HashMap<String, CalType> _userCal = new HashMap<String, CalType>();
+	public enum IndexType {When2MeetEvent, ProgramOwner, GCal, GCalImporter};
+	private HashMap<String, IndexType> _calGroups = new HashMap<String, IndexType>();
 	
-	public void addEvent(CalendarGroup<CalendarSlots> event, EventType type) {
-		// Fill in here
-		// If event already exists, replace it
-		// If event isn't in index, add it
+	public void addItem(String uniqueID, IndexType type) {
+		_calGroups.put(uniqueID, type);
 	}
 	
-	public void setCal(CalendarGroup<CalendarResponses> userCal, CalType type) {
-		// Set tracked userCal to be userCal
+	public Collection<String> getFiles() {
+		return _calGroups.keySet();
+	}
+	
+	public IndexType getType(String id) {
+		return _calGroups.get(id);
 	}
 }

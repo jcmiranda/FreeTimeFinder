@@ -40,6 +40,7 @@ import com.google.gdata.data.calendar.*;
 import com.google.gdata.data.extensions.When;
 import com.google.gdata.util.AuthenticationException;
 import com.google.gdata.util.ServiceException;
+
 import com.google.gdata.client.*;
 import com.google.api.client.auth.oauth2.draft10.AccessTokenResponse;
 import com.google.api.client.googleapis.auth.oauth2.draft10.*;
@@ -69,7 +70,7 @@ import com.google.api.client.json.jackson.JacksonFactory;
  * Function: GoogleCalendars refresh(org.joda.time.DateTime startTime, org.joda.time.DateTime endTime)
  */
 
-public class GCalImporter implements CalendarsImporter {
+public class GCalImporter implements CalendarsImporter<CalendarResponses> {
 	private CalendarService _client;
 	int MAX_RESPONSES = 100;
 	private Owner _owner;
@@ -79,7 +80,7 @@ public class GCalImporter implements CalendarsImporter {
 		_client = new CalendarService("yourCompany-yourAppName-v1");
 	}
 	
-	public GoogleCalendars importMyGCal(org.joda.time.DateTime startTime, org.joda.time.DateTime endTime) throws IOException, ServiceException, com.google.gdata.util.ServiceException {
+	public CalendarGroup<CalendarResponses> importMyGCal(org.joda.time.DateTime startTime, org.joda.time.DateTime endTime) throws IOException, ServiceException, com.google.gdata.util.ServiceException {
 		//authenticate user
 		this.setAuth();
 		//import calendars -- make calendar group
@@ -269,7 +270,7 @@ public class GCalImporter implements CalendarsImporter {
 		
 	}
 	
-	public GoogleCalendars importCalendarGroup(org.joda.time.DateTime st, org.joda.time.DateTime et) throws IOException, ServiceException, com.google.gdata.util.ServiceException {
+	public CalendarGroup<CalendarResponses> importCalendarGroup(org.joda.time.DateTime st, org.joda.time.DateTime et) throws IOException, ServiceException, com.google.gdata.util.ServiceException {
 		//calendar group
 		GoogleCalendars allCalendars = new GoogleCalendars(st, et, _owner);
 		//set URL to get calendars
@@ -330,7 +331,12 @@ public class GCalImporter implements CalendarsImporter {
 		myQuery.setStringCustomParameter("singleevents", "true");
 		myQuery.setMaxResults(100);
 		//send request and get result feed
-		CalendarEventFeed resultFeed = _client.query(myQuery, CalendarEventFeed.class);
+		CalendarEventFeed resultFeed = null;
+		try {
+		 resultFeed = _client.query(myQuery, CalendarEventFeed.class);
+		} catch (ServiceException e) {
+			System.out.println("AHa service exception");
+		}
 		
 		//go through feed and get events to make responses
 		for (int i = 0; i < resultFeed.getEntries().size(); i++) {
@@ -353,18 +359,24 @@ public class GCalImporter implements CalendarsImporter {
 //    	myImporter.post();
     	System.out.println("DONE");
     }
+	
+	public CalendarGroup<CalendarResponses> refresh(org.joda.time.DateTime st, org.joda.time.DateTime et) {
+		try {
+			return this.importMyGCal(st, et);
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (ServiceException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return null;
+	}
 
 	@Override
-	public CalendarGroup importCalendarGroup() {
+	public CalendarGroup<CalendarResponses> importCalendarGroup() {
 		// TODO Auto-generated method stub
 		return null;
 	}
-	
-	public GoogleCalendars refresh(org.joda.time.DateTime st, org.joda.time.DateTime et) throws IOException, ServiceException, com.google.gdata.util.ServiceException {
-		return this.importMyGCal(st, et);
-	}
-	
-	
-	
 }
 

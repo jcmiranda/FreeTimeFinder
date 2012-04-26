@@ -2,23 +2,26 @@ package gui;
 
 import static gui.GuiConstants.LINE_SPACING;
 
-
 import java.awt.GridLayout;
 import java.util.ArrayList;
 
 import org.joda.time.DateTime;
 import org.joda.time.Days;
 
+import calendar.Availability;
+import calendar.CalGroupType;
 import calendar.CalendarGroup;
 import calendar.CalendarResponses;
 import calendar.CalendarSlots;
 import calendar.Response;
-import calendar.Availability;
+import calendar.When2MeetEvent;
 
 public class ReplyPanel extends CalPanel{
 
 	private CalendarGroup<CalendarSlots> _slotCals;
 	private CalendarGroup<CalendarResponses> _respCals;
+	private CalendarGroup<CalendarSlots> _clicks;
+
 
 	public ReplyPanel(DateTime thisMonday) {
 		super(thisMonday);
@@ -42,33 +45,30 @@ public class ReplyPanel extends CalPanel{
 	public void setResps(CalendarGroup<CalendarResponses> respCals){
 
 		_respCals = respCals;
-
-		for (int i=0; i<14; i=i+2){
-			_days[i].setResponses(getDayResps(i/2, _respCals));
+		for (DayPanel d: _days){
+			d.setResponses(_respCals);
 		}
-		this.repaint();
+		configDays();
 	}
 
 
 	public void setSlots(CalendarGroup<CalendarSlots> slotCals){
 		_slotCals = slotCals;
+
+		_startHour = _slotCals.getStartTime().getHourOfDay();
+		_endHour = _slotCals.getEndTime().getHourOfDay();
+		_numHours = _endHour - _startHour;
+
+		_thisMonday = _slotCals.getStartTime().minusDays(_slotCals.getStartTime().getDayOfWeek()-1);
 		configDays();
-		for (int i=0; i<14; i=i+2){
-			if (_days[i].isActive()){
-				_days[i].setSlots(getDaySlots(i/2,_slotCals));			
-			}
-		}
-		this.repaint();
 	}
 
 	public ArrayList<ArrayList<Response>> getDayResps(int dayOfWeek, CalendarGroup<CalendarResponses> respCals){
 
-		// How would I do this without typecasting?
 		ArrayList<ArrayList<Response>> responses = new ArrayList<ArrayList<Response>>();
-		for (Object resp: respCals.getCalendars()){
+		for (CalendarResponses resp: respCals.getCalendars()){
 			ArrayList<Response> resps = new ArrayList<Response>();
-			CalendarResponses c = (CalendarResponses) resp;
-			for (Response r: c.getResponses()){
+			for (Response r: resp.getResponses()){
 				if (Days.daysBetween(_thisMonday.plusDays(dayOfWeek), r.getStartTime()).getDays()==0){
 					resps.add(r);
 				}
@@ -81,12 +81,10 @@ public class ReplyPanel extends CalPanel{
 
 	public ArrayList<CalendarSlots> getDaySlots(int dayOfWeek, CalendarGroup<CalendarSlots> slotCals){
 
-		// How would I do this without typecasting?
 		ArrayList<CalendarSlots> slots = new ArrayList<CalendarSlots>();
-		for (Object s: slotCals.getCalendars()){
-			CalendarSlots c = (CalendarSlots) s;
-			Availability[][] oneDayAvail = {c.getAvail()[Days.daysBetween(c.getStartTime(), _thisMonday.plusDays(dayOfWeek)).getDays()]};
-			CalendarSlots oneDayCal = new CalendarSlots(c.getStartTime(), c.getEndTime(), c.getOwner(), c.getMinInSlot(), oneDayAvail);
+		for (CalendarSlots s: slotCals.getCalendars()){
+			Availability[][] oneDayAvail = {s.getAvail()[Days.daysBetween(s.getStartTime(), _thisMonday.plusDays(dayOfWeek)).getDays()]};
+			CalendarSlots oneDayCal = new CalendarSlots(s.getStartTime(), s.getEndTime(), s.getOwner(), s.getMinInSlot(), oneDayAvail);
 			slots.add(oneDayCal);	
 		}
 		return slots;
@@ -118,10 +116,21 @@ public class ReplyPanel extends CalPanel{
 				_days[i+1].setActive(false);	
 			} else {
 				_days[i].setActive(true);
-				_days[i].setResponses(getDayResps(i/2, _respCals));
+				_days[i].setResponses(_respCals);
 				_days[i+1].setActive(true);
-				_days[i].setSlots(getDaySlots(i/2, _slotCals));
-				_days[i+1].setSlots(getDaySlots(i/2, _slotCals));
+				_days[i+1].setSlots(_slotCals);
+
+				_clicks = new CalendarGroup<CalendarSlots>(_slotCals.getStartTime(), _slotCals.getEndTime(), CalGroupType.When2MeetEvent);
+
+
+				if(((When2MeetEvent) _slotCals).getUserResponse() != null)
+					_clicks.addCalendar(((When2MeetEvent) _slotCals).getUserResponse());
+				else
+					_clicks.addCalendar(new CalendarSlots(_slotCals.getStartTime(),
+					_slotCals.getEndTime(),
+					_slotCals.getCalendars().get(0).getMinInSlot(),
+					Availability.busy));
+				_days[i].setSlots(_clicks);
 			}
 		}		
 		repaint();

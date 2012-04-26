@@ -1,6 +1,7 @@
 package cal_master;
 
 import java.io.IOException;
+
 import java.util.ArrayList;
 
 import org.joda.time.DateTime;
@@ -56,7 +57,7 @@ public class Converter {
 		return minutesOff / INTERVAL + offset;
 	}
 	
-	public CalendarSlots gCalToSlots(CalendarGroup<CalendarResponses> userCal, When2MeetEvent w2m){
+	public CalendarSlots calToSlots(CalendarGroup<CalendarResponses> userCal, When2MeetEvent w2m){
 		
 		ArrayList<CalendarResponses> calendars = userCal.getCalendars();
 		if(calendars.size() <= 0){

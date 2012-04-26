@@ -2,22 +2,22 @@ package calendar;
 
 import java.util.ArrayList;
 import java.util.Collection;
-
 import org.joda.time.DateTime;
 
 public class CalendarGroup<C extends Calendar> {
 
 	protected ArrayList<C> _calendars = new ArrayList<C>();
 	protected DateTime _start, _end;
+	private CalGroupType _calGroupType = CalGroupType.Unset;
 	
-	public CalendarGroup(DateTime start, DateTime end){
+	public CalendarGroup(DateTime start, DateTime end, CalGroupType type){
 		_start = start;
 		_end = end;
+		_calGroupType = type;
 	}
 	
-	public CalendarGroup(DateTime start, DateTime end, Collection<C> cals){
-		_start = start;
-		_end = end;
+	public CalendarGroup(DateTime start, DateTime end, Collection<C> cals, CalGroupType type){
+		this(start, end, type);
 		for(C c : cals)
 			_calendars.add(c);
 	}
@@ -53,4 +53,9 @@ public class CalendarGroup<C extends Calendar> {
 	public void clearCalendars(){
 		_calendars.clear();
 	}
+	
+	public CalGroupType getCalGroupType() {
+		return _calGroupType;
+	}
+	
 }
