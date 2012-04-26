@@ -126,7 +126,11 @@ public class CalendarGui {
 		_thisMonday = event.getStartTime().minusDays(event.getStartTime().getDayOfWeek()-1);
 		updateHourLabels();
 		updateDayLabels();
-
+	}
+	
+	public void setResponses(CalendarGroup<CalendarResponses> responseGroup){
+		_responseGroup= responseGroup;
+		_when2MeetCal.setResps(_responseGroup);
 	}
 	
 	public void updateDayLabels(){
@@ -286,7 +290,11 @@ public class CalendarGui {
 	//		this.repaint();
 	//	}
 
-
+	public void replyToEvent(){
+		_communicator.submitResponse(Integer.toString(((When2MeetEvent) _slotGroup).getID()), _when2MeetCal.getClicks());
+	}
+	
+	
 	public void repaint(){
 		_frame.invalidate();
 		_frame.validate();

@@ -6,7 +6,7 @@ public class GuiConstants {
 
 	public static final int FRAME_HEIGHT = 700;
 	public static final int FRAME_WIDTH = 1300;
-	public static final int RESPONSE_SPACING = 2;	
+	public static final int RESPONSE_SPACING = 0;	
 	public static final int LINE_SPACING = 2;	
 	public static final int RESPONSE_NAME_SPACING = 3;	
 	public static final int RESPONSE_CONFLICT_SPACING = 30;	
