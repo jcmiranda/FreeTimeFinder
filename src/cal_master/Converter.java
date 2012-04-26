@@ -12,6 +12,7 @@ import calendar.Availability;
 import calendar.CalendarGroup;
 import calendar.CalendarResponses;
 import calendar.CalendarSlots;
+import calendar.Event;
 import calendar.GoogleCalendars;
 import calendar.Response;
 import calendar.When2MeetEvent;
@@ -57,7 +58,7 @@ public class Converter {
 		return minutesOff / INTERVAL + offset;
 	}
 	
-	public CalendarSlots calToSlots(CalendarGroup<CalendarResponses> userCal, When2MeetEvent w2m){
+	public CalendarSlots calToSlots(CalendarGroup<CalendarResponses> userCal, Event w2m){
 		
 		ArrayList<CalendarResponses> calendars = userCal.getCalendars();
 		if(calendars.size() <= 0){

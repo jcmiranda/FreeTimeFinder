@@ -8,6 +8,7 @@ import java.awt.event.MouseListener;
 import javax.swing.JLabel;
 
 import cal_master.Communicator;
+import calendar.Event;
 import calendar.When2MeetEvent;
 
 public class EventLabel extends JLabel implements MouseListener{
@@ -39,7 +40,7 @@ public class EventLabel extends JLabel implements MouseListener{
 	}
 	
 	public void refresh(){
-		When2MeetEvent event = _communicator.getW2MByID(_id);
+		Event event = _communicator.getEventByID(_id);
 		if(event != null && event.hasUpdates()){
 			this.setFont(new Font(this.getFont().getName(), Font.BOLD, this.getFont().getSize()));
 		}
@@ -50,10 +51,10 @@ public class EventLabel extends JLabel implements MouseListener{
 	
 	@Override
 	public void mouseClicked(MouseEvent arg0) {
-		When2MeetEvent toReturn = _communicator.getW2M(_id);
+		Event toReturn = _communicator.getW2M(_id);
 		if(toReturn != null){
 			System.out.println("GOT IT!");
-			_gui.setSlots(toReturn);
+			_gui.setEvent(toReturn);
 			toReturn.updatesViewed();
 			_gui.repaint();
 		}
