@@ -33,7 +33,7 @@ public class DayPanel extends JPanel{
 	private CalendarGroup<CalendarSlots> _slots;
 	private CalendarGroup<CalendarResponses> _responses;
 	private Boolean _active = true;
-
+	private CalendarSlots _optimal;
 
 	public DayPanel(){
 		super();
@@ -161,9 +161,10 @@ public class DayPanel extends JPanel{
 					s.paint(brush, this);
 				}
 			}
+			if (_optimal!=null){
+				_optimal.paintOptimal(brush,this);
+			}
 		}
-		
-
 	}
 
 	// Maybe use this later

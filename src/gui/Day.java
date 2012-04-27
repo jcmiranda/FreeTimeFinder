@@ -1,9 +1,12 @@
 package gui;
 
+import static gui.GuiConstants.PALE_YELLOW;
+
 import java.awt.BorderLayout;
 
 import java.awt.Dimension;
 import java.awt.Graphics;
+import java.awt.Graphics2D;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.GridLayout;
@@ -99,8 +102,9 @@ public class Day extends JPanel{
 		this.repaint();
 	}
 
-	public void paint(Graphics g){
-		super.paint(g);
+	public void paintComponent(Graphics g){
+		super.paintComponent(g);
 		this.revalidate();
+
 	}
 }
