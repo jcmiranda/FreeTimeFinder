@@ -4,6 +4,7 @@ import static gui.GuiConstants.FRAME_HEIGHT;
 import static gui.GuiConstants.FRAME_WIDTH;
 
 import java.awt.BorderLayout;
+import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
@@ -19,6 +20,8 @@ import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.SwingConstants;
+import javax.swing.border.Border;
+import javax.swing.border.EmptyBorder;
 
 import org.joda.time.DateTime;
 
@@ -175,7 +178,7 @@ public class CalendarGui {
 	
 	public void updateHourLabels(){
 		_hourOfDayLabels.removeAll();
-		_hourOfDayLabels.setLayout(new GridLayout(_numHours, 1, 0, GuiConstants.LINE_SPACING));
+		_hourOfDayLabels.setLayout(new GridLayout(_numHours, 1, 0, 1));
 
 		for (int i=_startHour; i<_startHour + _numHours; i++){
 			JPanel hourLabel = new JPanel();
@@ -191,14 +194,17 @@ public class CalendarGui {
 	public void makeHourLabels(){
 		_hourOfDayLabels = new JPanel();
 		_hourOfDayLabels.setBackground(GuiConstants.LINE_COLOR);
-		_hourOfDayLabels.setLayout(new GridLayout(_numHours, 1, 0, GuiConstants.LINE_SPACING));
-
+//		_hourOfDayLabels.setBackground(Color.GREEN);
+		_hourOfDayLabels.setLayout(new GridLayout(_numHours, 1, 0, 1));
+		_hourOfDayLabels.setBorder(new EmptyBorder(0,0,0,0));
+		System.out.println(_numHours);
 
 		//System.out.println("End Hour: " + _endHour);
 		
 		for (int i=_startHour; i<_startHour + _numHours; i++){
 			JPanel hourLabel = new JPanel();
 			hourLabel.add(new JLabel(i+ ":00", SwingConstants.CENTER), SwingConstants.CENTER);
+			hourLabel.setBorder(new EmptyBorder(0,0,0,0));
 			hourLabel.setBackground(GuiConstants.LABEL_COLOR);
 			_hourOfDayLabels.add(hourLabel);
 		}
