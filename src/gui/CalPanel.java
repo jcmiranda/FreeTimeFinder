@@ -44,9 +44,9 @@ public abstract class CalPanel extends JPanel{
 
 	public void paintComponent(Graphics g){
 		super.paintComponent(g);
-		for(DayPanel day: _days){
-			day.repaint();
-		}
+//		for(DayPanel day: _days){
+//			day.repaint();
+//		}
 	}
 
 
