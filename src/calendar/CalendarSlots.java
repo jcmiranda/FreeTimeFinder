@@ -39,12 +39,9 @@ public class CalendarSlots implements Calendar {
 	}
 	
 	public CalendarSlots(DateTime startTime, DateTime endTime, When2MeetOwner owner, int minInSlot, Availability[][] availability){
-		_startTime = startTime;
-		_endTime = endTime;
+		this(startTime, endTime, minInSlot, Availability.free);
 		_owner = owner;
-		_minInSlot = minInSlot;
-		_numDays = availability.length;
-		_numSlotsInDay = lenDayInMinutes() / minInSlot;
+		assert availability.length == _numDays;
 		_avail = availability;
 	}
 
@@ -170,6 +167,10 @@ public class CalendarSlots implements Calendar {
 		return _minInSlot;
 	}
 	
+	public int getNumHours() {
+		return _minInSlot * _numSlotsInDay / 60;
+	}
+	
 	private int getDaysBetween(DateTime start, DateTime end){
 		if(end.getYear() == start.getYear())
 			return end.getDayOfYear() - start.getDayOfYear();
@@ -188,10 +189,19 @@ public class CalendarSlots implements Calendar {
 				for (int i=0; i< _numSlotsInDay; i++){
 					//May be some bugs here
 					
+					double iDbl = (double) i;
+					double hDbl = (double) d.getHeight();
+					double hrsDbl = (double) d.getNumHours();
+					double sDbl = (double) _numSlotsInDay;
+					System.out.println("Hours: " + d.getNumHours());
+					System.out.println("Num Slots in Day: " + _numSlotsInDay);
+					System.out.println("Len Day in Minutes: " + lenDayInMinutes());
+					System.out.println("Min in Slot: " + _minInSlot);
+					
 					if (_avail[numDays][i]==Availability.free){
 						rect = new Rectangle2D.Double();
-						int startY = (int) ((double) i*d.getHeight()/_numSlotsInDay);
-						rect.setFrame(0, startY, d.getWidth(), d.getHeight()/_numSlotsInDay);
+						double startY = iDbl * hDbl / sDbl; //(hrsDbl*4.0);
+						rect.setFrame(0, startY, d.getWidth(), hDbl/ sDbl); //(hrsDbl*4.0));
 						brush.setColor(SLOT_COLOR);
 						brush.draw(rect);
 						brush.fill(rect);

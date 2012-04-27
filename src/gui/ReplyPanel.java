@@ -61,7 +61,7 @@ public class ReplyPanel extends CalPanel{
 
 		_startHour = _slotCals.getStartTime().getHourOfDay();
 		_endHour = _slotCals.getEndTime().getHourOfDay();
-		_numHours = _endHour - _startHour;
+		_numHours = _slotCals.getCalendars().get(0).getNumHours();
 
 		_thisMonday = _slotCals.getStartTime().minusDays(_slotCals.getStartTime().getDayOfWeek()-1);
 		configDays();
@@ -111,8 +111,10 @@ public class ReplyPanel extends CalPanel{
 		for (int i=0; i<14; i+=2){
 			_days[i].setStartHour(_startHour);
 			_days[i+1].setStartHour(_startHour);
+			
 			_days[i].setNumHours(_numHours);
 			_days[i+1].setNumHours(_numHours);
+			
 			_days[i].setDay(_thisMonday.plusDays(i/2));
 			_days[i+1].setDay(_thisMonday.plusDays(i/2));
 			if (_thisMonday.plusDays(i/2).isAfter(_slotCals.getEndTime())

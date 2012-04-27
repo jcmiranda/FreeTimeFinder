@@ -124,14 +124,20 @@ public class DayPanel extends JPanel{
 	private void drawLines(Graphics2D brush){
 
 		brush.setColor(LINE_COLOR);
-		for (int i=1; i<_numHours; i++){
-			brush.drawLine(0, i*this.getHeight()/_numHours, this.getWidth(), i*this.getHeight()/_numHours);
+		double hrsDbl = (double) _numHours;
+		double heightDbl = (double) this.getHeight();
+		for (int i=1; i< _numHours; i++){
+			double iDbl = (double) i;
+			int height = (int) (iDbl * heightDbl / hrsDbl);
+			//int height = (int) ((double) i * (1.0 * this.getHeight()) / (1.0 * _numHours));
+			brush.drawLine(0, height, this.getWidth(), height);
 		}
 	}
 
 
 	public void paintComponent(Graphics g){
 		super.paintComponent(g);
+		System.out.println("Num Hours: " + _numHours);
 		Graphics2D brush = (Graphics2D) g;
 		if (!_active){
 			brush.setColor(GRAY_OUT_COLOR);

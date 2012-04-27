@@ -103,9 +103,18 @@ public class Event extends CalendarGroup<CalendarSlots> {
 		return _userHasSubmitted;
 	}
 
+	// 10 pts
+	// 0 - 9
+	// 0 -> 0
+	// 9 -> height
+	// index / (numPts - 1) * height
 	
 	private int endPtToHeight(int index, int numPts, int height) {
-		return (int) ((1.0 * index) / (1.0 * numPts - 1.0) * height);
+		double indDbl = (double) index;
+		double numPtsDbl = (double) numPts;
+		double heightDbl = (double) height;
+		return (int) (indDbl * heightDbl / (numPtsDbl - 1.0));
+		//return (int) ((1.0 * index) / (1.0 * numPts - 1.0) * height);
 	}
 	
 	private int slotHeight(int numPts, int height) {
