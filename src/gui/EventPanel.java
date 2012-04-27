@@ -1,8 +1,11 @@
 package gui;
 
+import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.util.ArrayList;
@@ -11,6 +14,7 @@ import javax.swing.GroupLayout;
 import javax.swing.GroupLayout.ParallelGroup;
 import javax.swing.GroupLayout.SequentialGroup;
 import javax.swing.JButton;
+import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.LayoutStyle;
@@ -18,11 +22,11 @@ import javax.swing.LayoutStyle;
 import cal_master.Communicator;
 import cal_master.Communicator.URLAlreadyExistsException;
 import calendar.Event;
-import calendar.When2MeetEvent;
 
 public class EventPanel extends JPanel {
 
 	private ArrayList<EventLabel> _eventLabels = new ArrayList<EventLabel>();
+	private ArrayList<RemoveEventLabel> _removeLabels = new ArrayList<RemoveEventLabel>();
 	private Communicator _communicator;
 	private JButton _addButton;
 	private CalendarGui _gui;
@@ -43,6 +47,7 @@ public class EventPanel extends JPanel {
 	}
 	
 	private void setUp() {
+		
 		SequentialGroup vertSeqGrp = _layout.createSequentialGroup();
 		ParallelGroup horizParGrp = _layout.createParallelGroup(GroupLayout.Alignment.LEADING);
 		
@@ -51,9 +56,19 @@ public class EventPanel extends JPanel {
                 GroupLayout.DEFAULT_SIZE, 15);
 		horizParGrp.addComponent(_addButton);
 		
+		int i=0;
 		for(EventLabel label : _eventLabels){
-			JPanel labelPanel = new JPanel();
-			labelPanel.add(label);
+//			RemoveEventLabel rLabel = _removeLabels.get(i);
+//			ParallelGroup rowGrp = _layout.createParallelGroup(GroupLayout.Alignment.LEADING)
+//				.addComponent(rLabel).addComponent(label);
+//			
+//			vertSeqGrp.addGroup(_layout.createParallelGroup(GroupLayout.Alignment.LEADING)
+//					.addComponent(rLabel).addComponent(label));
+//			horizParGrp.addGroup(_layout.createSequentialGroup()
+//					.addComponent(rLabel).addComponent(label));
+//			
+//			i++;
+			
 			vertSeqGrp.addComponent(label);
 			horizParGrp.addComponent(label);
 		}
@@ -64,25 +79,24 @@ public class EventPanel extends JPanel {
 	
 	public void addEvent(EventLabel label){
 		_eventLabels.add(label);
+		_removeLabels.add(new RemoveEventLabel(label.getID()));
 		setUp();
-//		JPanel labelPanel = new JPanel();
-//		labelPanel.add(label);
-//		this.add(labelPanel);
-//		System.out.println(_eventLabels.size());
 	}
 	
 	public void addEvents(ArrayList<EventLabel> events){
 		_eventLabels.addAll(events);
-//		for(EventLabel label : events){
-//			JPanel labelPanel = new JPanel();
-//			labelPanel.add(label);
-//			this.add(labelPanel);
-//		}
 		setUp();
 	}
 	
-	public void removeEvent(){
-		//TODO
+	public void removeEvent(String idToRemove){
+		for(int i=0; i<_eventLabels.size(); i++){
+			if(_eventLabels.get(i).getID() == idToRemove){
+				_eventLabels.remove(i);
+				_removeLabels.remove(i);
+				break;
+			}
+		}
+		setUp();
 	}
 	
 	public void refresh() {
@@ -94,7 +108,6 @@ public class EventPanel extends JPanel {
 	public void paintComponent(Graphics g){
 		super.paintComponent(g);
 		for(EventLabel label: _eventLabels){
-			//System.out.println(label.getName());
 			label.repaint();
 		}
 	}
@@ -103,7 +116,7 @@ public class EventPanel extends JPanel {
 
 		@Override
 		public void actionPerformed(ActionEvent arg0) {
-			//TODO: cancel option
+			
 			String url = JOptionPane.showInputDialog("Please enter the URL of the When2Meet you would like to add");
 			Event newEvent = null;
 			boolean noEvent = true;
@@ -128,12 +141,53 @@ public class EventPanel extends JPanel {
 				}
 				EventLabel newLabel = new EventLabel(newEvent.getName(), String.valueOf(newEvent.getID()), _communicator, _gui);
 				addEvent(newLabel);
-				//repaint();
 				_gui.repaint();
 			}
 			
 			
 		}
+		
+	}
+	
+	private class RemoveEventLabel extends JLabel implements MouseListener{
+
+		
+		private String _eventID;
+		
+		public RemoveEventLabel(String id){
+			super("X");
+			_eventID = id;
+			this.addMouseListener(this);
+		}
+		
+		@Override
+		public void mouseClicked(MouseEvent arg0) {
+			int selection = JOptionPane.showConfirmDialog(null,"Are you sure you want to remove this event?", "", 
+					JOptionPane.YES_NO_OPTION);
+			if(selection == JOptionPane.YES_OPTION){
+//				_communicator.removeWhen2Meet(_eventID);
+//				removeEvent(_eventID);
+				System.out.println("HA jk");
+			}
+			
+		}
+
+		@Override
+		public void mouseEntered(MouseEvent arg0) {
+			this.setForeground(Color.RED);
+		}
+
+		@Override
+		public void mouseExited(MouseEvent arg0) {
+			this.setForeground(Color.BLACK);
+		}
+
+		@Override
+		public void mousePressed(MouseEvent arg0) {}
+
+		@Override
+		public void mouseReleased(MouseEvent arg0) {}
+		
 		
 	}
 }
