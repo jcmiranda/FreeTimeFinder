@@ -118,10 +118,15 @@ public class When2MeetExporter {
 			cal.setAvail(slotIndices.get(i), avail);
 		}
 		
+		String person = ""+cal.getOwner().getID();
+		String eventID = _event.getID()+"";
+		String slots = slotIDs(slotIndices);
 		ArrayList<KeyValue> keyValues = new ArrayList<KeyValue>();
-		keyValues.add(new KeyValue("person", ""+cal.getOwner().getID()));
-		keyValues.add(new KeyValue("event", ""+_event.getID()));
-		keyValues.add(new KeyValue("slots", slotIDs(slotIndices)));
+		System.out.println("Person: " + person + "\tEvent ID: " + 
+				eventID + "\tSlots: " + slots + "\tToAvail: " + changeToAvailable);
+		keyValues.add(new KeyValue("person", person));
+		keyValues.add(new KeyValue("event", eventID));
+		keyValues.add(new KeyValue("slots", slots));
 		keyValues.add(new KeyValue("availability", binaryAvailability(cal)));
 		keyValues.add(new KeyValue("ChangeToAvailable", changeToAvailable));
 		
@@ -136,6 +141,7 @@ public class When2MeetExporter {
 	// When this method is called, this calendar owner has a name unique from
 	// all the other calendar owners
 	public void createNewUser(When2MeetEvent event, CalendarSlots cal, String password) throws NameAlreadyExistsException {
+		System.out.println("Creating new user with name " + cal.getOwner().getName());
 		ArrayList<KeyValue> keyValues = new ArrayList<KeyValue>();
 		keyValues.add(new KeyValue("id", ""+event.getID()));
 		keyValues.add(new KeyValue("name", "" + cal.getOwner().getName()));
@@ -183,6 +189,8 @@ public class When2MeetExporter {
 	
 	public void postAllAvailability(When2MeetEvent event) throws NameAlreadyExistsException {
 		_event = event;
+		System.out.println("Posting all availability for user " 
+				+ _event.getUserResponse().getOwner().getName());
 		CalendarSlots cal = event.getUserResponse();
 		if(!event.userHasSubmitted()){
 			String password = "";
