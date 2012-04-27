@@ -98,6 +98,8 @@ public class Response implements Comparable<Response>{
 		if (getName()!=null){
 			brush.drawString(this.getName(), startX + RESPONSE_SPACING+RESPONSE_NAME_SPACING, (int) (startY + brush.getFont().getSize() + RESPONSE_NAME_SPACING));
 		}
+		brush.setColor(Color.BLACK);
+		brush.draw(rect);
 
 	}
 }
