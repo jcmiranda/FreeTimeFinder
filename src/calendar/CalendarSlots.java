@@ -179,7 +179,7 @@ public class CalendarSlots implements Calendar {
 		return _minInSlot * _numSlotsInDay / 60;
 	}
 	
-	private int getDaysBetween(DateTime start, DateTime end){
+	public static int getDaysBetween(DateTime start, DateTime end){
 		if(end.getYear() == start.getYear())
 			return end.getDayOfYear() - start.getDayOfYear();
 		else if(end.getYear() == start.getYear() + 1)

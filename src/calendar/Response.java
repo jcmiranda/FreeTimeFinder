@@ -90,14 +90,14 @@ public class Response implements Comparable<Response>{
 //		rect.setRoundRect(startX+RESPONSE_SPACING, startY, (int) ((double) endX-startX-2*RESPONSE_SPACING), endY - startY, RECT_ARC_DIM, RECT_ARC_DIM);		
 		rect.setRect(startXDbl+spaceDbl, startY, endXDbl-startXDbl-2*spaceDbl, endY - startY);		
 
-		brush.setColor(Color.BLACK);
-		brush.draw(rect);
 		brush.setColor(RESPONSE_COLOR);
 		brush.fill(rect);
 		brush.setColor(RESPONSE_NAME_COLOR);
 		if (getName()!=null){
 			brush.drawString(this.getName(), startX + RESPONSE_SPACING+RESPONSE_NAME_SPACING, (int) (startY + brush.getFont().getSize() + RESPONSE_NAME_SPACING));
 		}
+		brush.setColor(LINE_COLOR);
+		brush.draw(rect);
 
 	}
 }

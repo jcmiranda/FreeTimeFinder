@@ -4,6 +4,7 @@ import static gui.GuiConstants.FRAME_HEIGHT;
 import static gui.GuiConstants.FRAME_WIDTH;
 
 import java.awt.BorderLayout;
+import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
@@ -19,6 +20,8 @@ import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.SwingConstants;
+import javax.swing.border.Border;
+import javax.swing.border.EmptyBorder;
 
 import org.joda.time.DateTime;
 
@@ -49,7 +52,7 @@ public class CalendarGui {
 	public static enum DaysOfWeek {Monday, Tuesday, Wednesday, Thursday, Friday, Saturday, Sunday};
 
 	// Represents the monday of the current week
-	private DateTime _thisMonday;
+//	private DateTime _thisMonday;
 
 	public CalendarGui(){
 		_communicator.startUp();
@@ -59,13 +62,14 @@ public class CalendarGui {
 			Event toReturn = _communicator.getW2M(_communicator.getFirstEventID());
 			_slotGroup = toReturn;
 			//_slotGroup=_communicator.getFirstEvent();
-			_thisMonday = _slotGroup.getStartTime().minusDays(_slotGroup.getStartTime().getDayOfWeek()-1);
+//			_thisMonday = _slotGroup.getStartTime().minusDays(_slotGroup.getStartTime().getDayOfWeek()-1);
 			_startHour = _slotGroup.getStartTime().getHourOfDay();
 			//_endHour = _slotGroup.getEndTime().getHourOfDay();
-		} else {
-			_thisMonday = new DateTime();
-			_thisMonday = _thisMonday.minusDays(_thisMonday.getDayOfWeek()-1);
 		}
+//		else {
+//			_thisMonday = new DateTime();
+//			_thisMonday = _thisMonday.minusDays(_thisMonday.getDayOfWeek()-1);
+//		}
 
 		if(_communicator.hasUserCal())
 			_responseGroup=_communicator.getUserCal();
@@ -73,7 +77,7 @@ public class CalendarGui {
 		assert _responseGroup != null;
 		assert _slotGroup != null;
 		
-		_replyPanel = new ReplyPanel(_thisMonday, _responseGroup, _slotGroup);
+		_replyPanel = new ReplyPanel(_responseGroup, _slotGroup);
 
 		ArrayList<NameIDPair> pairs = _communicator.getNameIDPairs();
 		for(NameIDPair pair : pairs) {
@@ -84,7 +88,7 @@ public class CalendarGui {
 		_submitButton.addActionListener(new SubmitListener());
 		//_eventPanel.addEvent(new EventLabel("TESTING TESTING", "1234", _communicator, this));
 		_numHours = _slotGroup.getCalendars().get(0).getNumHours();
-		makeDayLabels();
+//		makeDayLabels();
 		makeHourLabels();
 		buildFrame();
 	}
@@ -125,9 +129,9 @@ public class CalendarGui {
 		_startHour = event.getStartTime().getHourOfDay();
 		_numHours = event.getCalendars().get(0).getNumHours();
 		//_endHour = event.getEndTime().getHourOfDay();
-		_thisMonday = event.getStartTime().minusDays(event.getStartTime().getDayOfWeek()-1);
+//		_thisMonday = event.getStartTime().minusDays(event.getStartTime().getDayOfWeek()-1);
 		updateHourLabels();
-		updateDayLabels();
+//		updateDayLabels();
 	}
 
 	
@@ -135,46 +139,46 @@ public class CalendarGui {
 		_responseGroup= responseGroup;
 		_replyPanel.setResps(_responseGroup);
 	}
-
-	public void updateDayLabels(){
-		_dayOfWeekLabels.removeAll();
-		_dayOfWeekLabels.setLayout(new GridLayout(1, 7, GuiConstants.LINE_SPACING, 0));
-
-		int counter=0;
-		for (DaysOfWeek d: DaysOfWeek.values()){
-			JPanel dayLabel = new JPanel();
-			dayLabel.add(new JLabel(d.name() +" "  + _thisMonday.plusDays(counter).monthOfYear().getAsShortText() + " " + _thisMonday.plusDays(counter).dayOfMonth().get(), SwingConstants.CENTER));
-			dayLabel.setBackground(GuiConstants.LABEL_COLOR);
-			_dayOfWeekLabels.add(dayLabel);
-			counter++;			
-		}
-		_dayOfWeekLabels.revalidate();
-		this.repaint();
-	}
-
-	public void makeDayLabels(){
-
-		_dayOfWeekLabels = new JPanel();
-		_dayOfWeekLabels.setBackground(GuiConstants.LINE_COLOR);
-		_dayOfWeekLabels.setLayout(new GridLayout(1, 7, GuiConstants.LINE_SPACING, 0));
-
-		int counter=0;
-		for (DaysOfWeek d: DaysOfWeek.values()){
-			System.out.println(d);
-			JPanel dayLabel = new JPanel();
-			dayLabel.add(new JLabel(d.name() +" "  + _thisMonday.plusDays(counter).monthOfYear().getAsShortText() + " " + _thisMonday.plusDays(counter).dayOfMonth().get(), SwingConstants.CENTER));
-			dayLabel.setBackground(GuiConstants.LABEL_COLOR);
-			_dayOfWeekLabels.add(dayLabel);
-			counter++;
-
-		}
-	}
+//
+//	public void updateDayLabels(){
+//		_dayOfWeekLabels.removeAll();
+//		_dayOfWeekLabels.setLayout(new GridLayout(1, 7, GuiConstants.LINE_SPACING, 0));
+//
+//		int counter=0;
+//		for (DaysOfWeek d: DaysOfWeek.values()){
+//			JPanel dayLabel = new JPanel();
+//			dayLabel.add(new JLabel(d.name() +" "  + _thisMonday.plusDays(counter).monthOfYear().getAsShortText() + " " + _thisMonday.plusDays(counter).dayOfMonth().get(), SwingConstants.CENTER));
+//			dayLabel.setBackground(GuiConstants.LABEL_COLOR);
+//			_dayOfWeekLabels.add(dayLabel);
+//			counter++;			
+//		}
+//		_dayOfWeekLabels.revalidate();
+//		this.repaint();
+//	}
+//
+//	public void makeDayLabels(){
+//
+//		_dayOfWeekLabels = new JPanel();
+//		_dayOfWeekLabels.setBackground(GuiConstants.LINE_COLOR);
+//		_dayOfWeekLabels.setLayout(new GridLayout(1, 7, GuiConstants.LINE_SPACING, 0));
+//
+//		int counter=0;
+//		for (DaysOfWeek d: DaysOfWeek.values()){
+//			System.out.println(d);
+//			JPanel dayLabel = new JPanel();
+//			dayLabel.add(new JLabel(d.name() +" "  + _thisMonday.plusDays(counter).monthOfYear().getAsShortText() + " " + _thisMonday.plusDays(counter).dayOfMonth().get(), SwingConstants.CENTER));
+//			dayLabel.setBackground(GuiConstants.LABEL_COLOR);
+//			_dayOfWeekLabels.add(dayLabel);
+//			counter++;
+//
+//		}
+//	}
 
 	
 	
 	public void updateHourLabels(){
 		_hourOfDayLabels.removeAll();
-		_hourOfDayLabels.setLayout(new GridLayout(_numHours, 1, 0, GuiConstants.LINE_SPACING));
+		_hourOfDayLabels.setLayout(new GridLayout(_numHours, 1, 0, 1));
 
 		for (int i=_startHour; i<_startHour + _numHours; i++){
 			JPanel hourLabel = new JPanel();
@@ -190,14 +194,17 @@ public class CalendarGui {
 	public void makeHourLabels(){
 		_hourOfDayLabels = new JPanel();
 		_hourOfDayLabels.setBackground(GuiConstants.LINE_COLOR);
-		_hourOfDayLabels.setLayout(new GridLayout(_numHours, 1, 0, GuiConstants.LINE_SPACING));
-
+//		_hourOfDayLabels.setBackground(Color.GREEN);
+		_hourOfDayLabels.setLayout(new GridLayout(_numHours, 1, 0, 1));
+		_hourOfDayLabels.setBorder(new EmptyBorder(0,0,0,0));
+		System.out.println(_numHours);
 
 		//System.out.println("End Hour: " + _endHour);
 		
 		for (int i=_startHour; i<_startHour + _numHours; i++){
 			JPanel hourLabel = new JPanel();
 			hourLabel.add(new JLabel(i+ ":00", SwingConstants.CENTER), SwingConstants.CENTER);
+			hourLabel.setBorder(new EmptyBorder(0,0,0,0));
 			hourLabel.setBackground(GuiConstants.LABEL_COLOR);
 			_hourOfDayLabels.add(hourLabel);
 		}
@@ -259,18 +266,18 @@ public class CalendarGui {
 		_frame.setSize(FRAME_WIDTH, FRAME_HEIGHT);
 		_frame.setVisible(true);
 	}
-
-	public void nextWeek(){
-		_thisMonday = _thisMonday.plusDays(7);
-		//		_myCal.nextWeek();
-		_replyPanel.nextWeek();
-	}
-
-	public void lastWeek(){
-		_thisMonday = _thisMonday.minusDays(7);
-		//		_myCal.lastWeek();
-		_replyPanel.lastWeek();
-	}
+//
+//	public void nextWeek(){
+//		_thisMonday = _thisMonday.plusDays(7);
+//		//		_myCal.nextWeek();
+//		_replyPanel.nextWeek();
+//	}
+//
+//	public void lastWeek(){
+//		_thisMonday = _thisMonday.minusDays(7);
+//		//		_myCal.lastWeek();
+//		_replyPanel.lastWeek();
+//	}
 
 	public void replyToEvent(){
 		_communicator.submitResponse(Integer.toString(((When2MeetEvent) _slotGroup).getID()), _replyPanel.getClicks());
