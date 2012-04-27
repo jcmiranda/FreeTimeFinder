@@ -40,7 +40,7 @@ public class When2MeetImporter implements CalendarsImporter {
 	private int _slotIDGroupIndex = 2;
 	private Pattern _availPattern = Pattern.compile("AvailableAtSlot\\[(\\d+)\\]\\.push\\((\\d+)\\);"); 
 	private Pattern _datesPattern = Pattern.compile("text\\-align:center;font\\-size:10px;width:44px;padding\\-right:1px;\">(\\w+) (\\d+)<br>");
-	private Pattern _eventIDPattern = Pattern.compile("http://www.when2meet.com/\\?(\\d+)\\-[a-zA-Z]+");
+	private Pattern _eventIDPattern = Pattern.compile("http://www.when2meet.com/\\?(\\d+)\\-[0-9a-zA-Z]+");
 	private Pattern _eventNameDivPattern = Pattern.compile("<div id=\\\"NewEventNameDiv\\\" style=\\\"padding:20px 0px 20px 20px;font-size:30px;\\\">");
 	private Pattern _eventNamePattern = Pattern.compile("(.*)<br><span style=\\\"font-size: 12px;\\\">");
 	private Pattern _timesPattern = Pattern.compile("width:44px;font\\-size:10px;margin:4px 4px 0px 0px;'>(\\d*)(\\s*)(\\w+)&nbsp");
