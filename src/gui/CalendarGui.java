@@ -4,7 +4,6 @@ import static gui.GuiConstants.FRAME_HEIGHT;
 import static gui.GuiConstants.FRAME_WIDTH;
 
 import java.awt.BorderLayout;
-import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
@@ -12,23 +11,21 @@ import java.awt.event.ActionListener;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.util.ArrayList;
-import java.util.Collection;
 
 import javax.swing.GroupLayout;
 import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.SwingConstants;
 
 import org.joda.time.DateTime;
 
-
 import cal_master.Communicator;
 import cal_master.NameIDPair;
 import calendar.CalendarGroup;
 import calendar.CalendarResponses;
-import calendar.CalendarSlots;
 import calendar.Event;
 import calendar.When2MeetEvent;
 
@@ -47,6 +44,7 @@ public class CalendarGui {
 	private Communicator _communicator = new Communicator();
 	private EventPanel _eventPanel = new EventPanel(_communicator, this);
 	private UpdatesPanel _updatesPanel = new UpdatesPanel();
+	private JButton _submitButton = new JButton("Submit Response");
 
 	public static enum DaysOfWeek {Monday, Tuesday, Wednesday, Thursday, Friday, Saturday, Sunday};
 
@@ -82,7 +80,7 @@ public class CalendarGui {
 			_eventPanel.addEvent(new EventLabel(pair.getName(), pair.getID(), _communicator, this));
 		}
 		
-		
+		_submitButton.addActionListener(new SubmitListener());
 		//_eventPanel.addEvent(new EventLabel("TESTING TESTING", "1234", _communicator, this));
 		_numHours = _slotGroup.getCalendars().get(0).getNumHours();
 		makeDayLabels();
@@ -248,6 +246,10 @@ public class CalendarGui {
 		//		_frame.add(_when2MeetCal, BorderLayout.CENTER);
 
 		_frame.add(calPanel, BorderLayout.CENTER);
+		
+		JPanel submitPanel = new JPanel();
+		submitPanel.add(_submitButton);
+		_frame.add(submitPanel, BorderLayout.NORTH);
 
 		JPanel eastPanel = new JPanel(new GridLayout(0,1));
 		eastPanel.add(_eventPanel);
@@ -299,6 +301,20 @@ public class CalendarGui {
 		_frame.invalidate();
 		_frame.validate();
 		_frame.repaint();
+	}
+	
+	
+	private class SubmitListener implements ActionListener {
+
+		@Override
+		public void actionPerformed(ActionEvent e) {
+			int selection = JOptionPane.showConfirmDialog(null,"Are you sure you want to submit?", "", 
+					JOptionPane.YES_NO_OPTION);
+			if(selection == JOptionPane.YES_OPTION)
+				replyToEvent();
+			
+		}
+		
 	}
 
 }
