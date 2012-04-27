@@ -47,7 +47,6 @@ public class ReplyPanel extends CalPanel{
 	}
 	
 	public void setResps(CalendarGroup<CalendarResponses> respCals){
-
 		_respCals = respCals;
 		for (DayPanel d: _days){
 			d.setResponses(_respCals);

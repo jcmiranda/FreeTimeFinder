@@ -37,7 +37,7 @@ public class CalendarGui {
 	//private int _endHour = 24;
 	private int _numHours = 24;
 	private JFrame _frame;
-	private ReplyPanel _when2MeetCal;
+	private ReplyPanel _replyPanel;
 	private JPanel _dayOfWeekLabels;
 	private JPanel _hourOfDayLabels;
 	private ArrayList<Integer> _hoursOfDay = new ArrayList<Integer>();
@@ -73,7 +73,7 @@ public class CalendarGui {
 		 assert _responseGroup != null;
 		assert _slotGroup != null;
 		
-		_when2MeetCal = new ReplyPanel(_thisMonday, _responseGroup, _slotGroup);
+		_replyPanel = new ReplyPanel(_thisMonday, _responseGroup, _slotGroup);
 		
 		ArrayList<NameIDPair> pairs = _communicator.getNameIDPairs();
 		for(NameIDPair pair : pairs) {
@@ -116,7 +116,10 @@ public class CalendarGui {
 
 	public void setEvent(Event event){
 		_slotGroup= event;
-		_when2MeetCal.setSlots(event);
+		_responseGroup = _communicator.getUserCal();
+		_replyPanel.setSlots(event);
+		_replyPanel.setResps(_responseGroup);
+		_replyPanel.configDays();
 		_startHour = event.getStartTime().getHourOfDay();
 		_numHours = event.getCalendars().get(0).getNumHours();
 		//_endHour = event.getEndTime().getHourOfDay();
@@ -127,7 +130,7 @@ public class CalendarGui {
 	
 	public void setResponses(CalendarGroup<CalendarResponses> responseGroup){
 		_responseGroup= responseGroup;
-		_when2MeetCal.setResps(_responseGroup);
+		_replyPanel.setResps(_responseGroup);
 	}
 	
 	public void updateDayLabels(){
@@ -226,7 +229,7 @@ public class CalendarGui {
 						.addGroup(calLayout.createParallelGroup(GroupLayout.Alignment.LEADING)
 								.addComponent(_dayOfWeekLabels, GroupLayout.PREFERRED_SIZE, (int) (FRAME_WIDTH*.75),
 										GroupLayout.PREFERRED_SIZE)
-										.addComponent(_when2MeetCal, GroupLayout.PREFERRED_SIZE, (int) (FRAME_WIDTH*.75),
+										.addComponent(_replyPanel, GroupLayout.PREFERRED_SIZE, (int) (FRAME_WIDTH*.75),
 												GroupLayout.PREFERRED_SIZE))
 				);
 
@@ -237,7 +240,7 @@ public class CalendarGui {
 						.addGroup(calLayout.createParallelGroup(GroupLayout.Alignment.BASELINE)
 								.addComponent(_hourOfDayLabels, GroupLayout.PREFERRED_SIZE, FRAME_HEIGHT - _dayOfWeekLabels.getPreferredSize().height,
 										GroupLayout.PREFERRED_SIZE)
-										.addComponent(_when2MeetCal, GroupLayout.PREFERRED_SIZE, FRAME_HEIGHT - _dayOfWeekLabels.getPreferredSize().height,
+										.addComponent(_replyPanel, GroupLayout.PREFERRED_SIZE, FRAME_HEIGHT - _dayOfWeekLabels.getPreferredSize().height,
 												GroupLayout.PREFERRED_SIZE))
 				);
 
@@ -268,13 +271,13 @@ public class CalendarGui {
 	public void nextWeek(){
 		_thisMonday = _thisMonday.plusDays(7);
 		//		_myCal.nextWeek();
-		_when2MeetCal.nextWeek();
+		_replyPanel.nextWeek();
 	}
 
 	public void lastWeek(){
 		_thisMonday = _thisMonday.minusDays(7);
 		//		_myCal.lastWeek();
-		_when2MeetCal.lastWeek();
+		_replyPanel.lastWeek();
 	}
 	//
 	//	public void myView(){
@@ -293,7 +296,7 @@ public class CalendarGui {
 	//	}
 
 	public void replyToEvent(){
-		_communicator.submitResponse(Integer.toString(((When2MeetEvent) _slotGroup).getID()), _when2MeetCal.getClicks());
+		_communicator.submitResponse(Integer.toString(((When2MeetEvent) _slotGroup).getID()), _replyPanel.getClicks());
 	}
 	
 	
