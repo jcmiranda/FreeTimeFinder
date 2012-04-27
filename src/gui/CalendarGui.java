@@ -34,7 +34,8 @@ public class CalendarGui {
 	private CalendarGroup<CalendarResponses> _responseGroup;
 	private Event _slotGroup;
 	private int _startHour = 0;
-	private int _endHour = 24;
+	//private int _endHour = 24;
+	private int _numHours = 24;
 	private JFrame _frame;
 	private ReplyPanel _when2MeetCal;
 	private JPanel _dayOfWeekLabels;
@@ -60,7 +61,7 @@ public class CalendarGui {
 			//_slotGroup=_communicator.getFirstEvent();
 			_thisMonday = _slotGroup.getStartTime().minusDays(_slotGroup.getStartTime().getDayOfWeek()-1);
 			_startHour = _slotGroup.getStartTime().getHourOfDay();
-			_endHour = _slotGroup.getEndTime().getHourOfDay();
+			//_endHour = _slotGroup.getEndTime().getHourOfDay();
 		} else {
 			_thisMonday = new DateTime();
 			_thisMonday = _thisMonday.minusDays(_thisMonday.getDayOfWeek()-1);
@@ -81,9 +82,8 @@ public class CalendarGui {
 		
 		_submitButton.addActionListener(new SubmitListener());
 		//_eventPanel.addEvent(new EventLabel("TESTING TESTING", "1234", _communicator, this));
-		
+		_numHours = _slotGroup.getCalendars().get(0).getNumHours();
 		makeDayLabels();
-		
 		makeHourLabels();
 		buildFrame();
 	}
@@ -118,7 +118,8 @@ public class CalendarGui {
 		_slotGroup= event;
 		_when2MeetCal.setSlots(event);
 		_startHour = event.getStartTime().getHourOfDay();
-		_endHour = event.getEndTime().getHourOfDay();
+		_numHours = event.getCalendars().get(0).getNumHours();
+		//_endHour = event.getEndTime().getHourOfDay();
 		_thisMonday = event.getStartTime().minusDays(event.getStartTime().getDayOfWeek()-1);
 		updateHourLabels();
 		updateDayLabels();
@@ -163,11 +164,13 @@ public class CalendarGui {
 		}
 	}
 
+	
+	
 	public void updateHourLabels(){
 		_hourOfDayLabels.removeAll();
-		_hourOfDayLabels.setLayout(new GridLayout(_endHour - _startHour, 1, 0, GuiConstants.LINE_SPACING));
+		_hourOfDayLabels.setLayout(new GridLayout(_numHours, 1, 0, GuiConstants.LINE_SPACING));
 
-		for (int i=_startHour; i<_endHour; i++){
+		for (int i=_startHour; i<_startHour + _numHours; i++){
 			JPanel hourLabel = new JPanel();
 			hourLabel.add(new JLabel(i+ ":00", SwingConstants.CENTER), SwingConstants.CENTER);
 			hourLabel.setBackground(GuiConstants.LABEL_COLOR);
@@ -181,11 +184,11 @@ public class CalendarGui {
 	public void makeHourLabels(){
 		_hourOfDayLabels = new JPanel();
 		_hourOfDayLabels.setBackground(GuiConstants.LINE_COLOR);
-		_hourOfDayLabels.setLayout(new GridLayout(_endHour - _startHour, 1, 0, GuiConstants.LINE_SPACING));
+		_hourOfDayLabels.setLayout(new GridLayout(_numHours, 1, 0, GuiConstants.LINE_SPACING));
 
-		System.out.println("End Hour: " + _endHour);
+		//System.out.println("End Hour: " + _endHour);
 		
-		for (int i=_startHour; i<_endHour; i++){
+		for (int i=_startHour; i<_startHour + _numHours; i++){
 			JPanel hourLabel = new JPanel();
 			hourLabel.add(new JLabel(i+ ":00", SwingConstants.CENTER), SwingConstants.CENTER);
 			hourLabel.setBackground(GuiConstants.LABEL_COLOR);
