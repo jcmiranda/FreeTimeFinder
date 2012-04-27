@@ -349,8 +349,16 @@ public class Communicator {
 	
 	public void calToW2M(String eventID){
 		Event w2m = _events.get(eventID);
+		
 		if(w2m != null && !w2m.userHasSubmitted()){
-			
+			CalendarSlots cal = _converter.calToSlots(_userCal, w2m);
+			w2m.setUserResponse(cal);
+		}
+	}
+	
+	private void checkUserCal(String eventID){
+		Event w2m = _events.get(eventID);
+		if(w2m != null){
 			//check to see that w2m in range of userCal
 			//If it isn't, pullCall before 
 			DateTime wStart = w2m.getStartTime();
@@ -373,9 +381,6 @@ public class Communicator {
 				
 				pullCal(start, end);
 			}
-			
-			CalendarSlots cal = _converter.calToSlots(_userCal, w2m);
-			w2m.setUserResponse(cal);
 		}
 	}
 	
@@ -418,6 +423,9 @@ public class Communicator {
 			}
 			
 		}
+		
+		checkUserCal(id);
+		
 		if(!toReturn.userHasSubmitted()){
 			calToW2M(id);
 		}
