@@ -297,9 +297,11 @@ public class When2MeetImporter implements CalendarsImporter {
 		Collection<String> oldCalNames = w2me.getCalOwnerNames();
 		for(CalendarSlots newCal : newCals) {
 			String newCalName = newCal.getOwner().getName();
+			System.out.println("NewCalName: " + newCalName);
 			// This is an updated calendar
 			if(oldCalNames.contains(newCalName)) {
 				try {
+					System.out.println("Found old cal with name " + newCalName);
 					updates.addAll(calDiff.diffEventCals(w2me.getCalByName(newCalName), newCal));
 				} catch (MismatchedUserIDException e) {
 					// TODO Auto-generated catch block

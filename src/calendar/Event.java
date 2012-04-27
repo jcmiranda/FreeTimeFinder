@@ -1,13 +1,12 @@
 package calendar;
 
 import gui.DayPanel;
+import gui.GuiConstants;
 
-import java.awt.Color;
 import java.awt.Graphics2D;
 import java.awt.Polygon;
 import java.util.ArrayList;
 import java.util.Collection;
-import gui.GuiConstants;
 
 import org.joda.time.DateTime;
 
@@ -49,8 +48,16 @@ public class Event extends CalendarGroup<CalendarSlots> {
 	
 	
 	public void setUserResponse(CalendarSlots cal) { 
+		System.out.println("SETTING USER RESPONSE");
 		_userResponse = cal; 
+		System.out.println("Num cals before : " + this.getCalendars().size());
 		this.removeCalendar(cal);
+		System.out.println("Num cals after : " + this.getCalendars().size());
+		String names = "";
+		for(CalendarSlots c : this.getCalendars()){
+			names += c.getOwner().getName() + ", ";
+		}
+		System.out.println(names);
 	}
 	public void setUserSubmitted(boolean b) {_userHasSubmitted = b; }
 	
