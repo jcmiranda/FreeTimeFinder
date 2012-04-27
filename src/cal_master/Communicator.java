@@ -299,7 +299,7 @@ public class Communicator {
 		// If we do, remove it form our list of events
 		// Save this when2meet, and our new index
 		if(toRemove != null){
-			String id = eventID + "";
+			String id = eventID;
 			_events.remove(id);
 			removeOneItem(id);
 		}
