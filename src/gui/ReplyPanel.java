@@ -69,7 +69,7 @@ public class ReplyPanel extends CalPanel{
 
 		_startHour = _slotCals.getStartTime().getHourOfDay();
 		_endHour = _slotCals.getEndTime().getHourOfDay();
-		_numHours = _endHour - _startHour;
+		_numHours = _slotCals.getCalendars().get(0).getNumHours();
 
 		_thisMonday = _slotCals.getStartTime().minusDays(_slotCals.getStartTime().getDayOfWeek()-1);
 		configDays();
@@ -124,6 +124,7 @@ public class ReplyPanel extends CalPanel{
 
 	public void configDays(){
 		int ctr = 0;
+//<<<<<<< HEAD
 		for (int i=0; i<7; i++){
 			_bigDays[i].setStartHour(_startHour);
 			_bigDays[i].setNumHours(_numHours);
@@ -131,6 +132,21 @@ public class ReplyPanel extends CalPanel{
 			if (_thisMonday.plusDays(i).isAfter(_slotCals.getEndTime())
 					|| _thisMonday.plusDays(i).isBefore(_slotCals.getStartTime())){
 				_bigDays[i].setActive(false);
+//=======
+//		for (int i=0; i<14; i+=2){
+//			_days[i].setStartHour(_startHour);
+//			_days[i+1].setStartHour(_startHour);
+//			
+//			_days[i].setNumHours(_numHours);
+//			_days[i+1].setNumHours(_numHours);
+//			
+//			_days[i].setDay(_thisMonday.plusDays(i/2));
+//			_days[i+1].setDay(_thisMonday.plusDays(i/2));
+//			if (_thisMonday.plusDays(i/2).isAfter(_slotCals.getEndTime())
+//					|| _thisMonday.plusDays(i/2).isBefore(_slotCals.getStartTime())){
+//				_days[i].setActive(false);
+//				_days[i+1].setActive(false);
+//>>>>>>> f50a65162b0b592e3d316e52054b9160553b511f
 			} else {
 				_bigDays[i].setActive(true);
 				_bigDays[i].getClickableDay().setResponses(_respCals);

@@ -6,18 +6,26 @@ import java.util.HashMap;
 import calendar.CalGroupType;
 
 public class Index {
-	public enum IndexType {When2MeetEvent, ProgramOwner, GCal, GCalImporter};
-	private HashMap<String, IndexType> _calGroups = new HashMap<String, IndexType>();
+	//public enum IndexType {When2MeetEvent, ProgramOwner, GCal, GCalImporter};
+	private HashMap<String, StoredDataType> _items = new HashMap<String, StoredDataType>();
 	
-	public void addItem(String uniqueID, IndexType type) {
-		_calGroups.put(uniqueID, type);
+	public void addItem(String uniqueID, StoredDataType type) {
+		_items.put(uniqueID, type);
+	}
+	
+	public void removeItem(String id) {
+		_items.remove(id);
+	}
+	
+	public boolean hasItem(String id) {
+		return _items.keySet().contains(id);
 	}
 	
 	public Collection<String> getFiles() {
-		return _calGroups.keySet();
+		return _items.keySet();
 	}
 	
-	public IndexType getType(String id) {
-		return _calGroups.get(id);
+	public StoredDataType getType(String id) {
+		return _items.get(id);
 	}
 }

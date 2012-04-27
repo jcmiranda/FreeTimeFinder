@@ -37,7 +37,7 @@ public class When2MeetTest {
 		
 		
 		When2MeetImporter wtmi = new When2MeetImporter(); 
-		When2MeetEvent bDemo = wtmi.importCalendarGroup("http://www.when2meet.com/?426631-GoPHt");
+		When2MeetEvent bDemo = wtmi.importNewEvent("http://www.when2meet.com/?426631-GoPHt");
 		CalendarSlots jeanetteCal = bDemo.getCalByName("Jeanette");
 		
 		/*

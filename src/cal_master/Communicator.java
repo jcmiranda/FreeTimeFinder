@@ -13,11 +13,12 @@ import javax.swing.JOptionPane;
 
 import org.joda.time.DateTime;
 
-import cal_master.Index.IndexType;
+//import cal_master.Index.IndexType;
 import calendar.*;
 import calendar_exporters.*;
 import calendar_exporters.When2MeetExporter.NameAlreadyExistsException;
 import calendar_importers.*;
+import calendar_importers.EventImporter.InvalidURLException;
 
 import com.thoughtworks.xstream.XStream;
 
@@ -27,35 +28,33 @@ import ftf.TimeFinderSlots;
 public class Communicator {
 
 	private CalendarsImporter<CalendarResponses> _userCalImporter;
-	private IndexType _userCalImporterType = IndexType.GCalImporter;
-	// = null;
+	private StoredDataType _userCalImporterType; // = IndexType.GCalImporter;
 	private CalendarGroup<CalendarResponses> _userCal = null;
 	private String _userCalID = "userCal", _indexID = "index", _importerID = "userCalImporter";
 	
-	private HashMap<String, Event> _w2mEvents = new HashMap<String, Event>();
-	private When2MeetImporter _importer = new When2MeetImporter();
+	private HashMap<String, Event> _events = new HashMap<String, Event>();
+	private EventImporter _eventImporter = new EventImporter();
 	private When2MeetExporter _exporter = new When2MeetExporter();
 
-	// TODO edit 
-	//private HashMap<String, When2MeetImporter> _w2mImporters = new HashMap<String, When2MeetImporter>();
 	private Converter _converter = new Converter();
 	private TimeFinderSlots _timeFinder = new TimeFinderSlots();
 	private ProgramOwner _owner = new ProgramOwner();
 	
 	private XStream _xstream = new XStream();
-	private Index _index = new Index();
+	//private Index _index = new Index();
 	
 	private static final double ATTENDEE_PERCENTAGE = .75;
 	private static final int NUM_SUGGESTIONS = 5;
 	
 	public Communicator() {
 		_userCalImporter = null;
+		//_userCalImporterType = null;
 	}
 	
 	
 	private void setUpXStream() {
 		_xstream.alias("index", Index.class);
-		_xstream.alias("indextype", Index.IndexType.class);
+		_xstream.alias("storeddatatype", StoredDataType.class);
 		_xstream.alias("calendarslots", CalendarSlots.class);
 		_xstream.alias("calendarresponses", CalendarResponses.class);
 		_xstream.alias("calendargroup", CalendarGroup.class);
@@ -66,23 +65,30 @@ public class Communicator {
 		_xstream.alias("avail", Availability.class);
 	}
 	
+	public Index recreateIndex() {
+		File indexFile = new File(_indexID+".xml");
+		if(indexFile.exists())
+			return (Index) _xstream.fromXML(indexFile);
+		else
+			return new Index();
+	}
+	
 	public void startUp() {
 		
 		setUpXStream();
 		// If have an index, recreate index
-		File indexFile = new File(_indexID+".xml");
-		if(indexFile.exists())
-			_index = (Index) _xstream.fromXML(indexFile);
+		Index index = recreateIndex();
 		
 		// Pull in XML and create when2meet events from XML
 		// Pull in XML for user cal, and create user cal
-		for(String id : _index.getFiles()) {
-			IndexType type = _index.getType(id);
+		for(String id : index.getFiles()) {
+			StoredDataType type = index.getType(id);
+			//System.out.println("Type: " + type);
 			assert type != null;
 			Object o = _xstream.fromXML(new File(id + ".xml"));
 			switch(type) {
 			case When2MeetEvent: {
-				_w2mEvents.put(id,  (When2MeetEvent) o);
+				_events.put(id,  (When2MeetEvent) o);
 				break;
 			}
 			case GCal: {
@@ -125,7 +131,7 @@ public class Communicator {
 				// switch on user response
 				if(selectedValue == "Google Calendar"){
 					this.setCalImporter(new GCalImporter());
-					_userCalImporterType = IndexType.GCalImporter;
+					_userCalImporterType = StoredDataType.GCalImporter;
 					this.pullCal(DateTime.now(), DateTime.now().plusDays(30));
 				}
 			}
@@ -150,7 +156,7 @@ public class Communicator {
 	}
 	
 	public boolean hasEvent() {
-		return _w2mEvents != null && _w2mEvents.size() > 0;
+		return _events != null && _events.size() > 0;
 	}
 	
 	public boolean hasUserCal() {
@@ -158,14 +164,14 @@ public class Communicator {
 	}
 	
 	public CalendarGroup<CalendarSlots> getFirstEvent() {
-		System.out.println("Num events: " + _w2mEvents.values().size());
-		for(CalendarGroup<CalendarSlots> cal : _w2mEvents.values())
+		System.out.println("Num events: " + _events.values().size());
+		for(CalendarGroup<CalendarSlots> cal : _events.values())
 			return cal;
 		return null;
 	}
 	
 	public String getFirstEventID() {
-		for(String id : _w2mEvents.keySet())
+		for(String id : _events.keySet())
 			return id;
 		return null;
 	}
@@ -176,14 +182,16 @@ public class Communicator {
 	
 	/** SAVING **/
 	
+	/*
 	public void updateIndex() {
 		// Rebuilds the index given the current list of events and calendar
-		for(String id : _w2mEvents.keySet())
+		for(String id : _events.keySet())
 			_index.addItem(id, IndexType.When2MeetEvent);
 		_index.addItem(_userCalID, IndexType.GCal);
 		_index.addItem(_importerID, _userCalImporterType);
 		writeToFile(_indexID, _index);
 	}
+	*/
 	
 	private void writeToFile(String filename, Object o) {
 		Writer out = null;
@@ -196,26 +204,41 @@ public class Communicator {
 		_xstream.toXML(o, out);	
 	}
 	
+	private void saveIndex(Index temp) {
+		writeToFile(_indexID, temp);
+	}
+	
 	// Saves one item
-	public void saveOneItem(Object o, String id) {
+	public void saveOneItem(Object o, String id, StoredDataType type) {
 		// Check index to see if it exists
-		updateIndex();
+		Index temp = recreateIndex();
+		temp.addItem(id, type);
+		saveIndex(temp);
+		//writeToFile(_indexID,temp);
+		// updateIndex();
 		writeToFile(id, o);
 	}
 	
+	public void removeOneItem(String id) {
+		Index temp = recreateIndex();
+		temp.removeItem(id);
+		saveIndex(temp);
+	}
+	
+	/*
 	public void saveAll() {
 		// Store some form of an update index
 		updateIndex();
 		
 		// Store XML for when2meet events
-		for(String id : _w2mEvents.keySet()) {
-			System.out.println("Saving " + id);
-			writeToFile(id, _w2mEvents.get(id));
+		for(String id : _events.keySet()) {
+			writeToFile(id, _events.get(id));
 		}
 		
 		// Store XML for calendar
 		writeToFile(_userCalID, _userCal);
-	}
+		
+	}*/
 	
 	public class URLAlreadyExistsException extends Exception {
 		
@@ -224,7 +247,7 @@ public class Communicator {
 	public Event addEvent(String url) throws URLAlreadyExistsException, IOException {
 		// Check if we have this url already
 		// If we do, throw an error
-		for(Event event : _w2mEvents.values())
+		for(Event event : _events.values())
 			if(event.getURL().equals(url)) {
 				System.out.println("URL already found");
 				throw new URLAlreadyExistsException();
@@ -234,30 +257,46 @@ public class Communicator {
 		// If it's a valid url, pull in that when2meet using an importer
 		// If it's not a valid url, error message to user
 		
-		Event newEvent = _importer.importCalendarGroup(url);
+		Event newEvent;
+		try {
+			newEvent = _eventImporter.importNewEvent(url);
+		} catch (InvalidURLException e) {
+			JOptionPane.showMessageDialog(null, "Invalid URL");
+			return null;
+		}
+
+		StoredDataType eventType = calGroupTypeToIndexType(newEvent.getCalGroupType());
 		String id = newEvent.getID() + "";
-		_w2mEvents.put(id, newEvent);
-		saveOneItem(newEvent, id);
+		_events.put(id, newEvent);
+		saveOneItem(newEvent, id, eventType);
 		
 		return newEvent;
-
-		
+	}
+	
+	public StoredDataType calGroupTypeToIndexType(CalGroupType type) {
+		switch(type) {
+		case When2MeetEvent: { return StoredDataType.When2MeetEvent; }
+		case GCal: {return StoredDataType.GCal;}
+		}
+		return null;
 	}
 	
 	public void setUserCal(CalendarGroup<CalendarResponses> userCal){
 		_userCal = userCal;
+		StoredDataType type = calGroupTypeToIndexType(_userCal.getCalGroupType());
+		saveOneItem(_userCal, _userCalID, type);
 	}
 	
 	public void removeWhen2Meet(String eventID) {
 		// Check that we do have an event with this ID
-		Event toRemove = _w2mEvents.get(eventID);
+		Event toRemove = _events.get(eventID);
 		
 		// If we do, remove it form our list of events
 		// Save this when2meet, and our new index
 		if(toRemove != null){
 			String id = eventID + "";
-			_w2mEvents.remove(id);
-			saveOneItem(toRemove, id);
+			_events.remove(id);
+			removeOneItem(id);
 		}
 		
 		// If we didn't have it, huh? confused, how did this happen
@@ -266,7 +305,19 @@ public class Communicator {
 	public void setCalImporter(CalendarsImporter<CalendarResponses> importer){
 		System.out.println("Cal importer set");
 		_userCalImporter = importer;
-		this.saveOneItem(_userCalImporter, _importerID);
+		StoredDataType type = null;
+		if(_userCalImporter.getClass() == GCalImporter.class)
+			type = StoredDataType.GCalImporter;
+		else {
+			try {
+				throw new Exception();
+			} catch (Exception e) {
+				e.printStackTrace();
+				System.out.println("Wrong type of cal importer");
+			}
+			
+		}
+		this.saveOneItem(_userCalImporter, _importerID, type);
 	}
 	
 	public void setOwnerName(String name){
@@ -277,26 +328,37 @@ public class Communicator {
 		//TODO: deal with URL exception
 		// Update all when2meet events
 		When2MeetEvent temp = null;
-		for(Event event : _w2mEvents.values()){
+		for(Event event : _events.values()){
 			//repull info
-			if(event.getCalGroupType() == CalGroupType.When2MeetEvent)
-				_importer.refreshEvent((When2MeetEvent) event);
+			if(event.getCalGroupType() == CalGroupType.When2MeetEvent) {
+				_eventImporter.refreshEvent((When2MeetEvent) event);
+				saveOneItem(event, event.getID()+"", StoredDataType.When2MeetEvent);
+			}
 			else
 				System.out.println("Invalid event type - not when2meet");
 		}
 		// Update user calendar
 		if(_userCal != null){
 			pullCal(_userCal.getStartTime(), _userCal.getEndTime());
+			saveOneItem(_userCal, _userCalID, StoredDataType.GCal);
 		}
 		
 		// Rebuild index and store all files
-		saveAll();
+		//saveAll();
 	}
 	
 	public void calToW2M(String eventID){
-		Event w2m = _w2mEvents.get(eventID);
+		Event w2m = _events.get(eventID);
+		
 		if(w2m != null && !w2m.userHasSubmitted()){
-			
+			CalendarSlots cal = _converter.calToSlots(_userCal, w2m);
+			w2m.setUserResponse(cal);
+		}
+	}
+	
+	private void checkUserCal(String eventID){
+		Event w2m = _events.get(eventID);
+		if(w2m != null){
 			//check to see that w2m in range of userCal
 			//If it isn't, pullCall before 
 			DateTime wStart = w2m.getStartTime();
@@ -319,18 +381,15 @@ public class Communicator {
 				
 				pullCal(start, end);
 			}
-			
-			CalendarSlots cal = _converter.calToSlots(_userCal, w2m);
-			w2m.setUserResponse(cal);
 		}
 	}
 	
 	public Event getEventByID(String id){
-		return _w2mEvents.get(id);
+		return _events.get(id);
 	}
 	
 	public Event getW2M(String id){
-		Event toReturn = _w2mEvents.get(id);
+		Event toReturn = _events.get(id);
 		if(toReturn.getUserResponse() == null){
 			
 			//ask user if they've responded to the event
@@ -349,7 +408,7 @@ public class Communicator {
 						"", JOptionPane.INFORMATION_MESSAGE, null,
 						responseNames, responseNames[0]);
 				
-				System.out.println("SELECTED: " + selected);
+				//System.out.println("SELECTED: " + selected);
 				//take the selected cal, remove it from the list, and set it to be the userResponse
 				if(selected != null){
 					CalendarSlots user = toReturn.getCalByName(selected.toString());
@@ -364,6 +423,9 @@ public class Communicator {
 			}
 			
 		}
+		
+		checkUserCal(id);
+		
 		if(!toReturn.userHasSubmitted()){
 			calToW2M(id);
 		}
@@ -384,11 +446,24 @@ public class Communicator {
 			}
 		}
 		if(isValidName)
-			event.getUserResponse().setOwner(new When2MeetOwner(newName, event.getUserResponse().getOwner().getID()));
+			userResp.setOwner(new When2MeetOwner(newName, userResp.getOwner().getID()));
+		saveOneItem(event, event.getID()+"", StoredDataType.When2MeetEvent);
+	}
+	
+	private void getOwnerName(){
+		String newName = JOptionPane.showInputDialog("Please enter the name you would like to use in your When2Meet response");
+		if(newName != null){
+			_owner.setName(newName);
+		}
+		//save program owner
 	}
 	
 	public void submitResponse(String eventID, CalendarSlots response) {
-		Event event = _w2mEvents.get(eventID);	
+		Event event = _events.get(eventID);	
+		if(_owner.getName() == null){
+			getOwnerName();
+		}
+		
 		if(event.getCalGroupType() == CalGroupType.When2MeetEvent) {
 			boolean didNotPost = true;
 			while(didNotPost){
@@ -409,7 +484,7 @@ public class Communicator {
 	public CalendarSlots getBestTimes(String eventID, int duration){
 		//TODO make more generic (hard-coding 15, limiting to w2m)
 		
-		Event w2m = _w2mEvents.get(eventID);
+		Event w2m = _events.get(eventID);
 		CalendarSlots toReturn = null;
 		
 		if(w2m != null){
@@ -425,14 +500,14 @@ public class Communicator {
 		// Return the list of name ID pairs associated with all events
 		ArrayList<NameIDPair> toReturn = new ArrayList<NameIDPair>();
 		
-		for(Event e : _w2mEvents.values())
+		for(Event e : _events.values())
 			toReturn.add(new NameIDPair(e.getName(), String.valueOf(e.getID())));
 	
 		return toReturn;
 	}
 	
 	public Collection<String> getEventIDs() {
-		return _w2mEvents.keySet();
+		return _events.keySet();
 	}
 	
 	public CalendarGroup<CalendarResponses> getCal(){
