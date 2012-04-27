@@ -164,7 +164,7 @@ public class When2MeetImporter implements CalendarsImporter {
 				availLines.add(inputLine);
 			if(nameIDMatcher.find()) {
 				nameIDLines.add(inputLine);
-				System.out.println(inputLine);
+				// System.out.println(inputLine);
 			}
 			if(slotsMatcher.matches()) {
 				int slotID = Integer.parseInt(slotsMatcher.group(_slotIDGroupIndex));

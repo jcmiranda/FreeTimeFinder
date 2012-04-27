@@ -109,7 +109,7 @@ public class Converter {
 				/* ignore responses that begin after the w2m ends or end before the w2m starts */
 				if(rStart.isBefore(_eventEnd) && rEnd.isAfter(_eventStart) &&
 						isBeforeEndTimeOfDay(rStart) && isAfterStartTimeOfDay(rEnd)){
-					System.out.println("Response Name: " + r.getName());
+					// System.out.println("Response Name: " + r.getName());
 					int startMin = toRow(r.getStartTime(), false);
 					int startDay = toCol(r.getStartTime());
 					
@@ -134,7 +134,7 @@ public class Converter {
 						if(currDay == endDay && currMin >= endMin){
 							break;
 						}
-						System.out.println("Busy Day: " + currDay + "\tMin: " + currMin);
+						// System.out.println("Busy Day: " + currDay + "\tMin: " + currMin);
 						availability[currDay][currMin] = Availability.busy;
 						currMin = (currMin+1)%_numSlotsInDay;
 						if(currMin == 0){

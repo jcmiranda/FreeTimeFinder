@@ -137,7 +137,6 @@ public class DayPanel extends JPanel{
 
 	public void paintComponent(Graphics g){
 		super.paintComponent(g);
-		System.out.println("Num Hours: " + _numHours);
 		Graphics2D brush = (Graphics2D) g;
 		if (!_active){
 			brush.setColor(GRAY_OUT_COLOR);

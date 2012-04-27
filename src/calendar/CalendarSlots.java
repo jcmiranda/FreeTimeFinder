@@ -187,16 +187,10 @@ public class CalendarSlots implements Calendar {
 			int numDays = this.getDaysBetween(_startTime, d.getDay());
 			if(numDays >= 0 && numDays < _numDays){
 				for (int i=0; i< _numSlotsInDay; i++){
-					//May be some bugs here
-					
 					double iDbl = (double) i;
 					double hDbl = (double) d.getHeight();
 					double hrsDbl = (double) d.getNumHours();
 					double sDbl = (double) _numSlotsInDay;
-					System.out.println("Hours: " + d.getNumHours());
-					System.out.println("Num Slots in Day: " + _numSlotsInDay);
-					System.out.println("Len Day in Minutes: " + lenDayInMinutes());
-					System.out.println("Min in Slot: " + _minInSlot);
 					
 					if (_avail[numDays][i]==Availability.free){
 						rect = new Rectangle2D.Double();

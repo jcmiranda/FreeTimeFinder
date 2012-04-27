@@ -42,7 +42,7 @@ import com.google.gdata.client.*;
 
 public class GCalImporter implements CalendarsImporter<CalendarResponses> {
 	private CalendarService _client;
-	int MAX_RESPONSES = 100;
+	int MAX_RESPONSES = Integer.MAX_VALUE;
 	private Owner _owner;
 	
 	public GCalImporter() {
@@ -124,7 +124,7 @@ public class GCalImporter implements CalendarsImporter<CalendarResponses> {
             allCalendars.addCalendar(currCal);
             
             //TEST
-            // currCal.print();
+             currCal.print();
           }
         return allCalendars;
 	}
@@ -144,7 +144,7 @@ public class GCalImporter implements CalendarsImporter<CalendarResponses> {
 		myQuery.setStringCustomParameter("orderby", "starttime");
 		myQuery.setStringCustomParameter("sortorder", "ascending");
 		myQuery.setStringCustomParameter("singleevents", "true");
-		myQuery.setMaxResults(100);
+		myQuery.setMaxResults(MAX_RESPONSES);
 		//send request and get result feed
 		CalendarEventFeed resultFeed = null;
 		try {
@@ -177,7 +177,8 @@ public class GCalImporter implements CalendarsImporter<CalendarResponses> {
 	
     @Override
 	public CalendarGroup<CalendarResponses> refresh(org.joda.time.DateTime st, org.joda.time.DateTime et) {
-		try {
+		System.out.println("Refresh gcal from " + st + " to " + et);
+    	try {
 			return this.importMyGCal(st, et);
 		} catch (IOException e) {
 			// TODO Auto-generated catch block

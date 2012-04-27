@@ -121,11 +121,15 @@ public class CalendarResponses implements Calendar {
 	}
 
 	public void print() {
-		System.out.println("CALENDAR IMPL: ");
+		//System.out.println("CALENDAR IMPL: ");
 		System.out.println("Name: " + _name);
 		for(Response r : _responses) {
-			r.print();
+			if(r.getStartTime().getMonthOfYear() == 4 && r.getStartTime().getDayOfMonth() == 27)
+				r.print();
 		}
+//		for(Response r : _responses) {
+//			r.print();
+//		}
 	}
 
 	public void setResponses(ArrayList<Response> responses) {
