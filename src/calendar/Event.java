@@ -66,7 +66,7 @@ public class Event extends CalendarGroup<CalendarSlots> {
 	}
 	
 	private void initColors() {
-		//_colors.add(GuiConstants.PALE_YELLOW);
+		_colors.add(GuiConstants.PALE_YELLOW);
 		_colors.add(GuiConstants.AQUAMARINE);
 		_colors.add(GuiConstants.PALE_GREEN);
 		_colors.add(GuiConstants.BRIGHT_ORANGE);
@@ -164,7 +164,7 @@ public class Event extends CalendarGroup<CalendarSlots> {
 			}
 
 			// Connect the dots
-			for(int endPtSlot = 2; endPtSlot < (numSlotsInDay - 1) * 2; endPtSlot = endPtSlot + 2) {
+			for(int endPtSlot = 2; endPtSlot < endpts.length - 1; endPtSlot = endPtSlot + 2) {
 				int above = endpts[endPtSlot - 1][outside];
 				int below = endpts[endPtSlot + 1][outside];
 				if(above == below)
