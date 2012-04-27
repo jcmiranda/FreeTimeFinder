@@ -65,7 +65,7 @@ public class DayPanel extends JPanel{
 	}
 
 	public void setNumHours(int numHours) {
-		System.out.println("Setting numHours to " + numHours);
+		//System.out.println("ours to " + numHours);
 		_numHours = numHours;
 	}
 

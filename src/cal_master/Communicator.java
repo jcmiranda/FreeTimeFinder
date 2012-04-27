@@ -30,7 +30,8 @@ public class Communicator {
 	private CalendarsImporter<CalendarResponses> _userCalImporter;
 	private StoredDataType _userCalImporterType; // = IndexType.GCalImporter;
 	private CalendarGroup<CalendarResponses> _userCal = null;
-	private String _userCalID = "userCal", _indexID = "index", _importerID = "userCalImporter";
+	private String _userCalID = "userCal", _indexID = "index", 
+			_importerID = "userCalImporter", _progOwnerID = "progOwner";
 	
 	private HashMap<String, Event> _events = new HashMap<String, Event>();
 	private EventImporter _eventImporter = new EventImporter();
@@ -38,7 +39,7 @@ public class Communicator {
 
 	private Converter _converter = new Converter();
 	private TimeFinderSlots _timeFinder = new TimeFinderSlots();
-	private ProgramOwner _owner = new ProgramOwner();
+	private ProgramOwner _progOwner = new ProgramOwner();
 	
 	private XStream _xstream = new XStream();
 	//private Index _index = new Index();
@@ -98,7 +99,7 @@ public class Communicator {
 				break;
 			}
 			case ProgramOwner: {
-				_owner = (ProgramOwner) o;
+				_progOwner = (ProgramOwner) o;
 				break;
 			} 
 			case GCalImporter: {
@@ -111,6 +112,10 @@ public class Communicator {
 			}
 			}
 				
+		}
+		
+		if(_progOwner == null) {
+			getNewOwnerName();
 		}
 		
 		if(_userCal == null) {
@@ -321,7 +326,7 @@ public class Communicator {
 	}
 	
 	public void setOwnerName(String name){
-		_owner.setName(name);
+		_progOwner.setName(name);
 	}
 	
 	public void refresh() {
@@ -414,12 +419,14 @@ public class Communicator {
 					CalendarSlots user = toReturn.getCalByName(selected.toString());
 					//toReturn.removeCalendar(user);
 					toReturn.setUserResponse(user);
+					toReturn.setUserSubmitted(true);
+					// ASDF
 				}
 			}
 			//if they haven't, set userResponse to be a new CalendarSlots with them as the owner
 			else{
 				toReturn.setUserResponse(new CalendarSlots(toReturn.getStartTime(), toReturn.getEndTime(), 15, Availability.free));
-				toReturn.getUserResponse().setOwner(new When2MeetOwner(_owner.getName(), -1));
+				toReturn.getUserResponse().setOwner(new When2MeetOwner(_progOwner.getName(), -1));
 			}
 			
 		}
@@ -453,21 +460,39 @@ public class Communicator {
 		saveOneItem(event, event.getID()+"", StoredDataType.When2MeetEvent);
 	}
 	
-	private void getOwnerName(){
-		String newName = JOptionPane.showInputDialog("Please enter the name you would like to use in your When2Meet response");
-		if(newName != null){
-			_owner.setName(newName);
+	private boolean getNewOwnerName(){
+
+		String newName = JOptionPane.showInputDialog("Please enter the name you would like to use in your When2Meet responses");
+		if(newName != null){ 
+			_progOwner.setName(newName);
+			//save program owner
+			saveOneItem(_progOwner, _progOwnerID, StoredDataType.ProgramOwner);
+			return true;
 		}
-		//save program owner
+		
+		return false;
+	}
+	
+	private String getOwnerName() {
+		return _progOwner.getName();
 	}
 	
 	public void submitResponse(String eventID, CalendarSlots response) {
 		Event event = _events.get(eventID);	
-		if(_owner.getName() == null){
-			getOwnerName();
-		}
 		
-		response.setOwner(new When2MeetOwner(_owner.getName(), -1));
+		// If this response did not come from an existing response on the web, and was
+		// created entirely in our program. Need to get a user name to associate with this response
+		if(response.getOwner() == null) {
+			if(getOwnerName() == null)
+				getNewOwnerName();
+			response.setOwner(new When2MeetOwner(getOwnerName(), -1));
+		} else if(response.getOwner().getName() == null) {
+			if(getOwnerName() == null)
+				getNewOwnerName();
+			response.getOwner().setName(getOwnerName());
+		} 
+		
+		// response.setOwner(new When2MeetOwner(_owner.getName(), -1));
 		System.out.println("Response Owner: " + response.getOwner().getName());
 		System.out.println("Event User: " + event.getUserResponse().getOwner().getName());
 		System.out.println("Event ID: " + event.getID());
