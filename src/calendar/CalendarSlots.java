@@ -188,10 +188,16 @@ public class CalendarSlots implements Calendar {
 				for (int i=0; i< _numSlotsInDay; i++){
 					//May be some bugs here
 					
+					double iDbl = (double) i;
+					double hDbl = (double) d.getHeight();
+					
+					
+					double sDbl = (double) _numSlotsInDay;
+					
 					if (_avail[numDays][i]==Availability.free){
 						rect = new Rectangle2D.Double();
-						int startY = (int) ((double) i*d.getHeight()/_numSlotsInDay);
-						rect.setFrame(0, startY, d.getWidth(), d.getHeight()/_numSlotsInDay);
+						double startY = iDbl*hDbl/sDbl;
+						rect.setFrame(0, startY, d.getWidth(), hDbl/sDbl);
 						brush.setColor(SLOT_COLOR);
 						brush.draw(rect);
 						brush.fill(rect);

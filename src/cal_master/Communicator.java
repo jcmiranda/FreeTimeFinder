@@ -438,12 +438,24 @@ public class Communicator {
 			}
 		}
 		if(isValidName)
-			event.getUserResponse().setOwner(new When2MeetOwner(newName, event.getUserResponse().getOwner().getID()));
+			userResp.setOwner(new When2MeetOwner(newName, userResp.getOwner().getID()));
 		saveOneItem(event, event.getID()+"", StoredDataType.When2MeetEvent);
+	}
+	
+	private void getOwnerName(){
+		String newName = JOptionPane.showInputDialog("Please enter the name you would like to use in your When2Meet response");
+		if(newName != null){
+			_owner.setName(newName);
+		}
+		//save program owner
 	}
 	
 	public void submitResponse(String eventID, CalendarSlots response) {
 		Event event = _events.get(eventID);	
+		if(_owner.getName() == null){
+			getOwnerName();
+		}
+		
 		if(event.getCalGroupType() == CalGroupType.When2MeetEvent) {
 			boolean didNotPost = true;
 			while(didNotPost){
