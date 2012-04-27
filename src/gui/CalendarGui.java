@@ -4,7 +4,6 @@ import static gui.GuiConstants.FRAME_HEIGHT;
 import static gui.GuiConstants.FRAME_WIDTH;
 
 import java.awt.BorderLayout;
-import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
@@ -20,15 +19,13 @@ import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.SwingConstants;
-import javax.swing.border.Border;
 import javax.swing.border.EmptyBorder;
-
-import org.joda.time.DateTime;
 
 import cal_master.Communicator;
 import cal_master.NameIDPair;
 import calendar.CalendarGroup;
 import calendar.CalendarResponses;
+import calendar.CalendarSlots;
 import calendar.Event;
 import calendar.When2MeetEvent;
 
@@ -48,7 +45,7 @@ public class CalendarGui {
 	private EventPanel _eventPanel = new EventPanel(_communicator, this);
 	private UpdatesPanel _updatesPanel = new UpdatesPanel();
 	private JButton _submitButton = new JButton("Submit Response");
-
+	private JButton _timeFindButton = new JButton("Find Best Times");
 	public static enum DaysOfWeek {Monday, Tuesday, Wednesday, Thursday, Friday, Saturday, Sunday};
 
 	// Represents the monday of the current week
@@ -86,6 +83,7 @@ public class CalendarGui {
 
 		
 		_submitButton.addActionListener(new SubmitListener());
+		_timeFindButton.addActionListener(new TimeFindListener());
 		//_eventPanel.addEvent(new EventLabel("TESTING TESTING", "1234", _communicator, this));
 		_numHours = _slotGroup.getCalendars().get(0).getNumHours();
 //		makeDayLabels();
@@ -251,7 +249,14 @@ public class CalendarGui {
 		
 		JPanel submitPanel = new JPanel();
 		submitPanel.add(_submitButton);
-		_frame.add(submitPanel, BorderLayout.NORTH);
+		JPanel timeFindPanel = new JPanel();
+		timeFindPanel.add(_timeFindButton);
+		
+		JPanel buttonPanel = new JPanel(new GridLayout(1, 0));
+		buttonPanel.add(submitPanel);
+		buttonPanel.add(timeFindPanel);
+		
+		_frame.add(buttonPanel, BorderLayout.NORTH);
 
 		JPanel eastPanel = new JPanel(new GridLayout(0,1));
 		eastPanel.add(_eventPanel);
@@ -299,6 +304,38 @@ public class CalendarGui {
 					JOptionPane.YES_NO_OPTION);
 			if(selection == JOptionPane.YES_OPTION)
 				replyToEvent();
+			
+		}
+		
+	}
+	
+	private class TimeFindListener implements ActionListener {
+
+		@Override
+		public void actionPerformed(ActionEvent arg0) {
+			//
+			int duration = -1;
+			Object[] calOptions = {"15 min", "30 min", "45 min", "1 hr", "90 min", "2 hr" };
+			Object selectedValue = JOptionPane.showInputDialog(null, "Choose a calendar type to import.", "", 
+					JOptionPane.INFORMATION_MESSAGE, null, calOptions, calOptions[0]);
+			if(selectedValue.toString() == "15 min")
+				duration = 15;
+			else if(selectedValue.toString() == "30 min")
+				duration = 30;
+			else if(selectedValue.toString() == "45 min")
+				duration = 45;
+			else if(selectedValue.toString() == "1 hr")
+				duration = 60;
+			else if(selectedValue.toString() == "90 min")
+				duration = 90;
+			else if(selectedValue.toString() == "2 hr")
+				duration = 120;
+			
+			if(duration > 0){
+				CalendarSlots bestTimes = _communicator.getBestTimes(String.valueOf(_slotGroup.getID()), duration);
+				//TODO : display it!
+				bestTimes.print();
+			}
 			
 		}
 		

@@ -1,14 +1,13 @@
 package ftf;
 
 import java.util.ArrayList;
-
 import java.util.PriorityQueue;
 
 import org.joda.time.DateTime;
 
 import calendar.Availability;
-import calendar.CalendarGroup;
 import calendar.CalendarSlots;
+import calendar.Event;
 
 
 public class TimeFinderSlots {
@@ -33,7 +32,31 @@ public class TimeFinderSlots {
 		return minutesOff / _interval;
 	}
 	
-	public CalendarSlots findBestTimes(CalendarGroup<CalendarSlots> e, int interval, int duration, int numToReturn, int minAttendees){
+	private void calculateAvailForDay(CalendarSlots cal, int day, int col, int[][] freeTimes){
+		for(int row=0; row<_numSlotsInDay; row++){
+			if(_numSlotsInDay == cal.getSlotsInDay()){
+				switch(cal.getAvail(day, row)){
+				case free:
+					freeTimes[row][col] = 1;
+					break;
+				case busy:
+					freeTimes[row][col] = 0;
+				}
+			}
+			else{
+				DateTime time = slotToTime(row, col);
+				/*switch(cal.getAvail(time)){
+					case free:
+						freeTimes[row][col] = 1;
+						break;
+					case busy:
+						freeTimes[row][col] = 0;
+				}*/
+			}
+		}
+	}
+	
+	public CalendarSlots findBestTimes(Event e, int interval, int duration, int numToReturn, int minAttendees){
 		
 		ArrayList<CalendarSlots> calendars = e.getCalendars();
 		if(calendars.size() <= 0){
@@ -41,39 +64,23 @@ public class TimeFinderSlots {
 		}
 		
 		CalendarSlots firstCal = calendars.get(0);
+		CalendarSlots userResponse = e.getUserResponse();
 		_start = firstCal.getStartTime();
 		_numSlotsInDay = firstCal.lenDayInMinutes()/interval;
 		_interval = interval;
 		_numDays = firstCal.numDays();
-		int[][] freeTimes = new int[_numSlotsInDay][calendars.size()];
+		int[][] freeTimes = new int[_numSlotsInDay][calendars.size() + 1];
 		PriorityQueue<TimeAvailability> times = new PriorityQueue<TimeAvailability>();
 		
 		for(int day=0; day<_numDays; day++){
 			int col = 0;
+			
 			for(CalendarSlots cal : calendars){
-				for(int row=0; row<_numSlotsInDay; row++){
-					if(_numSlotsInDay == cal.getSlotsInDay()){
-						switch(cal.getAvail(day, row)){
-						case free:
-							freeTimes[row][col] = 1;
-							break;
-						case busy:
-							freeTimes[row][col] = 0;
-						}
-					}
-					else{
-						DateTime time = slotToTime(row, col);
-						/*switch(cal.getAvail(time)){
-							case free:
-								freeTimes[row][col] = 1;
-								break;
-							case busy:
-								freeTimes[row][col] = 0;
-						}*/
-					}
-				
-				}
+				calculateAvailForDay(cal, day, col, freeTimes);
 				col++;
+			}
+			if(userResponse != null){
+				calculateAvailForDay(userResponse, day, col, freeTimes);
 			}
 			
 			PriorityQueue<TimeAvailability> temp = calculateTimes(freeTimes, day, interval, duration, minAttendees);
