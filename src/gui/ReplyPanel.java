@@ -45,7 +45,7 @@ public class ReplyPanel extends CalPanel{
 
 		_startHour = _slotCals.getStartTime().getHourOfDay();
 		_endHour = _slotCals.getEndTime().getHourOfDay();
-		_numHours = _endHour - _startHour;
+		_numHours = _slotCals.getCalendars().get(0).getNumHours();
 		configDays();
 	}
 

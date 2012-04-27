@@ -113,15 +113,17 @@ public class When2MeetImporter implements CalendarsImporter {
 			
 			while(m.find()) {
 				Integer slot = new Integer(Integer.parseInt(m.group(1)));
-				Integer id = new Integer(Integer.parseInt(m.group(2)));
+				Integer userId = new Integer(Integer.parseInt(m.group(2)));
 				// System.out.println("Slot: " + slot + " ID: " + id);
 				assert(slot != null);
-				assert(id != null);
-				if(_IDsToCals.get(id) == null) {
-					System.out.println(id);
-					System.out.println(_IDsToCals.keySet());
+				assert(userId != null);
+				if(_IDsToCals.get(userId) == null) {
+					//System.out.println(m.group(0));
+					//System.out.println(userId);
+					//System.out.println(_IDsToCals.keySet());
 				}
-				_IDsToCals.get(id).setAvail(slot, Availability.free);		
+				else
+					_IDsToCals.get(userId).setAvail(slot, Availability.free);		
 			}
 		}
 	}

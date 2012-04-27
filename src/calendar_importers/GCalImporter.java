@@ -154,7 +154,7 @@ public class GCalImporter implements CalendarsImporter<CalendarResponses> {
 				List<When> times = event.getTimes();
 				long startTime = times.get(0).getStartTime().getValue();
 				long endTime = times.get(0).getEndTime().getValue();
-				if (endTime - startTime != 86400000) {
+				if (endTime - startTime < 86400000) {
 					Response eventResponse = new Response(new org.joda.time.DateTime(startTime), new org.joda.time.DateTime(endTime), event.getTitle().getPlainText());
 					responseList.add(eventResponse);
 				}

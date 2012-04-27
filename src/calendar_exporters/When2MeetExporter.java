@@ -182,7 +182,7 @@ public class When2MeetExporter {
 	}
 	
 	public void postAllAvailability(When2MeetEvent event) throws NameAlreadyExistsException {
-		//_event = event;
+		_event = event;
 		CalendarSlots cal = event.getUserResponse();
 		if(!event.userHasSubmitted()){
 			String password = "";

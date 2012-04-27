@@ -26,6 +26,7 @@ public class CalendarSlots implements Calendar {
 		_startTime = startTime;
 		_endTime = endTime;
 		_numSlotsInDay = (lenDayInMinutes() + 1) / minInSlot;
+		assert _numSlotsInDay % 4 == 0;
 		_numDays = numDays();
 		_minInSlot = minInSlot;		
 		_avail = new Availability[_numDays][_numSlotsInDay];
@@ -79,9 +80,13 @@ public class CalendarSlots implements Calendar {
 
 	public When2MeetOwner getOwner() { return _owner; }
 
-	public int getSlotsInDay() { return _numSlotsInDay; }
+	public int getSlotsInDay() { 
+		assert _numSlotsInDay % 4 == 0;
+		return _numSlotsInDay; }
 
-	public int getTotalSlots() { return _numDays * _numSlotsInDay; }
+	public int getTotalSlots() { 
+		assert _numSlotsInDay % 4 == 0;
+		return _numDays * _numSlotsInDay; }
 
 	public Availability[][] getAvail() {
 		return _avail;
@@ -138,6 +143,8 @@ public class CalendarSlots implements Calendar {
 		assert time.compareTo(_startTime) >= 0 : "Time before start of calendar";
 		assert time.compareTo(_endTime) <= 0 : "Time after end of calendar";
 
+		assert _numSlotsInDay % 4 == 0;
+		
 		int daysOff = time.getDayOfYear() - _startTime.getDayOfYear();
 		int minutesOff = time.getMinuteOfDay() - _startTime.getMinuteOfDay();
 		if(roundEarly)
@@ -168,6 +175,7 @@ public class CalendarSlots implements Calendar {
 	}
 	
 	public int getNumHours() {
+		assert _numSlotsInDay % 4 == 0;
 		return _minInSlot * _numSlotsInDay / 60;
 	}
 	
@@ -182,6 +190,7 @@ public class CalendarSlots implements Calendar {
 	
 	public void paint(Graphics2D brush, DayPanel d){
 		Rectangle2D.Double rect;
+		assert _numSlotsInDay % 4 == 0;
 
 		if(_isVisible){
 			int numDays = this.getDaysBetween(_startTime, d.getDay());
@@ -189,7 +198,7 @@ public class CalendarSlots implements Calendar {
 				for (int i=0; i< _numSlotsInDay; i++){
 					double iDbl = (double) i;
 					double hDbl = (double) d.getHeight();
-					double hrsDbl = (double) d.getNumHours();
+					double hrsDbl = (double) this.getNumHours(); // d.getNumHours();
 					double sDbl = (double) _numSlotsInDay;
 					
 					if (_avail[numDays][i]==Availability.free){

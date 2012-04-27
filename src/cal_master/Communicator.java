@@ -121,7 +121,7 @@ public class Communicator {
 					options, options[0]);
 			if(n == 0) {
 				// TODO import the users calendar
-				JOptionPane.showMessageDialog(null, "Now I should import a calendar");
+				//JOptionPane.showMessageDialog(null, "Now I should import a calendar");
 				
 				// from where would you like to import?
 				Object[] calOptions = {"Google Calendar" };
@@ -430,6 +430,9 @@ public class Communicator {
 			calToW2M(id);
 		}
 		
+		//save user response
+		saveOneItem(toReturn, String.valueOf(toReturn.getID()), calGroupTypeToIndexType(toReturn.getCalGroupType())); 
+		
 		return toReturn;
 	}
 	
@@ -463,6 +466,11 @@ public class Communicator {
 		if(_owner.getName() == null){
 			getOwnerName();
 		}
+		
+		response.setOwner(new When2MeetOwner(_owner.getName(), -1));
+		System.out.println("Response Owner: " + response.getOwner().getName());
+		System.out.println("Event User: " + event.getUserResponse().getOwner().getName());
+		System.out.println("Event ID: " + event.getID());
 		
 		if(event.getCalGroupType() == CalGroupType.When2MeetEvent) {
 			boolean didNotPost = true;
