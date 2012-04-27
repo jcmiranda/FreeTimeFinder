@@ -68,7 +68,7 @@ public class Response implements Comparable<Response>{
 		return this.getStartTime().compareTo(r.getStartTime());
 	}
 
-	public void paint(Graphics2D brush, DayPanel d, int startX, int endX){
+	public void paint(Graphics2D brush, DayPanel d, int startX, int endX, Color color){
 
 //		RoundRectangle2D.Double rect = new RoundRectangle2D.Double();
 		Rectangle2D.Double rect = new Rectangle2D.Double();
@@ -90,7 +90,7 @@ public class Response implements Comparable<Response>{
 //		rect.setRoundRect(startX+RESPONSE_SPACING, startY, (int) ((double) endX-startX-2*RESPONSE_SPACING), endY - startY, RECT_ARC_DIM, RECT_ARC_DIM);		
 		rect.setRect(startXDbl+spaceDbl, startY, endXDbl-startXDbl-2*spaceDbl, endY - startY);		
 
-		brush.setColor(RESPONSE_COLOR);
+		brush.setColor(color);
 		brush.fill(rect);
 		brush.setColor(RESPONSE_NAME_COLOR);
 		if (getName()!=null){
@@ -100,4 +100,5 @@ public class Response implements Comparable<Response>{
 		brush.draw(rect);
 
 	}
+
 }

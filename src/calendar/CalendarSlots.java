@@ -213,27 +213,5 @@ public class CalendarSlots implements Calendar {
 		}
 	}
 
-	public void paintOptimal(Graphics2D brush, DayPanel d){
-		Rectangle2D.Double rect;
-		
-		if(_isVisible){
-			int numDays = getDaysBetween(_startTime, d.getDay());
-			if(numDays >= 0 && numDays < _numDays){
-				for (int i=0; i< _numSlotsInDay; i++){
-					double iDbl = (double) i;
-					double hDbl = (double) d.getHeight();
-					double hrsDbl = (double) this.getNumHours(); // d.getNumHours();
-					double sDbl = (double) _numSlotsInDay;
-					
-					if (_avail[numDays][i]==Availability.free){
-						rect = new Rectangle2D.Double();
-						double startY = iDbl * hDbl / sDbl; //(hrsDbl*4.0);
-						rect.setFrame(0, startY, d.getWidth(), hDbl/ sDbl); //(hrsDbl*4.0));
-						brush.setColor(OPTIMAL_COLOR);
-						brush.fill(rect);
-					}
-				}
-			}
-		}
-	}
+
 }

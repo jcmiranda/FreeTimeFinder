@@ -33,7 +33,7 @@ public class DayPanel extends JPanel{
 	private CalendarGroup<CalendarSlots> _slots;
 	private CalendarGroup<CalendarResponses> _responses;
 	private Boolean _active = true;
-	private CalendarSlots _optimal;
+	private CalendarResponses _bestTimes;
 
 	public DayPanel(){
 		super();
@@ -77,6 +77,9 @@ public class DayPanel extends JPanel{
 		return _active;
 	}
 
+	public void setBestTimes(CalendarResponses bestTimes){
+		_bestTimes = bestTimes;
+	}
 
 	public void setEvent(Event event, int day) {
 		System.out.println("Event set");
@@ -150,7 +153,7 @@ public class DayPanel extends JPanel{
 			if (_responses!=null){
 				int numCals = _responses.getCalendars().size();
 				for (CalendarResponses r: _responses.getCalendars()){
-					r.paint(brush, this, numCals);
+					r.paint(brush, this, numCals, GuiConstants.RESPONSE_COLOR);
 				}
 			} else if (_event != null){
 				_event.paint(brush, this, _day);
@@ -161,8 +164,8 @@ public class DayPanel extends JPanel{
 					s.paint(brush, this);
 				}
 			}
-			if (_optimal!=null){
-				_optimal.paintOptimal(brush,this);
+			if (_bestTimes!=null){
+				_bestTimes.paint(brush,this, 1, GuiConstants.OPTIMAL_COLOR);
 			}
 		}
 	}

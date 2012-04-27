@@ -332,9 +332,11 @@ public class CalendarGui {
 				duration = 120;
 			
 			if(duration > 0){
-				CalendarSlots bestTimes = _communicator.getBestTimes(String.valueOf(_slotGroup.getID()), duration);
+				CalendarResponses bestTimes = _communicator.getBestTimes(String.valueOf(_slotGroup.getID()), duration);
 				//TODO : display it!
-				bestTimes.print();
+				//bestTimes.print();
+				_replyPanel.setBestTimes(bestTimes);
+				repaint();
 			}
 			
 		}

@@ -5,9 +5,10 @@ import java.util.PriorityQueue;
 
 import org.joda.time.DateTime;
 
-import calendar.Availability;
+import calendar.CalendarResponses;
 import calendar.CalendarSlots;
 import calendar.Event;
+import calendar.Response;
 
 
 public class TimeFinderSlots {
@@ -56,7 +57,7 @@ public class TimeFinderSlots {
 		}
 	}
 	
-	public CalendarSlots findBestTimes(Event e, int interval, int duration, int numToReturn, int minAttendees){
+	public CalendarResponses findBestTimes(Event e, int interval, int duration, int numToReturn, int minAttendees){
 		
 		ArrayList<CalendarSlots> calendars = e.getCalendars();
 		if(calendars.size() <= 0){
@@ -92,7 +93,7 @@ public class TimeFinderSlots {
 			}
 		}
 		
-		CalendarSlots toReturn = new CalendarSlots(_start, firstCal.getEndTime(), interval, Availability.busy);
+		/*CalendarSlots toReturn = new CalendarSlots(_start, firstCal.getEndTime(), interval, Availability.busy);
 		int i = 0;
 		int num = Math.min(numToReturn, times.size());
 		//System.out.println("times size: " + times.size());
@@ -106,9 +107,27 @@ public class TimeFinderSlots {
 				j++;
 			}
 			i++;
+		}*/
+		
+		
+		CalendarResponses ret = new CalendarResponses(_start, firstCal.getEndTime(), "");
+		int i=0;
+		int num = Math.min(numToReturn, times.size());
+		while(i<num){
+			TimeAvailability t = times.poll();
+			int j = 0;
+			DateTime start = slotToTime(t.getTime(), t.getDay());
+			while(j<duration/interval){
+				j++;
+			}
+			
+			DateTime end = slotToTime(t.getTime()+j, t.getDay());
+			ret.addResponse(new Response(start, end));
+			i++;
 		}
 		
-		return toReturn;
+		
+		return ret;
 	}
 	
 	public PriorityQueue<TimeAvailability> calculateTimes(int[][] times, int day, int interval, int duration, int minAttendees){

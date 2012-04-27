@@ -79,6 +79,12 @@ public class ReplyPanel extends CalPanel{
 		setViewDate();
 		configDays();
 	}
+	
+	public void setBestTimes(CalendarResponses bestTimes){
+		for (Day d: _bigDays){
+			d.setBestTimes(bestTimes);
+		}
+	}
 
 	//	public ArrayList<ArrayList<Response>> getDayResps(int dayOfWeek, CalendarGroup<CalendarResponses> respCals){
 	//

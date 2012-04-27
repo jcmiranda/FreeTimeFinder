@@ -1,9 +1,13 @@
 package calendar;
 
+import static gui.GuiConstants.OPTIMAL_COLOR;
 import static gui.GuiConstants.RESPONSE_CONFLICT_SPACING;
 import gui.DayPanel;
+import gui.GuiConstants;
 
+import java.awt.Color;
 import java.awt.Graphics2D;
+import java.awt.geom.Rectangle2D;
 import java.util.ArrayList;
 import java.util.Collections;
 
@@ -43,7 +47,7 @@ public class CalendarResponses implements Calendar {
 
 	private boolean sameTimeOfDay(DateTime dt1, DateTime dt2) {
 		return dt1.getHourOfDay() == dt2.getHourOfDay() &&
-				dt1.getMinuteOfHour() == dt2.getMinuteOfHour();
+		dt1.getMinuteOfHour() == dt2.getMinuteOfHour();
 	}
 
 	private DateTime toEndPrevDay(DateTime dt) {
@@ -123,10 +127,10 @@ public class CalendarResponses implements Calendar {
 	public void print() {
 		//System.out.println("CALENDAR IMPL: ");
 		//System.out.println("Name: " + _name);
-		
-//		for(Response r : _responses) {
-//			r.print();
-//		}
+
+		//		for(Response r : _responses) {
+		//			r.print();
+		//		}
 	}
 
 	public void setResponses(ArrayList<Response> responses) {
@@ -134,7 +138,7 @@ public class CalendarResponses implements Calendar {
 	}
 
 
-	public void paint(Graphics2D brush, DayPanel d, int numCals){
+	public void paint(Graphics2D brush, DayPanel d, int numCals, Color color){
 
 		ArrayList<Response> conflictCheck = new ArrayList<Response>();
 		for (Response r: getResponses()){
@@ -145,8 +149,10 @@ public class CalendarResponses implements Calendar {
 			}
 		}
 
-		int maxIndent=1;
+		Collections.sort(conflictCheck);
 		
+		int maxIndent=1;
+
 		for (int i=0; i<conflictCheck.size(); i++){
 			for (int j=i+1; j<conflictCheck.size(); j++){
 				if ((conflictCheck.get(i).getStartTime().isAfter(conflictCheck.get(j).getStartTime()) && conflictCheck.get(i).getStartTime().isBefore(conflictCheck.get(j).getEndTime()))
@@ -165,10 +171,23 @@ public class CalendarResponses implements Calendar {
 				r.paint(brush,
 						d,
 						(int) ((double) r.getIndentation()/(maxIndent+1)*d.getWidth()/2),
-						(int) ((double) d.getWidth() - d.getWidth()*(maxIndent - r.getIndentation())/(maxIndent+1)/2));
+						(int) ((double) d.getWidth() - d.getWidth()*(maxIndent - r.getIndentation())/(maxIndent+1)/2), color);
 			}
 		}
 	}
 
+	public void paintOptimal(Graphics2D brush, DayPanel d){
+		Rectangle2D.Double rect;
+		for (Response r: getResponses()){
+			if (r.getStartTime().year().equals(d.getDay().year())
+					&& r.getStartTime().dayOfYear().equals(d.getDay().dayOfYear())){
+				r.paint(brush,
+						d,
+						0,
+						d.getWidth(), GuiConstants.OPTIMAL_COLOR);
+			}
+		}
 
+
+	}
 }

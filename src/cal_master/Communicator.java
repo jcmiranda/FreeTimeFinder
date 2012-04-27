@@ -514,11 +514,11 @@ public class Communicator {
 		//save to index
 	}
 	
-	public CalendarSlots getBestTimes(String eventID, int duration){
+	public CalendarResponses getBestTimes(String eventID, int duration){
 		//TODO make more generic (hard-coding 15, limiting to w2m)
 		
 		Event w2m = _events.get(eventID);
-		CalendarSlots toReturn = null;
+		CalendarResponses toReturn = null;
 		
 		if(w2m != null){
 			int minAttendees = (int) (w2m.getCalendars().size() * ATTENDEE_PERCENTAGE);

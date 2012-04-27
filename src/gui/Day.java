@@ -1,7 +1,5 @@
 package gui;
 
-import static gui.GuiConstants.PALE_YELLOW;
-
 import java.awt.BorderLayout;
 
 import java.awt.Dimension;
@@ -18,6 +16,9 @@ import javax.swing.JPanel;
 import javax.swing.SwingConstants;
 
 import org.joda.time.DateTime;
+
+import calendar.CalendarResponses;
+import calendar.CalendarSlots;
 
 public class Day extends JPanel{
 
@@ -93,6 +94,9 @@ public class Day extends JPanel{
 		_clickableDay.setActive(active);
 	}
 
+	public void setBestTimes(CalendarResponses bestTimes){
+		_day.setBestTimes(bestTimes);
+	}
 
 	public void setDay(DateTime today){
 		_day.setDay(today);
