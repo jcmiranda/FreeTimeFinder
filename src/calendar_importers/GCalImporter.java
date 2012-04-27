@@ -124,7 +124,7 @@ public class GCalImporter implements CalendarsImporter<CalendarResponses> {
             allCalendars.addCalendar(currCal);
             
             //TEST
-            currCal.print();
+            // currCal.print();
           }
         return allCalendars;
 	}
@@ -149,19 +149,22 @@ public class GCalImporter implements CalendarsImporter<CalendarResponses> {
 		CalendarEventFeed resultFeed = null;
 		try {
 		 resultFeed = _client.query(myQuery, CalendarEventFeed.class);
+		 for (int i = 0; i < resultFeed.getEntries().size(); i++) {
+				CalendarEventEntry event = resultFeed.getEntries().get(i);
+				List<When> times = event.getTimes();
+				long startTime = times.get(0).getStartTime().getValue();
+				long endTime = times.get(0).getEndTime().getValue();
+				if (endTime - startTime != 86400000) {
+					Response eventResponse = new Response(new org.joda.time.DateTime(startTime), new org.joda.time.DateTime(endTime), event.getTitle().getPlainText());
+					responseList.add(eventResponse);
+				}
+			}
 		} catch (ServiceException e) {
 			System.out.println("AHa service exception");
 		}
 		
 		//go through feed and get events to make responses
-		for (int i = 0; i < resultFeed.getEntries().size(); i++) {
-			CalendarEventEntry event = resultFeed.getEntries().get(i);
-			List<When> times = event.getTimes();
-			long startTime = times.get(0).getStartTime().getValue();
-			long endTime = times.get(0).getEndTime().getValue();
-			Response eventResponse = new Response(new org.joda.time.DateTime(startTime), new org.joda.time.DateTime(endTime), event.getTitle().getPlainText());
-			responseList.add(eventResponse);
-		}
+		
 		return responseList;
 	}
 	

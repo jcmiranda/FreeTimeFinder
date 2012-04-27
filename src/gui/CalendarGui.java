@@ -202,8 +202,8 @@ public class CalendarGui {
 	private class InnerWindowListener extends WindowAdapter {
 		@Override
 		public void windowClosing(WindowEvent e) {
-			System.out.println("Window closing triggered");
-			_communicator.saveAll();
+			//System.out.println("Window closing triggered");
+			//_communicator.saveAll();
 		}
 	}
 	
@@ -215,7 +215,8 @@ public class CalendarGui {
 		GroupLayout calLayout = new GroupLayout(calPanel);
 		calPanel.setLayout(calLayout);
 
-		_frame.setResizable(false);
+		// TODO change to false
+		_frame.setResizable(true);
 
 		calLayout.setHorizontalGroup(
 				calLayout.createSequentialGroup()

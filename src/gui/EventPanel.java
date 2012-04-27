@@ -123,8 +123,6 @@ public class EventPanel extends JPanel {
 			}
 			
 			if(newEvent != null){
-				System.out.println("ADDED EVENT");
-				System.out.println(newEvent.getName());
 				if(newEvent.getName() == null){
 					newEvent.setName("BLOOP");
 				}
@@ -132,7 +130,6 @@ public class EventPanel extends JPanel {
 				addEvent(newLabel);
 				//repaint();
 				_gui.repaint();
-				System.out.println("ADDED LABEL");
 			}
 			
 			

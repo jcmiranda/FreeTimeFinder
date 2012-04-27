@@ -45,17 +45,36 @@ public class Converter {
 	}
 	
 	private int toRow(DateTime dt, boolean isEndTime){
+		int endMinutes = _eventEnd.getMinuteOfDay();
+		if(endMinutes == 0)
+			endMinutes = 24 * 60;
+		int thisMinutes = dt.getMinuteOfDay();
+		if(thisMinutes == 0 && isEndTime)
+			thisMinutes = 24 * 60;
+		
 		int minutesOff;
 		if(isEndTime)
-			minutesOff = Math.min(dt.getMinuteOfDay(), _eventEnd.getMinuteOfDay()) - _eventStart.getMinuteOfDay();
+			minutesOff = Math.min(thisMinutes, endMinutes) - _eventStart.getMinuteOfDay();
 		else
-			minutesOff = Math.max(dt.getMinuteOfDay() - _eventStart.getMinuteOfDay(), 0);
+			minutesOff = Math.max(thisMinutes - _eventStart.getMinuteOfDay(), 0);
 		
 		int offset = 0;
 		if(isEndTime && minutesOff % INTERVAL != 0){
 			offset = 1;
 		}
 		return minutesOff / INTERVAL + offset;
+	}
+	
+	private boolean isBeforeEndTimeOfDay(DateTime dt) {
+		int endMinutes = _eventEnd.getMinuteOfDay();
+		if(endMinutes == 0)
+			endMinutes = 24 * 60;
+		return dt.getMinuteOfDay() <= endMinutes;
+		//return false;
+	}
+	
+	private boolean isAfterStartTimeOfDay(DateTime dt) {
+		return dt.getMinuteOfDay() >= _eventStart.getMinuteOfDay();
 	}
 	
 	public CalendarSlots calToSlots(CalendarGroup<CalendarResponses> userCal, Event w2m){
@@ -85,8 +104,12 @@ public class Converter {
 			//_calStart = cal.getStartTime();
 			for(Response r : responses){
 				
+				DateTime rStart = r.getStartTime();
+				DateTime rEnd = r.getEndTime();
 				/* ignore responses that begin after the w2m ends or end before the w2m starts */
-				if(r.getStartTime().isBefore(_eventEnd) && r.getEndTime().isAfter(_eventStart)){
+				if(rStart.isBefore(_eventEnd) && rEnd.isAfter(_eventStart) &&
+						isBeforeEndTimeOfDay(rStart) && isAfterStartTimeOfDay(rEnd)){
+					System.out.println("Response Name: " + r.getName());
 					int startMin = toRow(r.getStartTime(), false);
 					int startDay = toCol(r.getStartTime());
 					
@@ -111,6 +134,7 @@ public class Converter {
 						if(currDay == endDay && currMin >= endMin){
 							break;
 						}
+						System.out.println("Busy Day: " + currDay + "\tMin: " + currMin);
 						availability[currDay][currMin] = Availability.busy;
 						currMin = (currMin+1)%_numSlotsInDay;
 						if(currMin == 0){
@@ -121,7 +145,7 @@ public class Converter {
 				
 			}
 		}
-		System.out.println("num rows = "+availability.length+" num cols = "+availability[0].length);
+		//System.out.println("num rows = "+availability.length+" num cols = "+availability[0].length);
 		
 		return new CalendarSlots(_eventStart, _eventEnd, null, INTERVAL, availability);
 		
