@@ -49,8 +49,7 @@ public class EventLabel extends JLabel implements MouseListener{
 		}
 	}
 	
-	@Override
-	public void mouseClicked(MouseEvent arg0) {
+	public void setEvent(){
 		Event toReturn = _communicator.getW2M(_id);
 		if(toReturn != null){
 			_gui.setEvent(toReturn);
@@ -59,7 +58,12 @@ public class EventLabel extends JLabel implements MouseListener{
 		}
 		
 		//TODO : deal with null (which should never happen)
-		
+	}
+	
+	
+	@Override
+	public void mouseClicked(MouseEvent arg0) {
+		setEvent();
 	}
 
 	@Override

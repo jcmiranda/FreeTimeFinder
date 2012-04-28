@@ -312,7 +312,13 @@ public class CalendarGui {
 		_frame.validate();
 		_frame.repaint();
 	}
-	
+
+	public void setBestTimes(int duration){
+		CalendarResponses bestTimes = _communicator.getBestTimes(String.valueOf(_slotGroup.getID()), duration);
+		//bestTimes.print();
+		_replyPanel.setBestTimes(bestTimes);
+		repaint();
+	}
 	
 	private class SubmitListener implements ActionListener {
 
@@ -344,34 +350,38 @@ public class CalendarGui {
 		
 	}
 	
+	
 	private class TimeFindListener implements ActionListener {
 
 		@Override
 		public void actionPerformed(ActionEvent arg0) {
 			//TODO make this pretty (aka at all clean)
-			int duration = -1;
-			Object[] calOptions = {"15 min", "30 min", "45 min", "1 hr", "90 min", "2 hr" };
-			Object selectedValue = JOptionPane.showInputDialog(null, "Choose a calendar type to import.", "", 
-					JOptionPane.INFORMATION_MESSAGE, null, calOptions, calOptions[0]);
-			if(selectedValue.toString() == "15 min")
-				duration = 15;
-			else if(selectedValue.toString() == "30 min")
-				duration = 30;
-			else if(selectedValue.toString() == "45 min")
-				duration = 45;
-			else if(selectedValue.toString() == "1 hr")
-				duration = 60;
-			else if(selectedValue.toString() == "90 min")
-				duration = 90;
-			else if(selectedValue.toString() == "2 hr")
-				duration = 120;
 			
-			if(duration > 0){
-				CalendarResponses bestTimes = _communicator.getBestTimes(String.valueOf(_slotGroup.getID()), duration);
-				//bestTimes.print();
-				_replyPanel.setBestTimes(bestTimes);
-				repaint();
-			}
+			SliderPane sliderPane = new SliderPane(_numHours, CalendarGui.this);
+			
+//			int duration = -1;
+//			Object[] calOptions = {"15 min", "30 min", "45 min", "1 hr", "90 min", "2 hr" };
+//			Object selectedValue = JOptionPane.showInputDialog(null, "Choose a calendar type to import.", "", 
+//					JOptionPane.INFORMATION_MESSAGE, null, calOptions, calOptions[0]);
+//			if(selectedValue.toString() == "15 min")
+//				duration = 15;
+//			else if(selectedValue.toString() == "30 min")
+//				duration = 30;
+//			else if(selectedValue.toString() == "45 min")
+//				duration = 45;
+//			else if(selectedValue.toString() == "1 hr")
+//				duration = 60;
+//			else if(selectedValue.toString() == "90 min")
+//				duration = 90;
+//			else if(selectedValue.toString() == "2 hr")
+//				duration = 120;
+//			
+//			if(duration > 0){
+//				CalendarResponses bestTimes = _communicator.getBestTimes(String.valueOf(_slotGroup.getID()), duration);
+//				//bestTimes.print();
+//				_replyPanel.setBestTimes(bestTimes);
+//				repaint();
+//			}
 			
 		}
 		
