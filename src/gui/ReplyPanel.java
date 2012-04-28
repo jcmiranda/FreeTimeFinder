@@ -94,7 +94,6 @@ public class ReplyPanel extends CalPanel{
 				_endDay = _slotCals.getEndTime();
 			}
 		}
-		System.out.println("AFTER NEXT: " + _startDay.getDayOfMonth() + " " +_endDay.getDayOfMonth());
 		configDays();
 	}
 
@@ -167,16 +166,14 @@ public class ReplyPanel extends CalPanel{
 	public void configDays(){
 
 		int numDays = CalendarSlots.getDaysBetween(_startDay, _endDay) +1;
-		System.out.println("NUMDAYS: " + numDays);
 		this.setLayout(new GridLayout(1,numDays,DAY_SPACING,0));
 		int ctr = 0;
 
 		for (int i=0; i<7; i++){
-			System.out.println("Boop");
 			_bigDays[i].setStartHour(_startHour);
 			_bigDays[i].setNumHours(_numHours);
 			_bigDays[i].setDay(_startDay.plusDays(i));
-			if (i>=numDays){
+			if (_startDay.plusDays(i).isAfter(_slotCals.getEndTime())){
 				_bigDays[i].setActive(false);
 				//				//=======
 				//				//		for (int i=0; i<14; i+=2){
