@@ -7,18 +7,27 @@ import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.io.UnsupportedEncodingException;
+import java.net.ConnectException;
 import java.net.HttpURLConnection;
 import java.net.InetAddress;
+import java.net.InetSocketAddress;
 import java.net.MalformedURLException;
 import java.net.ProtocolException;
+import java.net.Proxy;
 import java.net.Socket;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URL;
+import java.net.URLConnection;
 import java.net.URLDecoder;
 import java.net.URLEncoder;
+import java.net.UnknownHostException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
+import java.util.Timer;
+import java.util.TimerTask;
+import java.io.*;
 
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpServletResponseWrapper;
@@ -33,6 +42,15 @@ import calendar.OwnerImpl;
 import calendar.Response;
 
 
+import com.google.api.client.auth.oauth2.TokenResponse;
+import com.google.api.client.auth.oauth2.draft10.AccessTokenResponse;
+import com.google.api.client.googleapis.auth.oauth2.draft10.GoogleAccessProtectedResource;
+import com.google.api.client.googleapis.auth.oauth2.draft10.GoogleAccessTokenRequest;
+import com.google.api.client.googleapis.auth.oauth2.draft10.GoogleAccessTokenRequest.GoogleAuthorizationCodeGrant;
+import com.google.api.client.googleapis.auth.oauth2.draft10.GoogleAuthorizationRequestUrl;
+import com.google.api.client.http.HttpRequestFactory;
+import com.google.api.client.http.javanet.NetHttpTransport;
+import com.google.api.client.json.jackson.JacksonFactory;
 import com.google.gdata.client.calendar.CalendarQuery;
 import com.google.gdata.client.calendar.CalendarService;
 import com.google.gdata.data.*;
@@ -41,14 +59,11 @@ import com.google.gdata.data.extensions.When;
 import com.google.gdata.util.AuthenticationException;
 import com.google.gdata.util.ServiceException;
 
-import com.google.gdata.client.*;
-import com.google.api.client.auth.oauth2.draft10.AccessTokenResponse;
-import com.google.api.client.googleapis.auth.oauth2.draft10.*;
-import com.google.api.client.googleapis.auth.oauth2.draft10.GoogleAccessTokenRequest.GoogleAuthorizationCodeGrant;
-import com.google.api.client.http.HttpTransport;
-import com.google.api.client.http.javanet.NetHttpTransport;
-import com.google.api.client.json.JsonFactory;
-import com.google.api.client.json.jackson.JacksonFactory;
+import com.google.api.client.googleapis.auth.oauth2.*;
+
+//import org.apache.commons.httpclient.util.URIUtil.encodeQuery;
+
+
 
 //auth stuff:
 	//http://code.google.com/apis/gdata/docs/auth/clientlogin.html
@@ -72,8 +87,11 @@ import com.google.api.client.json.jackson.JacksonFactory;
 
 public class GCalImporter implements CalendarsImporter<CalendarResponses> {
 	private CalendarService _client;
-	int MAX_RESPONSES = 100;
+	int MAX_RESPONSES = 5000;
 	private Owner _owner;
+	private String CLIENT_ID;
+	private String CLIENT_SECRET;
+	private String _refreshToken;
 	
 	public GCalImporter() {
 		//connect to client
@@ -87,92 +105,167 @@ public class GCalImporter implements CalendarsImporter<CalendarResponses> {
 		return this.importCalendarGroup(startTime, endTime);
 	}
 	
-	public void setAuth() throws AuthenticationException, MalformedURLException, com.google.gdata.util.AuthenticationException {
-		//Get username and password from GUI
-		String username = (String) new JOptionPane().showInputDialog("Please type Google Calendar username:");
-		_owner = new OwnerImpl(username);
-		JOptionPane pwordPane = new JOptionPane();
-		JPasswordField jpf = new JPasswordField();
-		pwordPane.showConfirmDialog(null, jpf, "Please type Google Calendar password:", pwordPane.OK_CANCEL_OPTION);
-		char[] passwordArray = jpf.getPassword();
-		StringBuffer passwordString = new StringBuffer();
-		for (int i = 0; i < passwordArray.length; i++) {
-			passwordString.append(passwordArray[i]);
-		}
-		String password = passwordString.toString();
-		
-		//TODO: set up cookie/token stuff			
-		//URL feedURL = new URL("https://www.google.com/accounts/ClientLogin");
-		//HttpsURLConnection connection = (HttpsURLConnection) URL.openConnection();
-		//connection.setDoInput(true); 
-		//connection.setDoOutput(true);
-		//connection.setRequestMethod("POST"); 
-		//connection.setFollowRedirects(true); 
-		
-		_client.setUserCredentials(username, password);
-	}
+//	public void setAuth() throws AuthenticationException, MalformedURLException, com.google.gdata.util.AuthenticationException {
+//		//Get username and password from GUI
+//		String username = (String) new JOptionPane().showInputDialog("Please type Google Calendar username:");
+//		_owner = new OwnerImpl(username);
+//		JOptionPane pwordPane = new JOptionPane();
+//		JPasswordField jpf = new JPasswordField();
+//		pwordPane.showConfirmDialog(null, jpf, "Please type Google Calendar password:", pwordPane.OK_CANCEL_OPTION);
+//		char[] passwordArray = jpf.getPassword();
+//		StringBuffer passwordString = new StringBuffer();
+//		for (int i = 0; i < passwordArray.length; i++) {
+//			passwordString.append(passwordArray[i]);
+//		}
+//		String password = passwordString.toString();
+//		
+//		//TODO: set up cookie/token stuff			
+//		//URL feedURL = new URL("https://www.google.com/accounts/ClientLogin");
+//		//HttpsURLConnection connection = (HttpsURLConnection) URL.openConnection();
+//		//connection.setDoInput(true); 
+//		//connection.setDoOutput(true);
+//		//connection.setRequestMethod("POST"); 
+//		//connection.setFollowRedirects(true); 
+//		
+//		_client.setUserCredentials(username, password);
+//	}
+//	
+//	private synchronized void timeOut() {
+//		notifyAll();
+//	}
 	
-	public void post() {
-		
+//	public synchronized Socket serverReady(InetAddress ad, int port) throws IOException {  
+//        Socket listener = null;  
+//        while (true) {  
+//            try {  
+//                listener = new Socket(ad, port);  
+//            } 
+//            catch (ConnectException ignore) {}  
+//            if (listener == null) {  
+//                new Timer(true).schedule(new TimerTask() {  
+//                                    public void run() {  
+//                                        timeOut();  
+//                                    }  
+//                                },  
+//                                1000);  
+//                 try {  
+//                     wait();  
+//                 } 
+//                 catch (InterruptedException ignore) {}  
+//            } 
+//            else {  
+//                break;  
+//            }  
+//        }  
+//        return listener;  
+//    }  
+	
+//	private String get(String urlString) {
+//		URL url;
+//		StringBuffer resp = new StringBuffer();
+//		try {
+//			url = new URL(urlString);
+//			URLConnection conn = url.openConnection();
+//			conn.setDoOutput(true);
+//		    
+//		    // Get the response
+//		    BufferedReader rd = new BufferedReader(new InputStreamReader(conn.getInputStream()));
+//		    
+//		    String line;
+//		    while ((line = rd.readLine()) != null) 
+//		        resp = resp.append(line);
+//		    
+//		} catch (Exception e) {
+//
+//		}
+//		// TODO implement properly
+//		return resp.toString();
+//	}
+	
+	public void setAuth() {
 		//the info
-		String client_id = "1034117539945.apps.googleusercontent.com";
+		CLIENT_ID = "1034117539945.apps.googleusercontent.com";
 		String redirect_uri = "urn:ietf:wg:oauth:2.0:oob";
-		String redirect_uri_local = "http://localhost:1337";
-		String scope = "https://www.googleapis.com/auth/calendar";
-		String client_secret = "ygIy2-y40S1Fer0B3oU_coVn"; 
-		String code = "4/sDpXijSVGCPeC6dGec8OBh2PlKdF";
-		
-		//getting the code
+		String redirect_uri_local = "http://localhost:8080";
+		String scope = "http://www.google.com/calendar/feeds/";
+		CLIENT_SECRET = "ygIy2-y40S1Fer0B3oU_coVn"; 
+		String code = null;
+		String response_type = "code";
+		//encoded
+		String redirect_uri_local_en = null;
+		String scope_en = null;
+		String redirect_uri_en = null;
 		try {
-			//form URL
-		    GoogleAuthorizationRequestUrl url_string = new GoogleAuthorizationRequestUrl(client_id, redirect_uri_local, scope);
-		    URL url = new URL(url_string.build());
-		    URI uri = new URI(url_string.build());
-		    java.awt.Desktop.getDesktop().browse(uri);
-		    //Socket listener = new Socket(InetAddress.getLocalHost(), 1337);
-		    //BufferedReader rd = new BufferedReader(new InputStreamReader(listener.getInputStream()));		    
+			redirect_uri_en = URLEncoder.encode(redirect_uri, "UTF-8");
+			redirect_uri_local_en = URLEncoder.encode(redirect_uri_local, "UTF-8");		
+			scope_en = URLEncoder.encode(scope, "UTF-8");
+		}
+		catch (UnsupportedEncodingException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		}
+		
+		//STEP ONE: getting the code
+		try {
+		    String query = "response_type="+response_type+"&"+"client_id="+CLIENT_ID+"&"+"redirect_uri="+redirect_uri_en+"&"+"scope="+scope_en;		    
+			String url = "https://accounts.google.com/o/oauth2/auth?"+query;
+		    URI uri = new URI(url);
 		    
-		    HttpURLConnection conn = (HttpURLConnection) url.openConnection();
-		    conn.setFollowRedirects(false);
-		    conn.connect();
-		    int responseCode = conn.getResponseCode();
-		    System.out.println("response code = "+responseCode);
-		    String new_url = null;
-		    while (true) {
-		    	responseCode = conn.getResponseCode();
-		    	//System.out.println("response code = "+responseCode);
-		    	if (responseCode != 200) {
-		    		System.out.println("NOT 200! = "+responseCode);
-		    	}
-			    if (responseCode == 302) {
-			    	new_url = conn.getHeaderField("location");
-			    	break;
-			    }
-		    }
-		    System.out.println("URL new = " + new_url);
-		    BufferedReader rd = new BufferedReader(new InputStreamReader(conn.getInputStream()));
+		    //display webpage
+		    java.awt.Desktop.getDesktop().browse(uri);
+		    //get code
+		    code = (String) new JOptionPane().showInputDialog("Paste code:");		    
+		    
+//		    //SOCKET
+//		    //Socket listener = new Socket(InetAddress.getLocalHost(), 80);
+//		    //InetSocketAddress sa = new InetSocketAddress(InetAddress.getLocalHost(), 80);
+//		    //listener.bind(sa);
+//		    //local
+		    //Socket listener = this.serverReady(InetAddress.getLocalHost(), 80); 
+//		    //uri based
+////		    System.out.println(r_uri.getHost());
+////	    	Socket listener = this.serverReady(InetAddress., 80); 
+	    	//System.out.println("connected");
+		    
+//		    //HTTPURLConnection
+//		    HttpURLConnection listener = (HttpURLConnection) uri.toURL().openConnection();
+//		    listener.setDoInput(true); 
+//			listener.setDoOutput(true);
+//			listener.setFollowRedirects(true);
+//		    while (true) {
+////		    	listener = (HttpURLConnection) uri.toURL().openConnection();
+////		    	listener.setDoInput(true); 
+////				listener.setDoOutput(true);
+////				listener.setFollowRedirects(true);
+//		    	int response = listener.getResponseCode();
+//				System.out.println("resp = "+response);
+//				System.out.println("url = "+listener.getURL());
+//				if (response == 302) {
+//					break;
+//				}
+//		    }
+			
+			//int response = listener.getResponseCode();
+			//System.out.println("resp = "+response);
+		    
+	    	//READ INPUT
+//		    BufferedReader rd = new BufferedReader(new InputStreamReader(listener.getInputStream()));		    
 //		    String line;
 //			while ((line = rd.readLine()) != null) {
 //				System.out.println(line);
 //			}
-//		    URL currUrl = conn.getURL();
-//		    while (true) {
-//		    		currUrl = conn.getURL();
-//		    		System.out.println("URL = "+currUrl);
-//		    }
-			//close
-			//rd.close();
+//			rd.close();
 		    
+			//STEP TWO: GET ACCESS TOKEN
+
+		    //getting the access token
+		    GoogleAuthorizationCodeTokenRequest toke = new GoogleAuthorizationCodeTokenRequest(new NetHttpTransport(), new JacksonFactory(), CLIENT_ID, CLIENT_SECRET, code, redirect_uri);
+		    GoogleTokenResponse request = toke.execute();
+		    request.setExpiresInSeconds((long) 9000);
+		    _refreshToken = request.getRefreshToken();
 		    
-		    
-		    //HttpServletResponseWrapper .sendRedirect(builder.build());
-			
-			
-//			//getting the access token
-//			GoogleAuthorizationCodeGrant request = new GoogleAccessTokenRequest.GoogleAuthorizationCodeGrant(new NetHttpTransport(), new JacksonFactory(), client_id, client_secret, code, redirect_uri);
-//			
-//			AccessTokenResponse response = request.execute();
-//			System.out.println("Access token: " + response.accessToken);
+		    //set token for client
+			_client.setAuthSubToken(request.getAccessToken());
 		} 
 		catch (IOException e) {
 			// TODO Auto-generated catch block
@@ -183,92 +276,8 @@ public class GCalImporter implements CalendarsImporter<CalendarResponses> {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-//		catch (InterruptedException e) {
-//			// TODO Auto-generated catch block
-//			e.printStackTrace();
-//		} 
-		
-		 
-		
-		
-//			URL url;
-//			try {
-//				//data
-//				url = new URL("https://accounts.google.com/o/oauth2/token");
-//				String type = "application/x-www-form-urlencoded";
-//				String rawData = "code=4/IgpQJSUJB_Z12Qpu6UvJybYYy319&" +
-//						"cliend_id=1034117539945.apps.googleusercontent.com&" +
-//						"client_secret=ygIy2-y40S1Fer0B3oU_coVn&" +
-//						"redirect_uri=urn:ietf:wg:oauth:2.0:oob&" +
-//						//"redirect_uri=http://localhost&" +
-//						"grant_type=authorization_code";
-//				String encodedData = java.net.URLEncoder.encode(rawData, "UTF-8");
-//				//System.out.println(encodedData);
-//				
-//				//connect to url
-//				HttpURLConnection conn = (HttpURLConnection) url.openConnection();
-//			    conn.setDoOutput(true);
-//				conn.setRequestMethod("POST");
-//				conn.setRequestProperty("Content-Type", type);
-//				
-//				//send info
-//				OutputStreamWriter wr = new OutputStreamWriter(conn.getOutputStream());
-//				wr.write(rawData);
-//				wr.flush();		
-//				
-//				//System.out.println(conn.getResponseCode() + " "+conn.getResponseMessage());
-//				//read back
-//				BufferedReader rd = new BufferedReader(new InputStreamReader(conn.getInputStream()));
-//				String line;
-//				while ((line = rd.readLine()) != null) {
-//					System.out.println(line);
-//				}
-//				
-//				//close
-//				wr.close();
-//				rd.close();
-//			} 
-//			catch (MalformedURLException e) {
-//				// TODO Auto-generated catch block
-//				e.printStackTrace();
-//			}
-//			catch (UnsupportedEncodingException e) {
-//					// TODO Auto-generated catch block
-//					e.printStackTrace();
-//			}
-//			catch (IOException e) {
-//				// TODO Auto-generated catch block
-//				e.printStackTrace();
-//			}	
 	}
 	
-	public void getCode() throws MalformedURLException {
-//		//url
-//		URL url = new URL("https://accounts.google.com/o/oauth2/auth?" +
-//				"response_type=code&" +
-//				"client_id=1034117539945.apps.googleusercontent.com&" +
-//				"redirect_uri=http%3A%2F%2Flocalhost" +
-//				"scope=https%3A%2F%2Fwww.googleapis.com%2Fauth%2Fcalendar");
-//				//"https://accounts.google.com/o/oauth2/auth?");//+"scope=https%3A%2F%2Fwww.googleapis.com%2Fauth%2Fuserinfo.email+https%3A%2F%2Fwww.googleapis.com%2Fauth%2Fuserinfo.profile"
-//				//https://accounts.google.com/o/oauth2/auth?response_type=code&client_id=1034117539945.apps.googleusercontent.com&redirect_uri=http%3A%2F%2Flocalhost&scope=https%3A%2F%2Fwww.googleapis.com%2Fauth%2Fcalendar
-//				//https://accounts.google.com/o/oauth2/auth?response_type=code&client_id=1034117539945.apps.googleusercontent.com&redirect_uri=urn%3Aietf%3Awg%3Aoauth%3A2.0%3Aoob&scope=https%3A%2F%2Fwww.googleapis.com%2Fauth%2Fcalendar
-//				
-//		try {
-//			//connect to localhost
-//			//HttpURLConnection conn = (HttpURLConnection) url.openConnection();
-//			//conn.
-//			Socket listener = new Socket(InetAddress.getLocalHost(), 80);
-//			InputStream input = listener.getInputStream();
-//			System.out.println("input = "+input.read());
-//		} catch (IOException e) {
-//			// TODO Auto-generated catch block
-//			e.printStackTrace();
-//		}
-		
-		
-		
-		
-	}
 	
 	public CalendarGroup<CalendarResponses> importCalendarGroup(org.joda.time.DateTime st, org.joda.time.DateTime et) throws IOException, ServiceException, com.google.gdata.util.ServiceException {
 		//calendar group
@@ -288,28 +297,24 @@ public class GCalImporter implements CalendarsImporter<CalendarResponses> {
 		
 		//go through feed results and make calendars
         for (int i = 0; i < resultFeed.getEntries().size(); i++) {
-            CalendarEntry calendar = resultFeed.getEntries().get(i);
-            System.out.println("cal access level = "+calendar.getAccessLevel().EDITOR.getValue());
+            CalendarEntry calendar = resultFeed.getEntries().get(i);            
             
-            if (calendar.getAccessLevel().EDITOR.getValue().equals("editor")) {
+            //NOTE:
+            //for java.util.date month zero indexed, year is something + 1900
             
-	            //NOTE:
-	            //for java.util.date month zero indexed, year is something + 1900
-	            
-	            //make new calendar
-	            CalendarResponses currCal = new CalendarResponses(st, et, calendar.getTitle().getPlainText());          
-	           
-	            //get events for calendar
-	            ArrayList<Response> calResponses = this.getEvents(st, et, calendar.getId());
-	            currCal.setResponses(calResponses);            
-	            
-	            //add calendar to group of calendars
-	            allCalendars.addCalendar(currCal);
-	            
-	            //TEST
-	            currCal.print();
-            }
-          }
+            //make new calendar
+            CalendarResponses currCal = new CalendarResponses(st, et, calendar.getTitle().getPlainText());          
+           
+            //get events for calendar
+            ArrayList<Response> calResponses = this.getEvents(st, et, calendar.getId());
+            currCal.setResponses(calResponses);            
+            
+            //add calendar to group of calendars
+            allCalendars.addCalendar(currCal);
+            
+            //TEST
+            currCal.print();
+        }
         return allCalendars;
 	}
 	
@@ -320,7 +325,6 @@ public class GCalImporter implements CalendarsImporter<CalendarResponses> {
 		String sub2 = calID.substring(55,calID.length());
 		calID = sub1+sub2;
 		URL feedUrl = new URL(calID+"/private/full");
-		System.out.println("URL for event feed = "+feedUrl);
 		
 		//make query
 		CalendarQuery myQuery = new CalendarQuery(feedUrl);
@@ -333,36 +337,45 @@ public class GCalImporter implements CalendarsImporter<CalendarResponses> {
 		//send request and get result feed
 		CalendarEventFeed resultFeed = null;
 		try {
-		 resultFeed = _client.query(myQuery, CalendarEventFeed.class);
-		} catch (ServiceException e) {
-			System.out.println("AHa service exception");
+			resultFeed = _client.query(myQuery, CalendarEventFeed.class);
+			//go through feed and get events to make responses
+			for (int i = 0; i < resultFeed.getEntries().size(); i++) {
+				CalendarEventEntry event = resultFeed.getEntries().get(i);
+				List<When> times = event.getTimes();
+				long startTime = times.get(0).getStartTime().getValue();
+				long endTime = times.get(0).getEndTime().getValue();
+				if (endTime-startTime != 86400000) {
+					Response eventResponse = new Response(new org.joda.time.DateTime(startTime), new org.joda.time.DateTime(endTime), event.getTitle().getPlainText());
+					responseList.add(eventResponse);
+				}
+			}
+		} 
+		catch (ServiceException e) {
+			System.out.println("Calendar query failed: service exception");
 		}
 		
-		//go through feed and get events to make responses
-		for (int i = 0; i < resultFeed.getEntries().size(); i++) {
-			CalendarEventEntry event = resultFeed.getEntries().get(i);
-			List<When> times = event.getTimes();
-			long startTime = times.get(0).getStartTime().getValue();
-			long endTime = times.get(0).getEndTime().getValue();
-			Response eventResponse = new Response(new org.joda.time.DateTime(startTime), new org.joda.time.DateTime(endTime), event.getTitle().getPlainText());
-			responseList.add(eventResponse);
-		}
 		return responseList;
 	}
 	
     public static void main(String[] args) throws IOException, ServiceException, com.google.gdata.util.ServiceException {
     	GCalImporter myImporter = new GCalImporter();
-    	org.joda.time.DateTime startTime = new org.joda.time.DateTime(2011, 6, 28, 8, 0);
-		org.joda.time.DateTime endTime = new org.joda.time.DateTime(2011, 6, 30, 23, 0);
+    	org.joda.time.DateTime startTime = new org.joda.time.DateTime(2012, 4, 20, 8, 0);
+		org.joda.time.DateTime endTime = new org.joda.time.DateTime(2012, 4, 29, 23, 0);
     	myImporter.importMyGCal(startTime, endTime);
-//    	myImporter.getCode();
-//    	myImporter.post();
-    	System.out.println("DONE");
+    	myImporter.refresh(startTime, endTime);
+    	
     }
 	
 	public CalendarGroup<CalendarResponses> refresh(org.joda.time.DateTime st, org.joda.time.DateTime et) {
 		try {
-			return this.importMyGCal(st, et);
+			TokenResponse toke = new GoogleRefreshTokenRequest(new NetHttpTransport(), new JacksonFactory(), _refreshToken,CLIENT_ID, CLIENT_SECRET).execute();
+			_client.setAuthSubToken(toke.getAccessToken());
+		} catch (IOException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		}
+		try {
+			return this.importCalendarGroup(st, et);
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -374,7 +387,8 @@ public class GCalImporter implements CalendarsImporter<CalendarResponses> {
 	}
 
 	@Override
-	public CalendarGroup<CalendarResponses> importCalendarGroup() {
+	public CalendarGroup<CalendarResponses> importCalendarGroup(String url)
+			throws MalformedURLException, IOException {
 		// TODO Auto-generated method stub
 		return null;
 	}
