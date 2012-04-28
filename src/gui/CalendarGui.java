@@ -127,7 +127,6 @@ public class CalendarGui {
 	public void setEvent(Event event){
 		_slotGroup= event;
 		_responseGroup = _communicator.getUserCal();
-		System.out.println("Num Cals: " + _responseGroup.getCalendars().size());
 		_replyPanel.setSlots(event);
 		_replyPanel.setResps(_responseGroup);
 		//_replyPanel.configDays();
@@ -202,7 +201,6 @@ public class CalendarGui {
 //		_hourOfDayLabels.setBackground(Color.GREEN);
 		_hourOfDayLabels.setLayout(new GridLayout(_numHours, 1, 0, 1));
 		_hourOfDayLabels.setBorder(new EmptyBorder(0,0,0,0));
-		System.out.println(_numHours);
 
 		//System.out.println("End Hour: " + _endHour);
 		

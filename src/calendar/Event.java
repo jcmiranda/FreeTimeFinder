@@ -48,16 +48,12 @@ public class Event extends CalendarGroup<CalendarSlots> {
 	
 	
 	public void setUserResponse(CalendarSlots cal) { 
-		System.out.println("SETTING USER RESPONSE");
 		_userResponse = cal; 
-		System.out.println("Num cals before : " + this.getCalendars().size());
 		this.removeCalendar(cal);
-		System.out.println("Num cals after : " + this.getCalendars().size());
 		String names = "";
 		for(CalendarSlots c : this.getCalendars()){
 			names += c.getOwner().getName() + ", ";
 		}
-		System.out.println(names);
 	}
 	public void setUserSubmitted(boolean b) {_userHasSubmitted = b; }
 	
