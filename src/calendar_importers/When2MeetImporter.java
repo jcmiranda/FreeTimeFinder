@@ -20,6 +20,7 @@ import calendar.CalendarDifferenceCalculator.MismatchedUserIDException;
 import calendar.CalendarDifferenceCalculator.MismatchedUserNamesException;
 import calendar.CalendarGroup;
 import calendar.CalendarSlots;
+import calendar.Event.CalByThatNameNotFoundException;
 import calendar.EventUpdate;
 import calendar.OwnerImpl;
 import calendar.When2MeetEvent;
@@ -279,22 +280,11 @@ public class When2MeetImporter implements CalendarsImporter {
 		
 		ArrayList<EventUpdate> updates = new ArrayList<EventUpdate>();
 		CalendarDifferenceCalculator calDiff = new CalendarDifferenceCalculator();
-		if(w2me.userHasSubmitted()) {
-			CalendarSlots newUserResponse = getUserResponse(w2me.getUserResponse().getOwner().getID());
-			try {
-				updates.addAll(calDiff.diffEventCals(w2me.getUserResponse(), newUserResponse));
-			} catch (MismatchedUserIDException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			} catch (MismatchedUserNamesException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-		}
-		
 		
 		Collection<CalendarSlots> newCals = _IDsToCals.values();
+		// Get a list of all of the previous respondees to this when2meet
 		Collection<String> oldCalNames = w2me.getCalOwnerNames();
+		System.out.println(oldCalNames);
 		for(CalendarSlots newCal : newCals) {
 			String newCalName = newCal.getOwner().getName();
 			System.out.println("NewCalName: " + newCalName);
@@ -302,11 +292,16 @@ public class When2MeetImporter implements CalendarsImporter {
 			if(oldCalNames.contains(newCalName)) {
 				try {
 					System.out.println("Found old cal with name " + newCalName);
-					updates.addAll(calDiff.diffEventCals(w2me.getCalByName(newCalName), newCal));
+					CalendarSlots oldCal = w2me.getCalByName(newCalName);
+					assert oldCal != null;
+					updates.addAll(calDiff.diffEventCals(oldCal, newCal));
 				} catch (MismatchedUserIDException e) {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
 				} catch (MismatchedUserNamesException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				} catch (CalByThatNameNotFoundException e) {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
 				}
@@ -317,7 +312,41 @@ public class When2MeetImporter implements CalendarsImporter {
 			}
 		}
 		
+		w2me.resetCalendars(newCals);
+		
+		if(w2me.userHasSubmitted()) {
+			System.out.println("In user has submitted");
+			
+			// Want to get new response pulled off web, so need to get based on ID
+			CalendarSlots newUserResponse = getUserResponse(w2me.getUserResponse().getOwner().getID());
+			assert newUserResponse != null;
+			assert newUserResponse.getOwner() != null;
+			assert w2me.getUserResponse() != null;
+			System.out.println(newUserResponse.getOwner().getName());
+			
+			try {
+				updates.addAll(calDiff.diffEventCals(w2me.getUserResponse(), newUserResponse));
+			} catch (MismatchedUserIDException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			} catch (MismatchedUserNamesException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			
+			w2me.setUserResponse(newUserResponse);
+		}
+		
+		
+		
+		
+		
 		w2me.addUpdates(updates);
+		System.out.println("=== " + w2me.getName() + " ===");
+		for(EventUpdate eventUpdate : updates){
+			System.out.println(eventUpdate.getMessage());
+		}
+		System.out.println("=================");
 		
 		return w2me;
 	}

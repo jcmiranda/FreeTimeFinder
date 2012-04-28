@@ -128,14 +128,19 @@ public class CalendarGui {
 		_slotGroup= event;
 		_responseGroup = _communicator.getUserCal();
 		_replyPanel.setSlots(event);
+		System.out.println("Setting event for reply panel");
 		_replyPanel.setResps(_responseGroup);
+		_replyPanel.repaint();
 		//_replyPanel.configDays();
 		_startHour = event.getStartTime().getHourOfDay();
 		_numHours = event.getCalendars().get(0).getNumHours();
+		_updatesPanel.setEvent(_slotGroup);
 		//_endHour = event.getEndTime().getHourOfDay();
 //		_thisMonday = event.getStartTime().minusDays(event.getStartTime().getDayOfWeek()-1);
 		updateHourLabels();
 //		updateDayLabels();
+		_eventPanel.refresh();
+		
 	}
 
 	
@@ -382,6 +387,14 @@ public class CalendarGui {
 		@Override
 		public void actionPerformed(ActionEvent arg0) {
 			_communicator.refresh();
+			// Reget this when2meet in case it has changed
+			setEvent(_communicator.getW2M(""+_slotGroup.getID()));
+			System.out.println("After setting event in GUI");
+			_slotGroup.printUpdates();
+			System.out.println("=====");
+			
+			
+			repaint();
 		}
 		
 		

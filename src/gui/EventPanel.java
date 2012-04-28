@@ -1,6 +1,7 @@
 package gui;
 
 import java.awt.Color;
+import java.awt.Font;
 import java.awt.Graphics;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -17,6 +18,7 @@ import javax.swing.JButton;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
+import javax.swing.JScrollPane;
 import javax.swing.LayoutStyle;
 
 import cal_master.Communicator;
@@ -31,47 +33,56 @@ public class EventPanel extends JPanel {
 	private JButton _addButton;
 	private CalendarGui _gui;
 	private GroupLayout _layout= new GroupLayout(this);
+	private JLabel _titleLabel;
+	private JScrollPane _eventsScrollPane;
+	private JPanel _scrollPaneInner;
 	
 	public EventPanel(Communicator communicator, CalendarGui gui){
 		_communicator = communicator;
 		_gui = gui;
 		_addButton = new JButton("Add Event");
 		_addButton.addActionListener(new AddEventListener());
-		JPanel buttonPanel = new JPanel();
-		buttonPanel.add(_addButton);
+		
+		_titleLabel = new JLabel("My Events");
+		Font newLabelFont=new Font(_titleLabel.getFont().getName(),Font.BOLD,
+				_titleLabel.getFont().getSize());  
+
+		_titleLabel.setFont(newLabelFont);
+		_scrollPaneInner = new JPanel();
+		_eventsScrollPane = new JScrollPane(_scrollPaneInner);
+		
 		//this.setLayout(new GridLayout(0,1));
 		//this.add(buttonPanel);
-		this.setLayout(_layout);
-		_layout.setAutoCreateGaps(true);
-		this.setUp();
+			this.setUp();
 	}
 	
 	private void setUp() {
 		
-		SequentialGroup vertSeqGrp = _layout.createSequentialGroup();
-		ParallelGroup horizParGrp = _layout.createParallelGroup(GroupLayout.Alignment.LEADING);
-		
-		vertSeqGrp.addComponent(_addButton);
-		vertSeqGrp.addPreferredGap(LayoutStyle.ComponentPlacement.UNRELATED,
-                GroupLayout.DEFAULT_SIZE, 15);
-		horizParGrp.addComponent(_addButton);
-		
 		int i=0;
 		for(EventLabel label : _eventLabels){
-//			RemoveEventLabel rLabel = _removeLabels.get(i);
-//			ParallelGroup rowGrp = _layout.createParallelGroup(GroupLayout.Alignment.LEADING)
-//				.addComponent(rLabel).addComponent(label);
-//			
-//			vertSeqGrp.addGroup(_layout.createParallelGroup(GroupLayout.Alignment.LEADING)
-//					.addComponent(rLabel).addComponent(label));
-//			horizParGrp.addGroup(_layout.createSequentialGroup()
-//					.addComponent(rLabel).addComponent(label));
-//			
-//			i++;
-			
-			vertSeqGrp.addComponent(label);
-			horizParGrp.addComponent(label);
+//			vertSeqGrp.addComponent(label);
+//			horizParGrp.addComponent(label);
+			_scrollPaneInner.add(label);
 		}
+		
+		this.setLayout(_layout);
+		_layout.setAutoCreateGaps(true);
+		_layout.setAutoCreateContainerGaps(true);
+	
+		
+		SequentialGroup vertSeqGrp = _layout.createSequentialGroup();
+		ParallelGroup horizParGrp = _layout.createParallelGroup(GroupLayout.Alignment.CENTER);
+		
+		vertSeqGrp.addComponent(_titleLabel);
+		horizParGrp.addComponent(_titleLabel);
+	
+		horizParGrp.addComponent(_eventsScrollPane);
+		vertSeqGrp.addComponent(_eventsScrollPane);
+		
+		vertSeqGrp.addComponent(_addButton);
+		//vertSeqGrp.addPreferredGap(LayoutStyle.ComponentPlacement.UNRELATED,
+        //        GroupLayout.DEFAULT_SIZE, 15);
+		horizParGrp.addComponent(_addButton);
 		
 		_layout.setHorizontalGroup(horizParGrp);
 		_layout.setVerticalGroup(vertSeqGrp);
