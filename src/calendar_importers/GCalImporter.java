@@ -1,65 +1,36 @@
 package calendar_importers;
 
-import java.io.BufferedReader;
 import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.io.OutputStream;
-import java.io.OutputStreamWriter;
 import java.io.UnsupportedEncodingException;
-import java.net.ConnectException;
-import java.net.HttpURLConnection;
-import java.net.InetAddress;
-import java.net.InetSocketAddress;
 import java.net.MalformedURLException;
-import java.net.ProtocolException;
-import java.net.Proxy;
-import java.net.Socket;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URL;
-import java.net.URLConnection;
-import java.net.URLDecoder;
 import java.net.URLEncoder;
-import java.net.UnknownHostException;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
-import java.util.Timer;
-import java.util.TimerTask;
-import java.io.*;
 
-import javax.servlet.http.HttpServletResponse;
-import javax.servlet.http.HttpServletResponseWrapper;
 import javax.swing.JOptionPane;
-import javax.swing.JPasswordField;
 
 import calendar.CalendarGroup;
 import calendar.CalendarResponses;
 import calendar.GoogleCalendars;
 import calendar.Owner;
-import calendar.OwnerImpl;
 import calendar.Response;
 
+import com.google.api.client.auth.oauth.*;
+import com.google.api.*;
+//import 
 
 import com.google.api.client.auth.oauth2.TokenResponse;
-import com.google.api.client.auth.oauth2.draft10.AccessTokenResponse;
-import com.google.api.client.googleapis.auth.oauth2.draft10.GoogleAccessProtectedResource;
-import com.google.api.client.googleapis.auth.oauth2.draft10.GoogleAccessTokenRequest;
-import com.google.api.client.googleapis.auth.oauth2.draft10.GoogleAccessTokenRequest.GoogleAuthorizationCodeGrant;
-import com.google.api.client.googleapis.auth.oauth2.draft10.GoogleAuthorizationRequestUrl;
-import com.google.api.client.http.HttpRequestFactory;
-import com.google.api.client.http.javanet.NetHttpTransport;
-import com.google.api.client.json.jackson.JacksonFactory;
 import com.google.gdata.client.calendar.CalendarQuery;
 import com.google.gdata.client.calendar.CalendarService;
-import com.google.gdata.data.*;
-import com.google.gdata.data.calendar.*;
+import com.google.gdata.data.calendar.CalendarEntry;
+import com.google.gdata.data.calendar.CalendarEventEntry;
+import com.google.gdata.data.calendar.CalendarEventFeed;
+import com.google.gdata.data.calendar.CalendarFeed;
 import com.google.gdata.data.extensions.When;
-import com.google.gdata.util.AuthenticationException;
 import com.google.gdata.util.ServiceException;
-
-import com.google.api.client.googleapis.auth.oauth2.*;
 
 //import org.apache.commons.httpclient.util.URIUtil.encodeQuery;
 
@@ -386,8 +357,15 @@ public class GCalImporter implements CalendarsImporter<CalendarResponses> {
 		return null;
 	}
 
-	@Override
+	//@Override
 	public CalendarGroup<CalendarResponses> importCalendarGroup(String url)
+			throws MalformedURLException, IOException {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public CalendarGroup<CalendarResponses> importNewEvent(String url)
 			throws MalformedURLException, IOException {
 		// TODO Auto-generated method stub
 		return null;
