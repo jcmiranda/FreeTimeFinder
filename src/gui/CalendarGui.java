@@ -48,6 +48,7 @@ public class CalendarGui {
 	private JButton _timeFindButton = new JButton("Find Best Times");
 	private JButton _nextButton = new JButton("Next Week");
 	private JButton _prevButton = new JButton("Previous Week");
+	private JButton _refreshButton = new JButton("Refresh");
 	public static enum DaysOfWeek {Monday, Tuesday, Wednesday, Thursday, Friday, Saturday, Sunday};
 
 	// Represents the monday of the current week
@@ -89,6 +90,7 @@ public class CalendarGui {
 		_nextButton.addActionListener(new NextListener());
 		_prevButton.addActionListener(new PrevListener());
 		
+		_refreshButton.addActionListener(new RefreshListener());
 		//_eventPanel.addEvent(new EventLabel("TESTING TESTING", "1234", _communicator, this));
 		_numHours = _slotGroup.getCalendars().get(0).getNumHours();
 //		makeDayLabels();
@@ -264,11 +266,15 @@ public class CalendarGui {
 		JPanel nextPanel = new JPanel();
 		nextPanel.add(_nextButton);
 		
+		JPanel refreshPanel = new JPanel();
+		refreshPanel.add(_refreshButton);
+		
 		JPanel buttonPanel = new JPanel(new GridLayout(1, 0));
 		buttonPanel.add(prevPanel);
 		buttonPanel.add(nextPanel);
 		buttonPanel.add(submitPanel);
 		buttonPanel.add(timeFindPanel);
+		buttonPanel.add(refreshPanel);
 		
 		_frame.add(buttonPanel, BorderLayout.NORTH);
 
@@ -344,7 +350,7 @@ public class CalendarGui {
 
 		@Override
 		public void actionPerformed(ActionEvent arg0) {
-			//
+			//TODO make this pretty (aka at all clean)
 			int duration = -1;
 			Object[] calOptions = {"15 min", "30 min", "45 min", "1 hr", "90 min", "2 hr" };
 			Object selectedValue = JOptionPane.showInputDialog(null, "Choose a calendar type to import.", "", 
@@ -364,13 +370,23 @@ public class CalendarGui {
 			
 			if(duration > 0){
 				CalendarResponses bestTimes = _communicator.getBestTimes(String.valueOf(_slotGroup.getID()), duration);
-				//TODO : display it!
 				//bestTimes.print();
 				_replyPanel.setBestTimes(bestTimes);
 				repaint();
 			}
 			
 		}
+		
+	}
+	
+	private class RefreshListener implements ActionListener {
+
+		@Override
+		public void actionPerformed(ActionEvent arg0) {
+			_communicator.refresh();
+		}
+		
+		
 		
 	}
 

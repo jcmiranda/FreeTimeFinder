@@ -420,6 +420,7 @@ public class Communicator {
 					//toReturn.removeCalendar(user);
 					toReturn.setUserResponse(user);
 					toReturn.setUserSubmitted(true);
+					saveOneItem(toReturn, toReturn.getID()+"", calGroupTypeToIndexType(toReturn.getCalGroupType()));
 					// ASDF
 				}
 			}
@@ -427,6 +428,7 @@ public class Communicator {
 			else{
 				toReturn.setUserResponse(new CalendarSlots(toReturn.getStartTime(), toReturn.getEndTime(), 15, Availability.free));
 				toReturn.getUserResponse().setOwner(new When2MeetOwner(_progOwner.getName(), -1));
+				saveOneItem(toReturn, toReturn.getID()+"", calGroupTypeToIndexType(toReturn.getCalGroupType()));
 			}
 			
 		}
@@ -512,6 +514,7 @@ public class Communicator {
 		}
 		
 		//save to index
+		saveOneItem(event, String.valueOf(event.getID()), calGroupTypeToIndexType(event.getCalGroupType()));
 	}
 	
 	public CalendarResponses getBestTimes(String eventID, int duration){
@@ -549,6 +552,6 @@ public class Communicator {
 	
 	public void pullCal(DateTime start, DateTime end){
 		_userCal = _userCalImporter.refresh(start, end);
-		
+		saveOneItem(_userCal, _userCalID, calGroupTypeToIndexType(_userCal.getCalGroupType()));
 	}
 }
