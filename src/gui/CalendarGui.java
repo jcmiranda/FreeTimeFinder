@@ -25,7 +25,6 @@ import cal_master.Communicator;
 import cal_master.NameIDPair;
 import calendar.CalendarGroup;
 import calendar.CalendarResponses;
-import calendar.CalendarSlots;
 import calendar.Event;
 import calendar.When2MeetEvent;
 

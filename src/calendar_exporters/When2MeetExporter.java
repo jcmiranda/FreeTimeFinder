@@ -12,7 +12,6 @@ import java.util.regex.Pattern;
 
 import org.joda.time.DateTime;
 
-
 import calendar.Availability;
 import calendar.CalendarSlots;
 import calendar.When2MeetEvent;

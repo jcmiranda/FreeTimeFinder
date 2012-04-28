@@ -1,11 +1,10 @@
 package gui;
 
 import java.awt.event.MouseEvent;
-
 import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionListener;
+
 import org.joda.time.DateTime;
-import org.joda.time.Days;
 
 import calendar.Availability;
 import calendar.CalendarSlots;

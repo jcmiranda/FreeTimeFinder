@@ -1,19 +1,10 @@
 package calendar_importers_test;
 import java.io.IOException;
-import java.util.ArrayList;
 
-import com.thoughtworks.xstream.XStream;
-
-import calendar.Availability;
-import calendar.CalendarGroup;
 import calendar.CalendarSlots;
 import calendar.When2MeetEvent;
-import calendar.When2MeetOwner;
-import calendar_exporters.When2MeetExporter;
 import calendar_exporters.When2MeetExporter.NameAlreadyExistsException;
 import calendar_importers.When2MeetImporter;
-
-import ftf.TimeFinderSlots;
 
 public class When2MeetTest {
 	

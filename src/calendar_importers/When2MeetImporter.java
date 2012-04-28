@@ -22,7 +22,6 @@ import calendar.CalendarGroup;
 import calendar.CalendarSlots;
 import calendar.Event.CalByThatNameNotFoundException;
 import calendar.EventUpdate;
-import calendar.OwnerImpl;
 import calendar.When2MeetEvent;
 import calendar.When2MeetOwner;
 
