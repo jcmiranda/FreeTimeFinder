@@ -176,18 +176,4 @@ public class CalendarResponses implements Calendar {
 		}
 	}
 
-	public void paintOptimal(Graphics2D brush, DayPanel d){
-		Rectangle2D.Double rect;
-		for (Response r: getResponses()){
-			if (r.getStartTime().year().equals(d.getDay().year())
-					&& r.getStartTime().dayOfYear().equals(d.getDay().dayOfYear())){
-				r.paint(brush,
-						d,
-						0,
-						d.getWidth(), GuiConstants.OPTIMAL_COLOR);
-			}
-		}
-
-
-	}
 }

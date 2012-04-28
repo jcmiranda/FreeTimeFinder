@@ -65,7 +65,6 @@ public class DayPanel extends JPanel{
 	}
 
 	public void setNumHours(int numHours) {
-		//System.out.println("ours to " + numHours);
 		_numHours = numHours;
 	}
 
@@ -86,13 +85,13 @@ public class DayPanel extends JPanel{
 		_event = event;
 		_day = day;
 	}
-	
+
 	public CalendarGroup<CalendarSlots> getSlots() {
 		return _slots;
 	}
 
 	public void setSlots(CalendarGroup<CalendarSlots> slots){
-		
+
 		_slots = slots;
 	}
 
@@ -110,19 +109,24 @@ public class DayPanel extends JPanel{
 
 	public void setDay(DateTime today){
 		_today = today;
+		if (_event != null){
+			_day = CalendarSlots.getDaysBetween(_event.getStartTime(), _today);
+		}
 	}
 
 	public DateTime getDay(){
 		return _today;
 	}
 
-	public void nextWeek(){
-		_today = _today.plusDays(7);
-	}
-
-	public void lastWeek(){
-		_today = _today.minusDays(7);
-	}
+	//	public void nextWeek(){
+	//		_today = _today.plusDays(7);
+	//		_day+=7;
+	//	}
+	//
+	//	public void lastWeek(){
+	//		_today = _today.minusDays(7);
+	//		_day-=7;
+	//	}
 
 
 	private void drawLines(Graphics2D brush){
@@ -156,7 +160,7 @@ public class DayPanel extends JPanel{
 					r.paint(brush, this, numCals, GuiConstants.RESPONSE_COLOR);
 				}
 			} else if (_event != null){
-				_event.paint(brush, this, _day);
+				_event.paint(brush, this, CalendarSlots.getDaysBetween(_event.getStartTime(), this.getDay()));
 			} 
 
 			if(_slots != null) {

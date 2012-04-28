@@ -44,7 +44,7 @@ public class Communicator {
 	private XStream _xstream = new XStream();
 	//private Index _index = new Index();
 	
-	private static final double ATTENDEE_PERCENTAGE = .75;
+	private static final double ATTENDEE_PERCENTAGE = 0;
 	private static final int NUM_SUGGESTIONS = 5;
 	
 	public Communicator() {

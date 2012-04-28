@@ -79,11 +79,32 @@ public class ReplyPanel extends CalPanel{
 		setViewDate();
 		configDays();
 	}
-	
+
 	public void setBestTimes(CalendarResponses bestTimes){
 		for (Day d: _bigDays){
 			d.setBestTimes(bestTimes);
 		}
+	}
+//CalendarSlots.getDaysBetween(_endDay, _slotCals.getEndTime()) != 0 && 
+	public void nextWeek(){
+		if (_endDay.isBefore(_slotCals.getEndTime())){
+			_startDay = _startDay.plusDays(7);
+			_endDay = _endDay.plusDays(7);
+			if (_endDay.isAfter(_slotCals.getEndTime())){
+				_endDay = _slotCals.getEndTime();
+			}
+		}
+		System.out.println("AFTER NEXT: " + _startDay.getDayOfMonth() + " " +_endDay.getDayOfMonth());
+		configDays();
+	}
+
+	public void prevWeek(){
+		if (!(_startDay.getYear()==_slotCals.getStartTime().getYear()
+				&& _startDay.getDayOfYear()==_slotCals.getStartTime().getDayOfYear())){
+			_startDay = _startDay.minusDays(7);
+			_endDay = _endDay.minusDays(7);
+		}
+		configDays();
 	}
 
 	//	public ArrayList<ArrayList<Response>> getDayResps(int dayOfWeek, CalendarGroup<CalendarResponses> respCals){
@@ -145,16 +166,13 @@ public class ReplyPanel extends CalPanel{
 
 	public void configDays(){
 
-		//		System.out.println("Config days");
-		//		System.out.println("Num Resp Cals: " + _respCals.getCalendars().size());
-
-
 		int numDays = CalendarSlots.getDaysBetween(_startDay, _endDay) +1;
 		System.out.println("NUMDAYS: " + numDays);
 		this.setLayout(new GridLayout(1,numDays,DAY_SPACING,0));
 		int ctr = 0;
 
-		for (int i=0; i<7; i++){			
+		for (int i=0; i<7; i++){
+			System.out.println("Boop");
 			_bigDays[i].setStartHour(_startHour);
 			_bigDays[i].setNumHours(_numHours);
 			_bigDays[i].setDay(_startDay.plusDays(i));
@@ -230,7 +248,7 @@ public class ReplyPanel extends CalPanel{
 			//				ctr++;
 			//			}
 		}		
-		//repaint();
+//		repaint();
 	}
 
 

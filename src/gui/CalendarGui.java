@@ -46,6 +46,8 @@ public class CalendarGui {
 	private UpdatesPanel _updatesPanel = new UpdatesPanel();
 	private JButton _submitButton = new JButton("Submit Response");
 	private JButton _timeFindButton = new JButton("Find Best Times");
+	private JButton _nextButton = new JButton("Next Week");
+	private JButton _prevButton = new JButton("Previous Week");
 	public static enum DaysOfWeek {Monday, Tuesday, Wednesday, Thursday, Friday, Saturday, Sunday};
 
 	// Represents the monday of the current week
@@ -84,6 +86,9 @@ public class CalendarGui {
 		
 		_submitButton.addActionListener(new SubmitListener());
 		_timeFindButton.addActionListener(new TimeFindListener());
+		_nextButton.addActionListener(new NextListener());
+		_prevButton.addActionListener(new PrevListener());
+		
 		//_eventPanel.addEvent(new EventLabel("TESTING TESTING", "1234", _communicator, this));
 		_numHours = _slotGroup.getCalendars().get(0).getNumHours();
 //		makeDayLabels();
@@ -249,10 +254,19 @@ public class CalendarGui {
 		
 		JPanel submitPanel = new JPanel();
 		submitPanel.add(_submitButton);
+//		submitPanel.add(_prevButton);	
+//		submitPanel.add(_nextButton);
 		JPanel timeFindPanel = new JPanel();
 		timeFindPanel.add(_timeFindButton);
 		
+		JPanel prevPanel = new JPanel();
+		prevPanel.add(_prevButton);
+		JPanel nextPanel = new JPanel();
+		nextPanel.add(_nextButton);
+		
 		JPanel buttonPanel = new JPanel(new GridLayout(1, 0));
+		buttonPanel.add(prevPanel);
+		buttonPanel.add(nextPanel);
 		buttonPanel.add(submitPanel);
 		buttonPanel.add(timeFindPanel);
 		
@@ -305,6 +319,23 @@ public class CalendarGui {
 			if(selection == JOptionPane.YES_OPTION)
 				replyToEvent();
 			
+		}
+		
+	}
+	
+	private class NextListener implements ActionListener {
+
+		@Override
+		public void actionPerformed(ActionEvent e) {
+			_replyPanel.nextWeek();
+		}
+		
+	}
+	private class PrevListener implements ActionListener {
+
+		@Override
+		public void actionPerformed(ActionEvent e) {
+			_replyPanel.prevWeek();
 		}
 		
 	}

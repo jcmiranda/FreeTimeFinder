@@ -28,8 +28,6 @@ public class Day extends JPanel{
 	private JLabel _label;
 	private JPanel _labelPanel;
 	
-	private JPanel _hourOfDayLabels;
-	
 	public Day(ClickableDayPanel clickableDay, DayPanel day, DateTime today){
 		super();
 		_day = day;
