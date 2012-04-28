@@ -1,65 +1,26 @@
 package calendar_importers;
 
-import java.io.BufferedReader;
 import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.io.OutputStream;
-import java.io.OutputStreamWriter;
-import java.io.UnsupportedEncodingException;
-import java.net.ConnectException;
-import java.net.HttpURLConnection;
-import java.net.InetAddress;
-import java.net.InetSocketAddress;
 import java.net.MalformedURLException;
-import java.net.ProtocolException;
-import java.net.Proxy;
-import java.net.Socket;
-import java.net.URI;
-import java.net.URISyntaxException;
 import java.net.URL;
-import java.net.URLConnection;
-import java.net.URLDecoder;
-import java.net.URLEncoder;
-import java.net.UnknownHostException;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
-import java.util.Timer;
-import java.util.TimerTask;
-import java.io.*;
-
-import javax.servlet.http.HttpServletResponse;
-import javax.servlet.http.HttpServletResponseWrapper;
-import javax.swing.JOptionPane;
-import javax.swing.JPasswordField;
 
 import calendar.CalendarGroup;
 import calendar.CalendarResponses;
 import calendar.GoogleCalendars;
 import calendar.Owner;
-import calendar.OwnerImpl;
 import calendar.Response;
 
-
 import com.google.api.client.auth.oauth2.TokenResponse;
-import com.google.api.client.auth.oauth2.draft10.AccessTokenResponse;
-import com.google.api.client.googleapis.auth.oauth2.draft10.GoogleAccessProtectedResource;
-import com.google.api.client.googleapis.auth.oauth2.draft10.GoogleAccessTokenRequest;
-import com.google.api.client.googleapis.auth.oauth2.draft10.GoogleAccessTokenRequest.GoogleAuthorizationCodeGrant;
-import com.google.api.client.googleapis.auth.oauth2.draft10.GoogleAuthorizationRequestUrl;
-import com.google.api.client.http.HttpRequestFactory;
-import com.google.api.client.http.javanet.NetHttpTransport;
-import com.google.api.client.json.jackson.JacksonFactory;
 import com.google.gdata.client.calendar.CalendarQuery;
 import com.google.gdata.client.calendar.CalendarService;
-import com.google.gdata.data.*;
-import com.google.gdata.data.calendar.*;
+import com.google.gdata.data.calendar.CalendarEntry;
+import com.google.gdata.data.calendar.CalendarEventEntry;
+import com.google.gdata.data.calendar.CalendarEventFeed;
+import com.google.gdata.data.calendar.CalendarFeed;
 import com.google.gdata.data.extensions.When;
-import com.google.gdata.util.AuthenticationException;
 import com.google.gdata.util.ServiceException;
-
-import com.google.api.client.googleapis.auth.oauth2.*;
 
 //import org.apache.commons.httpclient.util.URIUtil.encodeQuery;
 
@@ -89,18 +50,21 @@ public class GCalImporter implements CalendarsImporter<CalendarResponses> {
 	private CalendarService _client;
 	int MAX_RESPONSES = Integer.MAX_VALUE;
 	private Owner _owner;
-	private String CLIENT_ID;
-	private String CLIENT_SECRET;
-	private String _refreshToken;
+	private GCalAuth _auth;
+	//private String CLIENT_ID;
+	//private String CLIENT_SECRET;
+	//private String _refreshToken;
 	
 	public GCalImporter() {
 		//connect to client
 		_client = new CalendarService("yourCompany-yourAppName-v1");
+		_auth = new GCalAuth();
 	}
 	
 	public CalendarGroup<CalendarResponses> importMyGCal(org.joda.time.DateTime startTime, org.joda.time.DateTime endTime) throws IOException, ServiceException, com.google.gdata.util.ServiceException {
 		//authenticate user
-		this.setAuth();
+		TokenResponse authResp = _auth.setAuth();
+		_client.setAuthSubToken(authResp.getAccessToken());
 		//import calendars -- make calendar group
 		return this.importCalendarGroup(startTime, endTime);
 	}
@@ -182,101 +146,101 @@ public class GCalImporter implements CalendarsImporter<CalendarResponses> {
 //		return resp.toString();
 //	}
 	
-	public void setAuth() {
-		//the info
-		CLIENT_ID = "1034117539945.apps.googleusercontent.com";
-		String redirect_uri = "urn:ietf:wg:oauth:2.0:oob";
-		String redirect_uri_local = "http://localhost:8080";
-		String scope = "http://www.google.com/calendar/feeds/";
-		CLIENT_SECRET = "ygIy2-y40S1Fer0B3oU_coVn"; 
-		String code = null;
-		String response_type = "code";
-		//encoded
-		String redirect_uri_local_en = null;
-		String scope_en = null;
-		String redirect_uri_en = null;
-		try {
-			redirect_uri_en = URLEncoder.encode(redirect_uri, "UTF-8");
-			redirect_uri_local_en = URLEncoder.encode(redirect_uri_local, "UTF-8");		
-			scope_en = URLEncoder.encode(scope, "UTF-8");
-		}
-		catch (UnsupportedEncodingException e1) {
-			// TODO Auto-generated catch block
-			e1.printStackTrace();
-		}
-		
-		//STEP ONE: getting the code
-		try {
-		    String query = "response_type="+response_type+"&"+"client_id="+CLIENT_ID+"&"+"redirect_uri="+redirect_uri_en+"&"+"scope="+scope_en;		    
-			String url = "https://accounts.google.com/o/oauth2/auth?"+query;
-		    URI uri = new URI(url);
-		    
-		    //display webpage
-		    java.awt.Desktop.getDesktop().browse(uri);
-		    //get code
-		    code = (String) new JOptionPane().showInputDialog("Paste code:");		    
-		    
-//		    //SOCKET
-//		    //Socket listener = new Socket(InetAddress.getLocalHost(), 80);
-//		    //InetSocketAddress sa = new InetSocketAddress(InetAddress.getLocalHost(), 80);
-//		    //listener.bind(sa);
-//		    //local
-		    //Socket listener = this.serverReady(InetAddress.getLocalHost(), 80); 
-//		    //uri based
-////		    System.out.println(r_uri.getHost());
-////	    	Socket listener = this.serverReady(InetAddress., 80); 
-	    	//System.out.println("connected");
-		    
-//		    //HTTPURLConnection
-//		    HttpURLConnection listener = (HttpURLConnection) uri.toURL().openConnection();
-//		    listener.setDoInput(true); 
-//			listener.setDoOutput(true);
-//			listener.setFollowRedirects(true);
-//		    while (true) {
-////		    	listener = (HttpURLConnection) uri.toURL().openConnection();
-////		    	listener.setDoInput(true); 
-////				listener.setDoOutput(true);
-////				listener.setFollowRedirects(true);
-//		    	int response = listener.getResponseCode();
-//				System.out.println("resp = "+response);
-//				System.out.println("url = "+listener.getURL());
-//				if (response == 302) {
-//					break;
-//				}
-//		    }
-			
-			//int response = listener.getResponseCode();
-			//System.out.println("resp = "+response);
-		    
-	    	//READ INPUT
-//		    BufferedReader rd = new BufferedReader(new InputStreamReader(listener.getInputStream()));		    
-//		    String line;
-//			while ((line = rd.readLine()) != null) {
-//				System.out.println(line);
-//			}
-//			rd.close();
-		    
-			//STEP TWO: GET ACCESS TOKEN
-
-		    //getting the access token
-		    GoogleAuthorizationCodeTokenRequest toke = new GoogleAuthorizationCodeTokenRequest(new NetHttpTransport(), new JacksonFactory(), CLIENT_ID, CLIENT_SECRET, code, redirect_uri);
-		    GoogleTokenResponse request = toke.execute();
-		    request.setExpiresInSeconds((long) 9000);
-		    _refreshToken = request.getRefreshToken();
-		    
-		    //set token for client
-			_client.setAuthSubToken(request.getAccessToken());
-		} 
-		catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		
-		catch (URISyntaxException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-	}
+//	public void setAuth() {
+//		//the info
+//		CLIENT_ID = "1034117539945.apps.googleusercontent.com";
+//		String redirect_uri = "urn:ietf:wg:oauth:2.0:oob";
+//		String redirect_uri_local = "http://localhost:8080";
+//		String scope = "http://www.google.com/calendar/feeds/";
+//		CLIENT_SECRET = "ygIy2-y40S1Fer0B3oU_coVn"; 
+//		String code = null;
+//		String response_type = "code";
+//		//encoded
+//		String redirect_uri_local_en = null;
+//		String scope_en = null;
+//		String redirect_uri_en = null;
+//		try {
+//			redirect_uri_en = URLEncoder.encode(redirect_uri, "UTF-8");
+//			redirect_uri_local_en = URLEncoder.encode(redirect_uri_local, "UTF-8");		
+//			scope_en = URLEncoder.encode(scope, "UTF-8");
+//		}
+//		catch (UnsupportedEncodingException e1) {
+//			// TODO Auto-generated catch block
+//			e1.printStackTrace();
+//		}
+//		
+//		//STEP ONE: getting the code
+//		try {
+//		    String query = "response_type="+response_type+"&"+"client_id="+CLIENT_ID+"&"+"redirect_uri="+redirect_uri_en+"&"+"scope="+scope_en;		    
+//			String url = "https://accounts.google.com/o/oauth2/auth?"+query;
+//		    URI uri = new URI(url);
+//		    
+//		    //display webpage
+//		    java.awt.Desktop.getDesktop().browse(uri);
+//		    //get code
+//		    code = (String) new JOptionPane().showInputDialog("Paste code:");		    
+//		    
+////		    //SOCKET
+////		    //Socket listener = new Socket(InetAddress.getLocalHost(), 80);
+////		    //InetSocketAddress sa = new InetSocketAddress(InetAddress.getLocalHost(), 80);
+////		    //listener.bind(sa);
+////		    //local
+//		    //Socket listener = this.serverReady(InetAddress.getLocalHost(), 80); 
+////		    //uri based
+//////		    System.out.println(r_uri.getHost());
+//////	    	Socket listener = this.serverReady(InetAddress., 80); 
+//	    	//System.out.println("connected");
+//		    
+////		    //HTTPURLConnection
+////		    HttpURLConnection listener = (HttpURLConnection) uri.toURL().openConnection();
+////		    listener.setDoInput(true); 
+////			listener.setDoOutput(true);
+////			listener.setFollowRedirects(true);
+////		    while (true) {
+//////		    	listener = (HttpURLConnection) uri.toURL().openConnection();
+//////		    	listener.setDoInput(true); 
+//////				listener.setDoOutput(true);
+//////				listener.setFollowRedirects(true);
+////		    	int response = listener.getResponseCode();
+////				System.out.println("resp = "+response);
+////				System.out.println("url = "+listener.getURL());
+////				if (response == 302) {
+////					break;
+////				}
+////		    }
+//			
+//			//int response = listener.getResponseCode();
+//			//System.out.println("resp = "+response);
+//		    
+//	    	//READ INPUT
+////		    BufferedReader rd = new BufferedReader(new InputStreamReader(listener.getInputStream()));		    
+////		    String line;
+////			while ((line = rd.readLine()) != null) {
+////				System.out.println(line);
+////			}
+////			rd.close();
+//		    
+//			//STEP TWO: GET ACCESS TOKEN
+//
+//		    //getting the access token
+//		    GoogleAuthorizationCodeTokenRequest toke = new GoogleAuthorizationCodeTokenRequest(new NetHttpTransport(), new JacksonFactory(), CLIENT_ID, CLIENT_SECRET, code, redirect_uri);
+//		    GoogleTokenResponse request = toke.execute();
+//		    request.setExpiresInSeconds((long) 9000);
+//		    _refreshToken = request.getRefreshToken();
+//		    
+//		    //set token for client
+//			_client.setAuthSubToken(request.getAccessToken());
+//		} 
+//		catch (IOException e) {
+//			// TODO Auto-generated catch block
+//			e.printStackTrace();
+//		}
+//		
+//		catch (URISyntaxException e) {
+//			// TODO Auto-generated catch block
+//			e.printStackTrace();
+//		}
+//	}
 	
 	
 	public CalendarGroup<CalendarResponses> importCalendarGroup(org.joda.time.DateTime st, org.joda.time.DateTime et) throws IOException, ServiceException, com.google.gdata.util.ServiceException {
@@ -367,13 +331,8 @@ public class GCalImporter implements CalendarsImporter<CalendarResponses> {
     }
 	
 	public CalendarGroup<CalendarResponses> refresh(org.joda.time.DateTime st, org.joda.time.DateTime et) {
-		try {
-			TokenResponse toke = new GoogleRefreshTokenRequest(new NetHttpTransport(), new JacksonFactory(), _refreshToken,CLIENT_ID, CLIENT_SECRET).execute();
-			_client.setAuthSubToken(toke.getAccessToken());
-		} catch (IOException e1) {
-			// TODO Auto-generated catch block
-			e1.printStackTrace();
-		}
+		TokenResponse toke = _auth.getRefreshToken();
+		_client.setAuthSubToken(toke.getAccessToken());
 		try {
 			return this.importCalendarGroup(st, et);
 		} catch (IOException e) {
@@ -387,10 +346,12 @@ public class GCalImporter implements CalendarsImporter<CalendarResponses> {
 	}
 
 	@Override
-	public CalendarGroup<CalendarResponses> importCalendarGroup(String url)
+	public CalendarGroup<CalendarResponses> importNewEvent(String url)
 			throws MalformedURLException, IOException {
 		// TODO Auto-generated method stub
 		return null;
 	}
+
+
 }
 
