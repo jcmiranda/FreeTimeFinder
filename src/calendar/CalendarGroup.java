@@ -46,6 +46,11 @@ public class CalendarGroup<C extends Calendar> {
 		_calendars.remove(calendar);
 	}
 	
+	public void resetCalendars(Collection<C> calendars) {
+		clearCalendars();
+		addCalendars(calendars);
+	}
+	
 	public void removeCalendars(Collection<C> calendars){
 		_calendars.removeAll(calendars);
 	}

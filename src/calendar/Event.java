@@ -57,15 +57,30 @@ public class Event extends CalendarGroup<CalendarSlots> {
 	}
 	public void setUserSubmitted(boolean b) {_userHasSubmitted = b; }
 	
-	public CalendarSlots getCalByName(String name) {
+	public class CalByThatNameNotFoundException extends Exception {
+		
+	}
+	
+	public CalendarSlots getCalByName(String name) throws CalByThatNameNotFoundException {
 		CalendarSlots cal = null;
+		
+		for(CalendarSlots thisCal : this.getCalendars()) {
+			if (thisCal.getOwner().getName().equalsIgnoreCase(name))
+				return thisCal;
+		}
+		
+		if(_userResponse.getOwner().getName().equalsIgnoreCase(name)) {
+			System.out.println("Getting User Response Cal");
+			return _userResponse;
+		}
+		
+		/*
 		for(int i = 0; i < this.getCalendars().size(); i++) { 
 			if(this.getCalendars().get(i).getOwner().getName().equalsIgnoreCase(name)) {
-				cal = this.getCalendars().get(i);
-				break;
+				return this.getCalendars().get(i);
 			}
-		}
-		return cal;
+		}*/
+		throw new CalByThatNameNotFoundException();
 	}
 	
 	private void initColors() {
@@ -230,6 +245,14 @@ public class Event extends CalendarGroup<CalendarSlots> {
 			for(int j = 0; j < endpts.length; j++)
 				endpts[j][inside] = endpts[j][outside];
 		}
+	}
+	
+	public void printUpdates() {
+		System.out.println("=== " + this.getName() + " ===");
+		for(EventUpdate eventUpdate : this.getUpdates()){
+			System.out.println(eventUpdate.getMessage());
+		}
+		System.out.println("=================");
 	}
 	
 

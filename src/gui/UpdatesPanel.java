@@ -1,38 +1,68 @@
 package gui;
 
+import java.awt.Font;
+import java.awt.GridLayout;
 import java.util.ArrayList;
 
+import javax.swing.GroupLayout;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
 
+import calendar.Event;
 import calendar.EventUpdate;
-import calendar.When2MeetEvent;
 
-public class UpdatesPanel extends JScrollPane {
+public class UpdatesPanel extends JPanel {
 	
+	private JScrollPane _scrollPane = new JScrollPane();
 	private JTextArea _textArea = new JTextArea();
-	private When2MeetEvent _event = null;
+	private JLabel _titleLabel = new JLabel();
+	private Event _event = null;
 	
 	public UpdatesPanel(){
 		super();
-		this.setViewportView(_textArea);
+		_scrollPane.setViewportView(_textArea);
 		_textArea.setEditable(false);
+		Font newLabelFont=new Font(_titleLabel.getFont().getName(),Font.BOLD,
+				_titleLabel.getFont().getSize());  
+
+		_titleLabel.setFont(newLabelFont);
+		
+		GroupLayout layout = new GroupLayout(this);
+		this.setLayout(layout);
+		layout.setAutoCreateGaps(true);
+		layout.setAutoCreateContainerGaps(true);
+		
+		layout.setHorizontalGroup(
+				layout.createParallelGroup()
+				.addComponent(_titleLabel)
+				.addComponent(_scrollPane));
+		
+		layout.setVerticalGroup(
+				layout.createSequentialGroup()
+				.addComponent(_titleLabel)
+				.addComponent(_scrollPane));
+		
+		this.add(_titleLabel);
+		this.add(_scrollPane);
 		
 		//TODO : set size (invisible if no event selected?)
 		
 	}
 	
 	private void setText(){
+		_titleLabel.setText(_event.getName() + " Updates");
 		_textArea.setText("");
 		ArrayList<EventUpdate> updates = _event.getUpdates();
-		String newText = "";
+		String newText = ""; // _event.getName() + " Updates";
 		for(EventUpdate update : updates){
-			newText += update.getMessage() + '\n';
+			newText += " " + update.getMessage() + '\n';
 		}
 		_textArea.setText(newText);
 	}
 	
-	public void setEvent(When2MeetEvent event){
+	public void setEvent(Event event){
 		_event = event;
 		setText();
 	}

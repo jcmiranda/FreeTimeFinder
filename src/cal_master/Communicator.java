@@ -15,6 +15,7 @@ import org.joda.time.DateTime;
 
 //import cal_master.Index.IndexType;
 import calendar.*;
+import calendar.Event.CalByThatNameNotFoundException;
 import calendar_exporters.*;
 import calendar_exporters.When2MeetExporter.NameAlreadyExistsException;
 import calendar_importers.*;
@@ -336,7 +337,7 @@ public class Communicator {
 		for(Event event : _events.values()){
 			//repull info
 			if(event.getCalGroupType() == CalGroupType.When2MeetEvent) {
-				_eventImporter.refreshEvent((When2MeetEvent) event);
+				event = _eventImporter.refreshEvent((When2MeetEvent) event);
 				saveOneItem(event, event.getID()+"", StoredDataType.When2MeetEvent);
 			}
 			else
@@ -395,6 +396,8 @@ public class Communicator {
 	
 	public Event getW2M(String id){
 		Event toReturn = _events.get(id);
+		
+		
 		if(toReturn.getUserResponse() == null){
 			
 			//ask user if they've responded to the event
@@ -416,7 +419,14 @@ public class Communicator {
 				//System.out.println("SELECTED: " + selected);
 				//take the selected cal, remove it from the list, and set it to be the userResponse
 				if(selected != null){
-					CalendarSlots user = toReturn.getCalByName(selected.toString());
+					CalendarSlots user = null;
+					try {
+						user = toReturn.getCalByName(selected.toString());
+					} catch (CalByThatNameNotFoundException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
+					assert user.getOwner() != null;
 					//toReturn.removeCalendar(user);
 					toReturn.setUserResponse(user);
 					toReturn.setUserSubmitted(true);
