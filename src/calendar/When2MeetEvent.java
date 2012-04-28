@@ -1,9 +1,5 @@
 package calendar;
 
-import gui.DayPanel;
-
-import java.awt.Graphics2D;
-import java.awt.Polygon;
 import java.util.ArrayList;
 import java.util.Collection;
 

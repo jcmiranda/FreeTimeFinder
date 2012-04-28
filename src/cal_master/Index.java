@@ -3,8 +3,6 @@ package cal_master;
 import java.util.Collection;
 import java.util.HashMap;
 
-import calendar.CalGroupType;
-
 public class Index {
 	//public enum IndexType {When2MeetEvent, ProgramOwner, GCal, GCalImporter};
 	private HashMap<String, StoredDataType> _items = new HashMap<String, StoredDataType>();

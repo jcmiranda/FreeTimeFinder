@@ -14,6 +14,9 @@ public class CalendarDifferenceCalculator {
 	public ArrayList<EventUpdate> diffEventCals(CalendarSlots oldCal, 
 			CalendarSlots newCal) throws MismatchedUserIDException, 
 			MismatchedUserNamesException {
+		assert oldCal != null;
+		assert newCal != null;
+		
 		When2MeetOwner oldOwner = oldCal.getOwner();
 		When2MeetOwner newOwner = newCal.getOwner();
 		
@@ -26,6 +29,11 @@ public class CalendarDifferenceCalculator {
 		int slotsInDay = oldCal.getSlotsInDay();
 		int numDays = oldCal.getTotalSlots() / slotsInDay;
 		
+		assert oldCal.getSlotsInDay() == newCal.getSlotsInDay();
+		assert oldCal.getStartTime().equals(newCal.getStartTime());
+		assert oldCal.getEndTime().equals(newCal.getEndTime());
+		
+		
 		ArrayList<EventUpdate> updates = new ArrayList<EventUpdate>();
 		for(int day = 0; day < numDays; day++) {
 			for(int slot = 0; slot < numDays; slot++) {
@@ -34,7 +42,7 @@ public class CalendarDifferenceCalculator {
 				
 				if(oldAvail != newAvail) {
 					updates.add(new EventUpdate(newOwner.getName() + 
-							"changed their availability on day " + day));
+							" changed his/her availability on day " + (day+1)));
 					break;
 				}
 					
