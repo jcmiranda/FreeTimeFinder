@@ -42,7 +42,7 @@ public class CalendarDifferenceCalculator {
 				
 				if(oldAvail != newAvail) {
 					updates.add(new EventUpdate(newOwner.getName() + 
-							" changed their availability on day " + (day+1)));
+							" changed his/her availability on day " + (day+1)));
 					break;
 				}
 					

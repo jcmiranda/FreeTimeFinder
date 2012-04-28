@@ -9,6 +9,7 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
+import javax.swing.GroupLayout.ParallelGroup;
 
 import calendar.Event;
 import calendar.EventUpdate;
@@ -24,10 +25,13 @@ public class UpdatesPanel extends JPanel {
 		super();
 		_scrollPane.setViewportView(_textArea);
 		_textArea.setEditable(false);
+		_textArea.setLineWrap(true);
 		Font newLabelFont=new Font(_titleLabel.getFont().getName(),Font.BOLD,
 				_titleLabel.getFont().getSize());  
 
 		_titleLabel.setFont(newLabelFont);
+		_titleLabel.setText("Updates");
+		_textArea.setText(" none");
 		
 		GroupLayout layout = new GroupLayout(this);
 		this.setLayout(layout);
@@ -35,7 +39,7 @@ public class UpdatesPanel extends JPanel {
 		layout.setAutoCreateContainerGaps(true);
 		
 		layout.setHorizontalGroup(
-				layout.createParallelGroup()
+				layout.createParallelGroup(GroupLayout.Alignment.CENTER)
 				.addComponent(_titleLabel)
 				.addComponent(_scrollPane));
 		
