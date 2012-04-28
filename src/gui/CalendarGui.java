@@ -351,8 +351,8 @@ public class CalendarGui {
 			//TODO make this pretty (aka at all clean)
 			int duration = -1;
 			Object[] calOptions = {"15 min", "30 min", "45 min", "1 hr", "90 min", "2 hr" };
-			Object selectedValue = JOptionPane.showInputDialog(null, "Choose a calendar type to import.", "", 
-					JOptionPane.INFORMATION_MESSAGE, null, calOptions, calOptions[0]);
+			Object selectedValue = JOptionPane.showInputDialog(null, "How long is the event you are scheduling?", "", 
+					JOptionPane.INFORMATION_MESSAGE, null, calOptions, calOptions[3]);
 			if(selectedValue.toString() == "15 min")
 				duration = 15;
 			else if(selectedValue.toString() == "30 min")
