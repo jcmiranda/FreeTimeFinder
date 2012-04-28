@@ -1,13 +1,12 @@
 package calendar;
 
 import gui.DayPanel;
+import gui.GuiConstants;
 
-import java.awt.Color;
 import java.awt.Graphics2D;
 import java.awt.Polygon;
 import java.util.ArrayList;
 import java.util.Collection;
-import gui.GuiConstants;
 
 import org.joda.time.DateTime;
 
@@ -51,6 +50,10 @@ public class Event extends CalendarGroup<CalendarSlots> {
 	public void setUserResponse(CalendarSlots cal) { 
 		_userResponse = cal; 
 		this.removeCalendar(cal);
+		String names = "";
+		for(CalendarSlots c : this.getCalendars()){
+			names += c.getOwner().getName() + ", ";
+		}
 	}
 	public void setUserSubmitted(boolean b) {_userHasSubmitted = b; }
 	
@@ -66,7 +69,7 @@ public class Event extends CalendarGroup<CalendarSlots> {
 	}
 	
 	private void initColors() {
-		//_colors.add(GuiConstants.PALE_YELLOW);
+		_colors.add(GuiConstants.PALE_YELLOW);
 		_colors.add(GuiConstants.AQUAMARINE);
 		_colors.add(GuiConstants.PALE_GREEN);
 		_colors.add(GuiConstants.BRIGHT_ORANGE);
@@ -103,9 +106,18 @@ public class Event extends CalendarGroup<CalendarSlots> {
 		return _userHasSubmitted;
 	}
 
+	// 10 pts
+	// 0 - 9
+	// 0 -> 0
+	// 9 -> height
+	// index / (numPts - 1) * height
 	
 	private int endPtToHeight(int index, int numPts, int height) {
-		return (int) ((1.0 * index) / (1.0 * numPts - 1.0) * height);
+		double indDbl = (double) index;
+		double numPtsDbl = (double) numPts;
+		double heightDbl = (double) height;
+		return (int) (indDbl * heightDbl / (numPtsDbl - 1.0));
+		//return (int) ((1.0 * index) / (1.0 * numPts - 1.0) * height);
 	}
 	
 	private int slotHeight(int numPts, int height) {
@@ -155,7 +167,7 @@ public class Event extends CalendarGroup<CalendarSlots> {
 			}
 
 			// Connect the dots
-			for(int endPtSlot = 2; endPtSlot < (numSlotsInDay - 1) * 2; endPtSlot = endPtSlot + 2) {
+			for(int endPtSlot = 2; endPtSlot < endpts.length - 1; endPtSlot = endPtSlot + 2) {
 				int above = endpts[endPtSlot - 1][outside];
 				int below = endpts[endPtSlot + 1][outside];
 				if(above == below)

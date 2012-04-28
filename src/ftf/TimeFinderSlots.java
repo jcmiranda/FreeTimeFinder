@@ -1,14 +1,15 @@
 package ftf;
 
 import java.util.ArrayList;
-
 import java.util.PriorityQueue;
 
 import org.joda.time.DateTime;
 
 import calendar.Availability;
-import calendar.CalendarGroup;
+import calendar.CalendarResponses;
 import calendar.CalendarSlots;
+import calendar.Event;
+import calendar.Response;
 
 
 public class TimeFinderSlots {
@@ -33,7 +34,21 @@ public class TimeFinderSlots {
 		return minutesOff / _interval;
 	}
 	
-	public CalendarSlots findBestTimes(CalendarGroup<CalendarSlots> e, int interval, int duration, int numToReturn, int minAttendees){
+	private void calculateAvailForDay(CalendarSlots cal, int day, int col, int[][] freeTimes){
+		for(int row=0; row<_numSlotsInDay; row++){
+			if(_numSlotsInDay == cal.getSlotsInDay()){
+				switch(cal.getAvail(day, row)){
+				case free:
+					freeTimes[row][col] = 1;
+					break;
+				case busy:
+					freeTimes[row][col] = 0;
+				}
+			}
+		}
+	}
+	
+	public CalendarResponses findBestTimes(Event e, int interval, int duration, int numToReturn, int minAttendees){
 		
 		ArrayList<CalendarSlots> calendars = e.getCalendars();
 		if(calendars.size() <= 0){
@@ -41,16 +56,20 @@ public class TimeFinderSlots {
 		}
 		
 		CalendarSlots firstCal = calendars.get(0);
+		CalendarSlots userResponse = e.getUserResponse();
 		_start = firstCal.getStartTime();
-		_numSlotsInDay = firstCal.lenDayInMinutes()/interval;
+		//_numSlotsInDay = firstCal.lenDayInMinutes()/interval;
+		_numSlotsInDay = firstCal.getSlotsInDay();
 		_interval = interval;
 		_numDays = firstCal.numDays();
-		int[][] freeTimes = new int[_numSlotsInDay][calendars.size()];
+		int[][] freeTimes = new int[_numSlotsInDay][calendars.size() + 1];
 		PriorityQueue<TimeAvailability> times = new PriorityQueue<TimeAvailability>();
 		
 		for(int day=0; day<_numDays; day++){
 			int col = 0;
+			
 			for(CalendarSlots cal : calendars){
+				//calculateAvailForDay(cal, day, col, freeTimes);
 				for(int row=0; row<_numSlotsInDay; row++){
 					if(_numSlotsInDay == cal.getSlotsInDay()){
 						switch(cal.getAvail(day, row)){
@@ -61,36 +80,60 @@ public class TimeFinderSlots {
 							freeTimes[row][col] = 0;
 						}
 					}
-					else{
-						DateTime time = slotToTime(row, col);
-						/*switch(cal.getAvail(time)){
-							case free:
-								freeTimes[row][col] = 1;
-								break;
-							case busy:
-								freeTimes[row][col] = 0;
-						}*/
-					}
-				
 				}
 				col++;
+			}
+			if(userResponse != null){
+				//calculateAvailForDay(userResponse, day, col, freeTimes);
+				for(int row=0; row<_numSlotsInDay; row++){
+					if(_numSlotsInDay == userResponse.getSlotsInDay()){
+						switch(userResponse.getAvail(day, row)){
+						case free:
+							freeTimes[row][col] = 1;
+							break;
+						case busy:
+							freeTimes[row][col] = 0;
+						}
+					}
+				}
+				//col++;
 			}
 			
 			PriorityQueue<TimeAvailability> temp = calculateTimes(freeTimes, day, interval, duration, minAttendees);
 			int size = temp.size();
 			int i=0;
 			while(i<size){
-				times.add(temp.poll());
+				TimeAvailability t = temp.poll();
+				//t.print();
+				times.add(t);
 				i++;
 			}
+			
+			//System.out.println("DAY " + (day+1));
+			/*for(int r=0; r<_numSlotsInDay; r++){
+				String toPrint = "";
+				if(r%4 == 0)
+					System.out.println("=============");
+				for(int d=0; d<col+1; d++){
+					toPrint += freeTimes[r][d] + " ";
+				}
+				System.out.println(toPrint);
+				
+			}*/
+			
 		}
 		
-		CalendarSlots toReturn = new CalendarSlots(_start, firstCal.getEndTime(), interval, Availability.busy);
-		int i = 0;
-		int num = Math.min(numToReturn, times.size());
+		
+		
+		
+		
+		
+		/*CalendarSlots toReturn = new CalendarSlots(_start, firstCal.getEndTime(), interval, Availability.busy);
+		int iS = 0;
+		int numS = Math.min(numToReturn, times.size());
 		//System.out.println("times size: " + times.size());
 		//System.out.println("NUM: " + num);
-		while(i<num){
+		while(iS<numS){
 			TimeAvailability t = times.poll();
 			int j = 0;
 			while(j<duration/interval){
@@ -98,10 +141,30 @@ public class TimeFinderSlots {
 				toReturn.setAvail(t.getDay(), t.getTime() + j, Availability.free);
 				j++;
 			}
+			iS++;
+		}*/
+		
+		//toReturn.print();
+		
+		
+		CalendarResponses ret = new CalendarResponses(_start, firstCal.getEndTime(), "");
+		int i=0;
+		int num = Math.min(numToReturn, times.size());
+		while(i<num){
+			TimeAvailability t = times.poll();
+			int j = 0;
+			DateTime start = slotToTime(t.getTime(), t.getDay());
+			while(j<duration/interval){
+				j++;
+			}
+			
+			DateTime end = slotToTime(t.getTime()+j, t.getDay());
+			ret.addResponse(new Response(start, end));
 			i++;
 		}
 		
-		return toReturn;
+		
+		return ret;
 	}
 	
 	public PriorityQueue<TimeAvailability> calculateTimes(int[][] times, int day, int interval, int duration, int minAttendees){
@@ -168,6 +231,10 @@ public class TimeFinderSlots {
 		
 		public int getAttendance(){
 			return _numAvailable;
+		}
+		
+		public void print(){
+			System.out.println("Day: " + _day + "\tStart Slot: " + _startTime + "\tNum Available: " + _numAvailable);
 		}
 
 		@Override

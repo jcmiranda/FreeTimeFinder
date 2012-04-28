@@ -33,14 +33,13 @@ public class DayPanel extends JPanel{
 	private CalendarGroup<CalendarSlots> _slots;
 	private CalendarGroup<CalendarResponses> _responses;
 	private Boolean _active = true;
-
+	private CalendarResponses _bestTimes;
 
 	public DayPanel(){
 		super();
 		this.setBackground(BG_COLOR);
 		//this.setBorder(new LineBorder(LINE_COLOR, 4, true));
 		this.repaint();
-		System.out.println("Default day panel created");
 	}
 
 	public DayPanel(int startHour, int numHours, DateTime today, int day, boolean active){
@@ -77,19 +76,22 @@ public class DayPanel extends JPanel{
 		return _active;
 	}
 
+	public void setBestTimes(CalendarResponses bestTimes){
+		_bestTimes = bestTimes;
+	}
 
 	public void setEvent(Event event, int day) {
 		System.out.println("Event set");
 		_event = event;
 		_day = day;
 	}
-	
+
 	public CalendarGroup<CalendarSlots> getSlots() {
 		return _slots;
 	}
 
 	public void setSlots(CalendarGroup<CalendarSlots> slots){
-		
+
 		_slots = slots;
 	}
 
@@ -107,26 +109,36 @@ public class DayPanel extends JPanel{
 
 	public void setDay(DateTime today){
 		_today = today;
+		if (_event != null){
+			_day = CalendarSlots.getDaysBetween(_event.getStartTime(), _today);
+		}
 	}
 
 	public DateTime getDay(){
 		return _today;
 	}
 
-	public void nextWeek(){
-		_today = _today.plusDays(7);
-	}
-
-	public void lastWeek(){
-		_today = _today.minusDays(7);
-	}
+	//	public void nextWeek(){
+	//		_today = _today.plusDays(7);
+	//		_day+=7;
+	//	}
+	//
+	//	public void lastWeek(){
+	//		_today = _today.minusDays(7);
+	//		_day-=7;
+	//	}
 
 
 	private void drawLines(Graphics2D brush){
 
 		brush.setColor(LINE_COLOR);
-		for (int i=1; i<_numHours; i++){
-			brush.drawLine(0, i*this.getHeight()/_numHours, this.getWidth(), i*this.getHeight()/_numHours);
+		double hrsDbl = (double) _numHours;
+		double heightDbl = (double) this.getHeight();
+		for (int i=1; i< _numHours; i++){
+			double iDbl = (double) i;
+			int height = (int) (iDbl * heightDbl / hrsDbl);
+			//int height = (int) ((double) i * (1.0 * this.getHeight()) / (1.0 * _numHours));
+			brush.drawLine(0, height, this.getWidth(), height);
 		}
 	}
 
@@ -145,10 +157,10 @@ public class DayPanel extends JPanel{
 			if (_responses!=null){
 				int numCals = _responses.getCalendars().size();
 				for (CalendarResponses r: _responses.getCalendars()){
-					r.paint(brush, this, numCals);
+					r.paint(brush, this, numCals, GuiConstants.RESPONSE_COLOR);
 				}
 			} else if (_event != null){
-				_event.paint(brush, this, _day);
+				_event.paint(brush, this, CalendarSlots.getDaysBetween(_event.getStartTime(), this.getDay()));
 			} 
 
 			if(_slots != null) {
@@ -156,9 +168,10 @@ public class DayPanel extends JPanel{
 					s.paint(brush, this);
 				}
 			}
+			if (_bestTimes!=null){
+				_bestTimes.paint(brush,this, 1, GuiConstants.OPTIMAL_COLOR);
+			}
 		}
-		
-
 	}
 
 	// Maybe use this later

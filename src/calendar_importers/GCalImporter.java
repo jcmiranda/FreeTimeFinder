@@ -87,7 +87,7 @@ import com.google.api.client.googleapis.auth.oauth2.*;
 
 public class GCalImporter implements CalendarsImporter<CalendarResponses> {
 	private CalendarService _client;
-	int MAX_RESPONSES = 5000;
+	int MAX_RESPONSES = Integer.MAX_VALUE;
 	private Owner _owner;
 	private String CLIENT_ID;
 	private String CLIENT_SECRET;
@@ -313,8 +313,8 @@ public class GCalImporter implements CalendarsImporter<CalendarResponses> {
             allCalendars.addCalendar(currCal);
             
             //TEST
-            currCal.print();
-        }
+             currCal.print();
+          }
         return allCalendars;
 	}
 	
@@ -333,7 +333,7 @@ public class GCalImporter implements CalendarsImporter<CalendarResponses> {
 		myQuery.setStringCustomParameter("orderby", "starttime");
 		myQuery.setStringCustomParameter("sortorder", "ascending");
 		myQuery.setStringCustomParameter("singleevents", "true");
-		myQuery.setMaxResults(100);
+		myQuery.setMaxResults(MAX_RESPONSES);
 		//send request and get result feed
 		CalendarEventFeed resultFeed = null;
 		try {
@@ -344,7 +344,7 @@ public class GCalImporter implements CalendarsImporter<CalendarResponses> {
 				List<When> times = event.getTimes();
 				long startTime = times.get(0).getStartTime().getValue();
 				long endTime = times.get(0).getEndTime().getValue();
-				if (endTime-startTime != 86400000) {
+				if (endTime - startTime < 86400000) {
 					Response eventResponse = new Response(new org.joda.time.DateTime(startTime), new org.joda.time.DateTime(endTime), event.getTitle().getPlainText());
 					responseList.add(eventResponse);
 				}

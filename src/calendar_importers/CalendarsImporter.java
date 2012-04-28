@@ -8,6 +8,6 @@ import calendar.Calendar;
 import calendar.CalendarGroup;
 
 public interface CalendarsImporter<C extends Calendar> {
-	CalendarGroup<C> importCalendarGroup(String url) throws MalformedURLException, IOException;
+	CalendarGroup<C> importNewEvent(String url) throws MalformedURLException, IOException;
 	CalendarGroup<C> refresh(DateTime st, DateTime et);
 }

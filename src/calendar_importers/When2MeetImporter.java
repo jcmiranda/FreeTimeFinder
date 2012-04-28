@@ -40,7 +40,7 @@ public class When2MeetImporter implements CalendarsImporter {
 	private int _slotIDGroupIndex = 2;
 	private Pattern _availPattern = Pattern.compile("AvailableAtSlot\\[(\\d+)\\]\\.push\\((\\d+)\\);"); 
 	private Pattern _datesPattern = Pattern.compile("text\\-align:center;font\\-size:10px;width:44px;padding\\-right:1px;\">(\\w+) (\\d+)<br>");
-	private Pattern _eventIDPattern = Pattern.compile("http://www.when2meet.com/\\?(\\d+)\\-[a-zA-Z]+");
+	private Pattern _eventIDPattern = Pattern.compile("http://www.when2meet.com/\\?(\\d+)\\-[0-9a-zA-Z]+");
 	private Pattern _eventNameDivPattern = Pattern.compile("<div id=\\\"NewEventNameDiv\\\" style=\\\"padding:20px 0px 20px 20px;font-size:30px;\\\">");
 	private Pattern _eventNamePattern = Pattern.compile("(.*)<br><span style=\\\"font-size: 12px;\\\">");
 	private Pattern _timesPattern = Pattern.compile("width:44px;font\\-size:10px;margin:4px 4px 0px 0px;'>(\\d*)(\\s*)(\\w+)&nbsp");
@@ -67,6 +67,11 @@ public class When2MeetImporter implements CalendarsImporter {
 		_months.put("Oct", 10);
 		_months.put("Nov", 11);
 		_months.put("Dec", 12);
+	}
+	
+	public boolean isWhen2MeetURL(String url) {
+		Matcher eventIDMatcher = _eventIDPattern.matcher(url);
+		return eventIDMatcher.matches();
 	}
 	
 	private void parseEventID() {
@@ -108,15 +113,17 @@ public class When2MeetImporter implements CalendarsImporter {
 			
 			while(m.find()) {
 				Integer slot = new Integer(Integer.parseInt(m.group(1)));
-				Integer id = new Integer(Integer.parseInt(m.group(2)));
+				Integer userId = new Integer(Integer.parseInt(m.group(2)));
 				// System.out.println("Slot: " + slot + " ID: " + id);
 				assert(slot != null);
-				assert(id != null);
-				if(_IDsToCals.get(id) == null) {
-					System.out.println(id);
-					System.out.println(_IDsToCals.keySet());
+				assert(userId != null);
+				if(_IDsToCals.get(userId) == null) {
+					//System.out.println(m.group(0));
+					//System.out.println(userId);
+					//System.out.println(_IDsToCals.keySet());
 				}
-				_IDsToCals.get(id).setAvail(slot, Availability.free);		
+				else
+					_IDsToCals.get(userId).setAvail(slot, Availability.free);		
 			}
 		}
 	}
@@ -159,7 +166,7 @@ public class When2MeetImporter implements CalendarsImporter {
 				availLines.add(inputLine);
 			if(nameIDMatcher.find()) {
 				nameIDLines.add(inputLine);
-				System.out.println(inputLine);
+				// System.out.println(inputLine);
 			}
 			if(slotsMatcher.matches()) {
 				int slotID = Integer.parseInt(slotsMatcher.group(_slotIDGroupIndex));
@@ -238,7 +245,7 @@ public class When2MeetImporter implements CalendarsImporter {
 	
 	
 	@Override
-	public When2MeetEvent importCalendarGroup(String url) throws IOException{
+	public When2MeetEvent importNewEvent(String url) throws IOException{
 		_urlString = url;
 		_IDsToCals.clear();
 		_slotIndexToSlotID.clear();
@@ -290,9 +297,11 @@ public class When2MeetImporter implements CalendarsImporter {
 		Collection<String> oldCalNames = w2me.getCalOwnerNames();
 		for(CalendarSlots newCal : newCals) {
 			String newCalName = newCal.getOwner().getName();
+			System.out.println("NewCalName: " + newCalName);
 			// This is an updated calendar
 			if(oldCalNames.contains(newCalName)) {
 				try {
+					System.out.println("Found old cal with name " + newCalName);
 					updates.addAll(calDiff.diffEventCals(w2me.getCalByName(newCalName), newCal));
 				} catch (MismatchedUserIDException e) {
 					// TODO Auto-generated catch block
