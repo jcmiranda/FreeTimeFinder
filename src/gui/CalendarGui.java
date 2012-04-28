@@ -25,7 +25,6 @@ import cal_master.Communicator;
 import cal_master.NameIDPair;
 import calendar.CalendarGroup;
 import calendar.CalendarResponses;
-import calendar.CalendarSlots;
 import calendar.Event;
 import calendar.When2MeetEvent;
 
@@ -128,14 +127,19 @@ public class CalendarGui {
 		_slotGroup= event;
 		_responseGroup = _communicator.getUserCal();
 		_replyPanel.setSlots(event);
+		System.out.println("Setting event for reply panel");
 		_replyPanel.setResps(_responseGroup);
+		_replyPanel.repaint();
 		//_replyPanel.configDays();
 		_startHour = event.getStartTime().getHourOfDay();
 		_numHours = event.getCalendars().get(0).getNumHours();
+		_updatesPanel.setEvent(_slotGroup);
 		//_endHour = event.getEndTime().getHourOfDay();
 //		_thisMonday = event.getStartTime().minusDays(event.getStartTime().getDayOfWeek()-1);
 		updateHourLabels();
 //		updateDayLabels();
+		_eventPanel.refresh();
+		
 	}
 
 	
@@ -351,8 +355,8 @@ public class CalendarGui {
 			//TODO make this pretty (aka at all clean)
 			int duration = -1;
 			Object[] calOptions = {"15 min", "30 min", "45 min", "1 hr", "90 min", "2 hr" };
-			Object selectedValue = JOptionPane.showInputDialog(null, "Choose a calendar type to import.", "", 
-					JOptionPane.INFORMATION_MESSAGE, null, calOptions, calOptions[0]);
+			Object selectedValue = JOptionPane.showInputDialog(null, "How long is the event you are scheduling?", "", 
+					JOptionPane.INFORMATION_MESSAGE, null, calOptions, calOptions[3]);
 			if(selectedValue.toString() == "15 min")
 				duration = 15;
 			else if(selectedValue.toString() == "30 min")
@@ -382,6 +386,14 @@ public class CalendarGui {
 		@Override
 		public void actionPerformed(ActionEvent arg0) {
 			_communicator.refresh();
+			// Reget this when2meet in case it has changed
+			setEvent(_communicator.getW2M(""+_slotGroup.getID()));
+			System.out.println("After setting event in GUI");
+			_slotGroup.printUpdates();
+			System.out.println("=====");
+			
+			
+			repaint();
 		}
 		
 		

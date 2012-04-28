@@ -351,7 +351,5 @@ public class GCalImporter implements CalendarsImporter<CalendarResponses> {
 		// TODO Auto-generated method stub
 		return null;
 	}
-
-
 }
 
