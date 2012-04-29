@@ -3,6 +3,7 @@ package calendar;
 import static gui.GuiConstants.SLOT_COLOR;
 import gui.DayPanel;
 
+import java.awt.Color;
 import java.awt.Graphics2D;
 import java.awt.geom.Rectangle2D;
 import java.util.ArrayList;
@@ -18,6 +19,7 @@ public class CalendarSlots implements Calendar {
 	private When2MeetOwner _owner;
 	private Availability[][] _avail;
 	private boolean _isVisible = true;
+	private Color _color;
 
 	public CalendarSlots(DateTime startTime, DateTime endTime, int minInSlot, Availability initAvail) {
 		_startTime = startTime;
@@ -32,6 +34,14 @@ public class CalendarSlots implements Calendar {
 				_avail[day][slot] = initAvail;
 	}
 
+	public void setColor(Color color){
+		_color = color;
+	}
+	
+	public Color getColor(){
+		return _color;
+	}
+	
 	public int getDays() {
 		return _numDays;
 	}

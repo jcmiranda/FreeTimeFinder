@@ -43,6 +43,7 @@ public class CalendarGui {
 	private Communicator _communicator = new Communicator();
 	private EventPanel _eventPanel = new EventPanel(_communicator, this);
 	private UpdatesPanel _updatesPanel = new UpdatesPanel();
+	private FriendBar _friendBar = new FriendBar(this);
 	private JButton _submitButton = new JButton("Submit Response");
 	private JButton _timeFindButton = new JButton("Find Best Times");
 	private JButton _nextButton = new JButton("Next Week");
@@ -63,6 +64,7 @@ public class CalendarGui {
 			//_slotGroup=_communicator.getFirstEvent();
 //			_thisMonday = _slotGroup.getStartTime().minusDays(_slotGroup.getStartTime().getDayOfWeek()-1);
 			_startHour = _slotGroup.getStartTime().getHourOfDay();
+			_friendBar.setEvent(_slotGroup);
 			//_endHour = _slotGroup.getEndTime().getHourOfDay();
 		}
 //		else {
@@ -134,6 +136,7 @@ public class CalendarGui {
 		_startHour = event.getStartTime().getHourOfDay();
 		_numHours = event.getCalendars().get(0).getNumHours();
 		_updatesPanel.setEvent(_slotGroup);
+		_friendBar.setEvent(_slotGroup);
 		//_endHour = event.getEndTime().getHourOfDay();
 //		_thisMonday = event.getStartTime().minusDays(event.getStartTime().getDayOfWeek()-1);
 		updateHourLabels();
@@ -271,6 +274,7 @@ public class CalendarGui {
 		JPanel refreshPanel = new JPanel();
 		refreshPanel.add(_refreshButton);
 		
+		
 		JPanel buttonPanel = new JPanel(new GridLayout(1, 0));
 		buttonPanel.add(prevPanel);
 		buttonPanel.add(nextPanel);
@@ -278,7 +282,11 @@ public class CalendarGui {
 		buttonPanel.add(timeFindPanel);
 		buttonPanel.add(refreshPanel);
 		
-		_frame.add(buttonPanel, BorderLayout.NORTH);
+		JPanel northPanel = new JPanel(new GridLayout(2,1));
+		northPanel.add(buttonPanel);
+		northPanel.add(_friendBar);
+		
+		_frame.add(northPanel, BorderLayout.NORTH);
 
 		JPanel eastPanel = new JPanel(new GridLayout(0,1));
 		eastPanel.add(_eventPanel);
