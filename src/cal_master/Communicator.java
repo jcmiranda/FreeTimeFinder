@@ -32,6 +32,7 @@ import calendar_importers.EventImporter;
 import calendar_importers.EventImporter.InvalidURLException;
 import calendar_importers.GCalImporter;
 
+import com.google.gdata.util.ServiceException;
 import com.thoughtworks.xstream.XStream;
 
 import ftf.TimeFinderSlots;
@@ -149,7 +150,12 @@ public class Communicator {
 				if(selectedValue == "Google Calendar"){
 					this.setCalImporter(new GCalImporter());
 					_userCalImporterType = StoredDataType.GCalImporter;
-					this.pullCal(DateTime.now(), DateTime.now().plusDays(30));
+					//this.pullCal(DateTime.now(), DateTime.now().plusDays(30));
+					try {
+						_userCal = ((GCalImporter)_userCalImporter).importMyGCal(DateTime.now(), DateTime.now().plusDays(30));
+					} catch (IOException e) {
+					} catch (ServiceException e) {
+					}
 				}
 			}
 		}

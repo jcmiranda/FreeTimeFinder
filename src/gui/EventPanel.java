@@ -82,7 +82,22 @@ public class EventPanel extends JPanel {
 		//vertSeqGrp.addPreferredGap(LayoutStyle.ComponentPlacement.UNRELATED,
         //        GroupLayout.DEFAULT_SIZE, 15);
 		horizParGrp.addComponent(_addButton);
-		
+	
+		for(EventLabel label : _eventLabels){
+			RemoveEventLabel rLabel = _removeLabels.get(i);
+			
+			vertSeqGrp.addGroup(_layout.createParallelGroup(GroupLayout.Alignment.LEADING)
+					.addComponent(rLabel).addComponent(label));
+			horizParGrp.addGroup(_layout.createSequentialGroup()
+					.addComponent(rLabel).addComponent(label));
+			
+			i++;
+			
+//			
+//			vertSeqGrp.addComponent(label);
+//			horizParGrp.addComponent(label);
+		}
+
 		_layout.setHorizontalGroup(horizParGrp);
 		_layout.setVerticalGroup(vertSeqGrp);
 	}
@@ -103,6 +118,11 @@ public class EventPanel extends JPanel {
 			if(_eventLabels.get(i).getID() == idToRemove){
 				_eventLabels.remove(i);
 				_removeLabels.remove(i);
+				if (_eventLabels.size()==0){
+					//TODO DEAL with Null event
+				} else {
+					_eventLabels.get(Math.max(0, i-1)).setEvent();
+				}
 				break;
 			}
 		}
@@ -176,7 +196,7 @@ public class EventPanel extends JPanel {
 					JOptionPane.YES_NO_OPTION);
 			if(selection == JOptionPane.YES_OPTION){
 //				_communicator.removeWhen2Meet(_eventID);
-//				removeEvent(_eventID);
+				removeEvent(_eventID);
 				System.out.println("HA jk");
 			}
 			
