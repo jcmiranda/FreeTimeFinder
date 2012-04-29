@@ -67,12 +67,12 @@ public class SliderPane{
 
 		public void stateChanged(ChangeEvent changeEvent) {
 			JSlider source = (JSlider) changeEvent.getSource();
-			if (!source.getValueIsAdjusting()) {
+//			if (!source.getValueIsAdjusting()) {
 				_duration = (int) source.getValue();
 				_label.setText(Integer.toString (((int) source.getValue())/60)
 						+ " hrs " + Integer.toString(((int) source.getValue())%60) + " min");
 				_gui.setBestTimes(_duration);
-			}
+//			}
 		}
 
 	}
