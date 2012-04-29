@@ -1,8 +1,6 @@
 package calendar;
 
-import static gui.GuiConstants.OPTIMAL_COLOR;
 import static gui.GuiConstants.SLOT_COLOR;
-
 import gui.DayPanel;
 
 import java.awt.Graphics2D;
@@ -10,7 +8,6 @@ import java.awt.geom.Rectangle2D;
 import java.util.ArrayList;
 
 import org.joda.time.DateTime;
-import org.joda.time.Days;
 
 public class CalendarSlots implements Calendar {
 	private DateTime _startTime;

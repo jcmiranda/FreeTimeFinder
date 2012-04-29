@@ -13,13 +13,24 @@ import javax.swing.JOptionPane;
 
 import org.joda.time.DateTime;
 
-//import cal_master.Index.IndexType;
-import calendar.*;
+import calendar.Availability;
+import calendar.CalGroupType;
+import calendar.Calendar;
+import calendar.CalendarGroup;
+import calendar.CalendarResponses;
+import calendar.CalendarSlots;
+import calendar.Event;
 import calendar.Event.CalByThatNameNotFoundException;
-import calendar_exporters.*;
+import calendar.EventUpdate;
+import calendar.GoogleCalendars;
+import calendar.When2MeetEvent;
+import calendar.When2MeetOwner;
+import calendar_exporters.When2MeetExporter;
 import calendar_exporters.When2MeetExporter.NameAlreadyExistsException;
-import calendar_importers.*;
+import calendar_importers.CalendarsImporter;
+import calendar_importers.EventImporter;
 import calendar_importers.EventImporter.InvalidURLException;
+import calendar_importers.GCalImporter;
 
 import com.thoughtworks.xstream.XStream;
 

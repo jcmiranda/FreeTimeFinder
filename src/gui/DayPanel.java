@@ -1,27 +1,20 @@
 package gui;
 
 import static gui.GuiConstants.BG_COLOR;
-
-
 import static gui.GuiConstants.GRAY_OUT_COLOR;
 import static gui.GuiConstants.LINE_COLOR;
 
 import java.awt.Graphics;
 import java.awt.Graphics2D;
-import java.util.ArrayList;
 
 import javax.swing.JPanel;
-import javax.swing.border.LineBorder;
 
 import org.joda.time.DateTime;
 
 import calendar.CalendarGroup;
 import calendar.CalendarResponses;
 import calendar.CalendarSlots;
-import calendar.Availability;
 import calendar.Event;
-import calendar.Response;
-import calendar.When2MeetEvent;
 
 public class DayPanel extends JPanel{
 

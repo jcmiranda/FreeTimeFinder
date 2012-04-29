@@ -1,17 +1,12 @@
 package gui;
 
-import static gui.GuiConstants.LINE_SPACING;
 import static gui.GuiConstants.DAY_SPACING;
 import static gui.GuiConstants.LINE_COLOR;
 
 import java.awt.Graphics;
 import java.awt.GridLayout;
-import java.util.ArrayList;
-
-import javax.swing.JPanel;
 
 import org.joda.time.DateTime;
-import org.joda.time.Days;
 
 import calendar.Availability;
 import calendar.CalGroupType;
@@ -19,7 +14,6 @@ import calendar.CalendarGroup;
 import calendar.CalendarResponses;
 import calendar.CalendarSlots;
 import calendar.Event;
-import calendar.Response;
 import calendar.When2MeetEvent;
 
 public class ReplyPanel extends CalPanel{

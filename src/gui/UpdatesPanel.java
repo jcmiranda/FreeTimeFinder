@@ -1,7 +1,6 @@
 package gui;
 
 import java.awt.Font;
-import java.awt.GridLayout;
 import java.util.ArrayList;
 
 import javax.swing.GroupLayout;
@@ -9,7 +8,6 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
-import javax.swing.GroupLayout.ParallelGroup;
 
 import calendar.Event;
 import calendar.EventUpdate;

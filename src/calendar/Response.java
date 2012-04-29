@@ -1,19 +1,13 @@
 package calendar;
+import static gui.GuiConstants.LINE_COLOR;
+import static gui.GuiConstants.RESPONSE_NAME_COLOR;
+import static gui.GuiConstants.RESPONSE_NAME_SPACING;
+import static gui.GuiConstants.RESPONSE_SPACING;
 import gui.DayPanel;
-
 
 import java.awt.Color;
 import java.awt.Graphics2D;
-
 import java.awt.geom.Rectangle2D;
-import java.awt.geom.RoundRectangle2D;
-
-import static gui.GuiConstants.RESPONSE_NAME_COLOR;
-import static gui.GuiConstants.RESPONSE_COLOR;
-import static gui.GuiConstants.LINE_COLOR;
-import static gui.GuiConstants.RESPONSE_SPACING;
-import static gui.GuiConstants.RESPONSE_NAME_SPACING;
-import static gui.GuiConstants.RECT_ARC_DIM;
 
 import org.joda.time.DateTime;
 
