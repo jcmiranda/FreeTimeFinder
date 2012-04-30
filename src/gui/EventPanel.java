@@ -3,6 +3,7 @@ package gui;
 import java.awt.Color;
 import java.awt.Font;
 import java.awt.Graphics;
+import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseEvent;
@@ -48,6 +49,7 @@ public class EventPanel extends JPanel {
 
 		_titleLabel.setFont(newLabelFont);
 		_scrollPaneInner = new JPanel();
+		_scrollPaneInner.setLayout(new GridLayout(10,1));
 		_eventsScrollPane = new JScrollPane(_scrollPaneInner);
 		
 		//this.setLayout(new GridLayout(0,1));
@@ -59,8 +61,6 @@ public class EventPanel extends JPanel {
 		
 		int i=0;
 		for(EventLabel label : _eventLabels){
-//			vertSeqGrp.addComponent(label);
-//			horizParGrp.addComponent(label);
 			_scrollPaneInner.add(label);
 		}
 		
@@ -83,7 +83,7 @@ public class EventPanel extends JPanel {
         //        GroupLayout.DEFAULT_SIZE, 15);
 		horizParGrp.addComponent(_addButton);
 	
-		for(EventLabel label : _eventLabels){
+		/*for(EventLabel label : _eventLabels){
 			RemoveEventLabel rLabel = _removeLabels.get(i);
 			
 			vertSeqGrp.addGroup(_layout.createParallelGroup(GroupLayout.Alignment.LEADING)
@@ -96,7 +96,7 @@ public class EventPanel extends JPanel {
 //			
 //			vertSeqGrp.addComponent(label);
 //			horizParGrp.addComponent(label);
-		}
+		}*/
 
 		_layout.setHorizontalGroup(horizParGrp);
 		_layout.setVerticalGroup(vertSeqGrp);

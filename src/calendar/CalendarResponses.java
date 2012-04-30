@@ -1,13 +1,9 @@
 package calendar;
 
-import static gui.GuiConstants.OPTIMAL_COLOR;
-import static gui.GuiConstants.RESPONSE_CONFLICT_SPACING;
 import gui.DayPanel;
-import gui.GuiConstants;
 
 import java.awt.Color;
 import java.awt.Graphics2D;
-import java.awt.geom.Rectangle2D;
 import java.util.ArrayList;
 import java.util.Collections;
 

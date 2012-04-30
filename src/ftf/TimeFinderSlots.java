@@ -5,7 +5,6 @@ import java.util.PriorityQueue;
 
 import org.joda.time.DateTime;
 
-import calendar.Availability;
 import calendar.CalendarResponses;
 import calendar.CalendarSlots;
 import calendar.Event;

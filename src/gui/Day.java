@@ -1,24 +1,16 @@
 package gui;
 
-import java.awt.BorderLayout;
-
-import java.awt.Dimension;
 import java.awt.Graphics;
-import java.awt.Graphics2D;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.GridLayout;
 
-import javax.swing.Box;
-import javax.swing.GroupLayout;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
-import javax.swing.SwingConstants;
 
 import org.joda.time.DateTime;
 
 import calendar.CalendarResponses;
-import calendar.CalendarSlots;
 
 public class Day extends JPanel{
 

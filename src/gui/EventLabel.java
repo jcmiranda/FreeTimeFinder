@@ -9,7 +9,6 @@ import javax.swing.JLabel;
 
 import cal_master.Communicator;
 import calendar.Event;
-import calendar.When2MeetEvent;
 
 public class EventLabel extends JLabel implements MouseListener{
 

@@ -2,6 +2,7 @@ package calendar;
 
 import java.util.ArrayList;
 import java.util.Collection;
+
 import org.joda.time.DateTime;
 
 public class CalendarGroup<C extends Calendar> {

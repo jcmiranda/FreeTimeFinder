@@ -3,6 +3,7 @@ package calendar;
 import gui.DayPanel;
 import gui.GuiConstants;
 
+import java.awt.Color;
 import java.awt.Graphics2D;
 import java.awt.Polygon;
 import java.util.ArrayList;
@@ -171,79 +172,88 @@ public class Event extends CalendarGroup<CalendarSlots> {
 			}
 
 			CalendarSlots cal = cals.get(i);
-			brush.setColor(_colors.get(i % _colors.size()));
-			// Fill in availabilities
-			for(int slot = 0; slot < numSlotsInDay; slot++) {
-				int s = slot*2+1;
-				if(cal.getAvail(day, slot) == Availability.free)
-					endpts[s][outside] = endpts[s][inside] + 1;
-				else
-					endpts[s][outside] = endpts[s][inside];
-			}
-
-			// Connect the dots
-			for(int endPtSlot = 2; endPtSlot < endpts.length - 1; endPtSlot = endPtSlot + 2) {
-				int above = endpts[endPtSlot - 1][outside];
-				int below = endpts[endPtSlot + 1][outside];
-				if(above == below)
-					endpts[endPtSlot][outside] = above;
-				else if(above < below)
-					endpts[endPtSlot][outside] = above;
-				else
-					endpts[endPtSlot][outside] = below;
-			}
-
-			// Draw this calendar
-			int pHeight = d.getHeight();
-			int numEndPts = endpts.length;
-			int availWidth = availWidth(cals.size(), d.getWidth());
-			for(int slot = 0; slot < numSlotsInDay; slot++) {
-				Polygon poly = new Polygon();
-				int endPtAbove = slot * 2;
-				int endPtHere = slot * 2 + 1;
-				int endPtBelow = slot * 2 + 2;
-				int topY = endPtToHeight(endPtAbove, numEndPts, pHeight);
-				int bottomY = endPtToHeight(endPtBelow, numEndPts, pHeight);
-				int centerX = d.getWidth() / 2;
-				int centerY = (topY + bottomY) / 2;
-
-				// If we're on the left, want to subtract from center
-				// Otherwise want to add to center
-				int dir = -1;
-				if(outside == 3)
-					dir = 1;
-
-				int outsideXMiddle = centerX + endpts[endPtHere][outside] * dir * availWidth;
-				int insideXMiddle = centerX + endpts[endPtHere][inside] * dir * availWidth;
-				int outsideXTop = centerX + endpts[endPtAbove][outside] * dir * availWidth;
-				int insideXTop = centerX + endpts[endPtAbove][inside] * dir * availWidth;
-				int outsideXBot = centerX + endpts[endPtBelow][outside] * dir * availWidth;
-				int insideXBot = centerX + endpts[endPtBelow][inside] * dir * availWidth; 
-
-				// Don't want to add top points
-				if(! (outsideXTop == insideXTop && outsideXMiddle == insideXMiddle)) {
-					poly.addPoint(outsideXTop, topY);
-					poly.addPoint(insideXTop, topY);
+			
+			//set color of cal for use in friend bar
+			Color color = _colors.get(i % _colors.size());
+			cal.setColor(color);
+			
+			if(cal.isVisible()){
+				System.out.println("Cal " + cal.getOwner().getName() + " is visible");
+				brush.setColor(color);
+				// Fill in availabilities
+				for(int slot = 0; slot < numSlotsInDay; slot++) {
+					int s = slot*2+1;
+					if(cal.getAvail(day, slot) == Availability.free)
+						endpts[s][outside] = endpts[s][inside] + 1;
+					else
+						endpts[s][outside] = endpts[s][inside];
 				}
-				
-				if(! (outsideXMiddle == insideXMiddle))
-					poly.addPoint(insideXMiddle, centerY);
-				
-				if(!(outsideXBot == insideXBot && outsideXMiddle == insideXMiddle)) {
-					poly.addPoint(insideXBot, bottomY);
-					poly.addPoint(outsideXBot, bottomY);		
+	
+				// Connect the dots
+				for(int endPtSlot = 2; endPtSlot < endpts.length - 1; endPtSlot = endPtSlot + 2) {
+					int above = endpts[endPtSlot - 1][outside];
+					int below = endpts[endPtSlot + 1][outside];
+					if(above == below)
+						endpts[endPtSlot][outside] = above;
+					else if(above < below)
+						endpts[endPtSlot][outside] = above;
+					else
+						endpts[endPtSlot][outside] = below;
 				}
-				if(! (outsideXMiddle == insideXMiddle))
-					poly.addPoint(outsideXMiddle, centerY);
-
-				brush.draw(poly);	
-				brush.fill(poly);
+	
+				// Draw this calendar
+				int pHeight = d.getHeight();
+				int numEndPts = endpts.length;
+				int availWidth = availWidth(cals.size(), d.getWidth());
+				for(int slot = 0; slot < numSlotsInDay; slot++) {
+					Polygon poly = new Polygon();
+					int endPtAbove = slot * 2;
+					int endPtHere = slot * 2 + 1;
+					int endPtBelow = slot * 2 + 2;
+					int topY = endPtToHeight(endPtAbove, numEndPts, pHeight);
+					int bottomY = endPtToHeight(endPtBelow, numEndPts, pHeight);
+					int centerX = d.getWidth() / 2;
+					int centerY = (topY + bottomY) / 2;
+	
+					// If we're on the left, want to subtract from center
+					// Otherwise want to add to center
+					int dir = -1;
+					if(outside == 3)
+						dir = 1;
+	
+					int outsideXMiddle = centerX + endpts[endPtHere][outside] * dir * availWidth;
+					int insideXMiddle = centerX + endpts[endPtHere][inside] * dir * availWidth;
+					int outsideXTop = centerX + endpts[endPtAbove][outside] * dir * availWidth;
+					int insideXTop = centerX + endpts[endPtAbove][inside] * dir * availWidth;
+					int outsideXBot = centerX + endpts[endPtBelow][outside] * dir * availWidth;
+					int insideXBot = centerX + endpts[endPtBelow][inside] * dir * availWidth; 
+	
+					// Don't want to add top points
+					if(! (outsideXTop == insideXTop && outsideXMiddle == insideXMiddle)) {
+						poly.addPoint(outsideXTop, topY);
+						poly.addPoint(insideXTop, topY);
+					}
+					
+					if(! (outsideXMiddle == insideXMiddle))
+						poly.addPoint(insideXMiddle, centerY);
+					
+					if(!(outsideXBot == insideXBot && outsideXMiddle == insideXMiddle)) {
+						poly.addPoint(insideXBot, bottomY);
+						poly.addPoint(outsideXBot, bottomY);		
+					}
+					if(! (outsideXMiddle == insideXMiddle))
+						poly.addPoint(outsideXMiddle, centerY);
+	
+					brush.draw(poly);	
+					brush.fill(poly);
+				}
+	
+	
+				// Move over endpts
+				for(int j = 0; j < endpts.length; j++)
+					endpts[j][inside] = endpts[j][outside];
+			
 			}
-
-
-			// Move over endpts
-			for(int j = 0; j < endpts.length; j++)
-				endpts[j][inside] = endpts[j][outside];
 		}
 	}
 	

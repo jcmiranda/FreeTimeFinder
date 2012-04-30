@@ -381,7 +381,7 @@ public class Communicator {
 	
 	private void checkUserCal(String eventID){
 		Event w2m = _events.get(eventID);
-		if(w2m != null){
+		if(w2m != null && _userCal != null){
 			//check to see that w2m in range of userCal
 			//If it isn't, pullCall before 
 			DateTime wStart = w2m.getStartTime();
@@ -462,7 +462,7 @@ public class Communicator {
 		
 		checkUserCal(id);
 		
-		if(!toReturn.userHasSubmitted()){
+		if(!toReturn.userHasSubmitted() && _userCal != null){
 			calToW2M(id);
 		}
 		
