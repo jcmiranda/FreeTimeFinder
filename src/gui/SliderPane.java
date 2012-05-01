@@ -47,7 +47,7 @@ public class SliderPane{
 
 		_optionPane.setMessage(new Object[] { "How long is the event you are planning? ", _slider , _label});
 		_optionPane.setMessageType(JOptionPane.QUESTION_MESSAGE);
-		_optionPane.setOptionType(JOptionPane.OK_OPTION);
+		_optionPane.setOptionType(JOptionPane.DEFAULT_OPTION);
 
 		//		JOptionPane.showInput
 

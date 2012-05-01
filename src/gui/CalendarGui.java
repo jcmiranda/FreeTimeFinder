@@ -364,15 +364,6 @@ public class CalendarGui {
 		}
 		
 	}
-
-	private class AddEventListener implements ActionListener {
-
-		@Override
-		public void actionPerformed(ActionEvent arg0) {
-			SliderPane sliderPane = new SliderPane(_numHours, CalendarGui.this);
-		}
-		
-	}
 	
 	private class RefreshListener implements ActionListener {
 
