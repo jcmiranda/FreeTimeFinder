@@ -44,7 +44,7 @@ public class Communicator {
 	private StoredDataType _userCalImporterType; // = IndexType.GCalImporter;
 	private CalendarGroup<CalendarResponses> _userCal = null;
 	private String _userCalID = "userCal", _indexID = "index", 
-			_importerID = "userCalImporter", _progOwnerID = "progOwner";
+			_userCalImporterID = "userCalImporter", _progOwnerID = "progOwner";
 	
 	private HashMap<String, Event> _events = new HashMap<String, Event>();
 	private EventImporter _eventImporter = new EventImporter();
@@ -67,6 +67,7 @@ public class Communicator {
 	
 	
 	private void setUpXStream() {
+		// TODO add Kelly's gcal and date time classes
 		_xstream.alias("index", Index.class);
 		_xstream.alias("storeddatatype", StoredDataType.class);
 		_xstream.alias("calendarslots", CalendarSlots.class);
@@ -120,7 +121,6 @@ public class Communicator {
 				break;
 			}
 			default: {
-				
 				System.out.println("Default condition triggered on recreating index.");
 			}
 			}
@@ -130,6 +130,7 @@ public class Communicator {
 		if(_progOwner == null) {
 			getNewOwnerName();
 		}
+		
 		
 		if(_userCal == null) {
 			// TODO add a never option
@@ -150,9 +151,15 @@ public class Communicator {
 				if(selectedValue == "Google Calendar"){
 					this.setCalImporter(new GCalImporter());
 					_userCalImporterType = StoredDataType.GCalImporter;
+					saveOneItem(_userCalImporter, _userCalImporterID, _userCalImporterType);
 					//this.pullCal(DateTime.now(), DateTime.now().plusDays(30));
 					try {
+						
 						_userCal = ((GCalImporter)_userCalImporter).importMyGCal(DateTime.now(), DateTime.now().plusDays(30));
+						// Save their calendar importer to save their updated auth codes
+						saveOneItem(_userCalImporter, _userCalImporterID, _userCalImporterType);
+						
+						
 					} catch (IOException e) {
 					} catch (ServiceException e) {
 					}
@@ -340,7 +347,7 @@ public class Communicator {
 			}
 			
 		}
-		this.saveOneItem(_userCalImporter, _importerID, type);
+		this.saveOneItem(_userCalImporter, _userCalImporterID, type);
 	}
 	
 	public void setOwnerName(String name){
@@ -580,5 +587,6 @@ public class Communicator {
 	public void pullCal(DateTime start, DateTime end){
 		_userCal = _userCalImporter.refresh(start, end);
 		saveOneItem(_userCal, _userCalID, calGroupTypeToIndexType(_userCal.getCalGroupType()));
+		saveOneItem(_userCalImporter, _userCalImporterID, _userCalImporterType);
 	}
 }
