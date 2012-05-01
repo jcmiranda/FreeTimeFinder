@@ -13,6 +13,7 @@ import java.net.MalformedURLException;
 import java.util.ArrayList;
 
 import javax.swing.GroupLayout;
+import javax.swing.GroupLayout.Group;
 import javax.swing.GroupLayout.ParallelGroup;
 import javax.swing.GroupLayout.SequentialGroup;
 import javax.swing.JButton;
@@ -31,6 +32,7 @@ public class EventPanel extends JPanel {
 	private ArrayList<RemoveEventLabel> _removeLabels = new ArrayList<RemoveEventLabel>();
 	private Communicator _communicator;
 	private JButton _addButton;
+	private JButton _createButton;
 	private CalendarGui _gui;
 	private GroupLayout _layout= new GroupLayout(this);
 	private JLabel _titleLabel;
@@ -42,6 +44,8 @@ public class EventPanel extends JPanel {
 		_gui = gui;
 		_addButton = new JButton("Add Event");
 		_addButton.addActionListener(new AddEventListener());
+		_createButton = new JButton ("Create Event");
+		_createButton.addActionListener(new CreateEventListener());
 		
 		_titleLabel = new JLabel("My Events");
 		Font newLabelFont=new Font(_titleLabel.getFont().getName(),Font.BOLD,
@@ -77,11 +81,13 @@ public class EventPanel extends JPanel {
 	
 		horizParGrp.addComponent(_eventsScrollPane);
 		vertSeqGrp.addComponent(_eventsScrollPane);
-		
-		vertSeqGrp.addComponent(_addButton);
+		vertSeqGrp.addGroup(_layout.createParallelGroup().addComponent(_addButton).addComponent(_createButton));
+//		vertSeqGrp.addComponent();
 		//vertSeqGrp.addPreferredGap(LayoutStyle.ComponentPlacement.UNRELATED,
         //        GroupLayout.DEFAULT_SIZE, 15);
-		horizParGrp.addComponent(_addButton);
+		horizParGrp.addGroup(_layout.createSequentialGroup().addComponent(_addButton).addComponent(_createButton));
+//		horizParGrp.addComponent(_addButton);
+//		horizParGrp.addComponent(_createButton);
 	
 		/*for(EventLabel label : _eventLabels){
 			RemoveEventLabel rLabel = _removeLabels.get(i);
@@ -140,6 +146,15 @@ public class EventPanel extends JPanel {
 		for(EventLabel label: _eventLabels){
 			label.repaint();
 		}
+	}
+	
+	private class CreateEventListener implements ActionListener {
+
+		@Override
+		public void actionPerformed(ActionEvent e) {
+			AddEventDialog aEDialog = new AddEventDialog(_gui);
+		}
+		
 	}
 	
 	private class AddEventListener implements ActionListener {
