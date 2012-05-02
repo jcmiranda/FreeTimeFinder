@@ -306,7 +306,7 @@ public class CalendarGui {
 		_frame.setVisible(true);
 	}
 
-	public void CreateEvent(ArrayList<DateTime> dates, int startTime, int endTime){
+	public void CreateEvent(String name, ArrayList<DateTime> dates, int startTime, int endTime){
 		//TODO Finish this method
 	}
 	

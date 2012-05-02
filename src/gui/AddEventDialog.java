@@ -188,7 +188,6 @@ public class AddEventDialog{
 			_calendar.add(new JPanel());
 		}
 
-		System.out.println(_firstOfMonth.dayOfMonth().getMaximumValue());
 		int maxDay = _firstOfMonth.dayOfMonth().getMaximumValue();
 		for (int i = 0; i<maxDay; i++){
 
@@ -221,11 +220,6 @@ public class AddEventDialog{
 			else {
 				_selected.remove(((DateButton) e.getSource()).getDate());
 			}
-
-			for (DateTime t: _selected){
-				System.out.println(t);
-			}
-			System.out.println("");
 		}
 
 	}
@@ -272,7 +266,7 @@ public class AddEventDialog{
 		public void actionPerformed(ActionEvent e) {
 			if (e.getActionCommand().equals("OK")){
 				_dialog.dispose();
-				_gui.CreateEvent(_selected, _startHour.getSelectedIndex(), _endHour.getSelectedIndex());
+				_gui.CreateEvent(_eventName.getText(), _selected, _startHour.getSelectedIndex(), _endHour.getSelectedIndex());
 			}
 			else if (e.getActionCommand().equals("Cancel")){
 				_dialog.dispose();
