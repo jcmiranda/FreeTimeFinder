@@ -21,6 +21,8 @@ import javax.swing.JPanel;
 import javax.swing.SwingConstants;
 import javax.swing.border.EmptyBorder;
 
+import org.joda.time.DateTime;
+
 import cal_master.Communicator;
 import cal_master.NameIDPair;
 import calendar.CalendarGroup;
@@ -301,19 +303,11 @@ public class CalendarGui {
 		_frame.setSize(FRAME_WIDTH, FRAME_HEIGHT);
 		_frame.setVisible(true);
 	}
-//
-//	public void nextWeek(){
-//		_thisMonday = _thisMonday.plusDays(7);
-//		//		_myCal.nextWeek();
-//		_replyPanel.nextWeek();
-//	}
-//
-//	public void lastWeek(){
-//		_thisMonday = _thisMonday.minusDays(7);
-//		//		_myCal.lastWeek();
-//		_replyPanel.lastWeek();
-//	}
 
+	public void CreateEvent(ArrayList<DateTime> dates, int startTime, int endTime){
+		//TODO Finish this method
+	}
+	
 	public void replyToEvent(){
 		_communicator.submitResponse(Integer.toString(((When2MeetEvent) _slotGroup).getID()), _replyPanel.getClicks());
 	}
@@ -362,38 +356,11 @@ public class CalendarGui {
 		
 	}
 	
-	
 	private class TimeFindListener implements ActionListener {
 
 		@Override
 		public void actionPerformed(ActionEvent arg0) {
-			
 			SliderPane sliderPane = new SliderPane(_numHours, CalendarGui.this);
-			
-//			int duration = -1;
-//			Object[] calOptions = {"15 min", "30 min", "45 min", "1 hr", "90 min", "2 hr" };
-//			Object selectedValue = JOptionPane.showInputDialog(null, "Choose a calendar type to import.", "", 
-//					JOptionPane.INFORMATION_MESSAGE, null, calOptions, calOptions[0]);
-//			if(selectedValue.toString() == "15 min")
-//				duration = 15;
-//			else if(selectedValue.toString() == "30 min")
-//				duration = 30;
-//			else if(selectedValue.toString() == "45 min")
-//				duration = 45;
-//			else if(selectedValue.toString() == "1 hr")
-//				duration = 60;
-//			else if(selectedValue.toString() == "90 min")
-//				duration = 90;
-//			else if(selectedValue.toString() == "2 hr")
-//				duration = 120;
-//			
-//			if(duration > 0){
-//				CalendarResponses bestTimes = _communicator.getBestTimes(String.valueOf(_slotGroup.getID()), duration);
-//				//bestTimes.print();
-//				_replyPanel.setBestTimes(bestTimes);
-//				repaint();
-//			}
-			
 		}
 		
 	}
