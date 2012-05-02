@@ -63,6 +63,7 @@ public class CalendarGui {
 
 			Event toReturn = _communicator.getW2M(_communicator.getFirstEventID());
 			_slotGroup = toReturn;
+			_slotGroup.init();
 			//_slotGroup=_communicator.getFirstEvent();
 //			_thisMonday = _slotGroup.getStartTime().minusDays(_slotGroup.getStartTime().getDayOfWeek()-1);
 			_startHour = _slotGroup.getStartTime().getHourOfDay();
@@ -129,6 +130,7 @@ public class CalendarGui {
 
 	public void setEvent(Event event){
 		_slotGroup= event;
+		_slotGroup.init();
 		_responseGroup = _communicator.getUserCal();
 		_replyPanel.setSlots(event);
 		System.out.println("Setting event for reply panel");
@@ -314,9 +316,11 @@ public class CalendarGui {
 
 
 	public void repaint(){
-		_frame.invalidate();
-		_frame.validate();
-		_frame.repaint();
+		if(_frame != null){
+			_frame.invalidate();
+			_frame.validate();
+			_frame.repaint();
+		}
 	}
 
 	public void setBestTimes(int duration){

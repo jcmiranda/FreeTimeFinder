@@ -1,12 +1,9 @@
 package gui;
 import java.awt.BorderLayout;
-import java.awt.Dimension;
-import java.awt.FlowLayout;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.GridLayout;
 import java.awt.Insets;
-import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.FocusEvent;
@@ -18,7 +15,6 @@ import javax.swing.JComboBox;
 import javax.swing.JDialog;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
-import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
 import javax.swing.JToggleButton;
@@ -39,8 +35,8 @@ public class AddEventDialog{
 	private DateTime _today;
 	private DateTime _firstOfMonth;
 	private ArrayList<DateTime> _selected = new ArrayList<DateTime>();
-	private JComboBox<String> _startHour;
-	private JComboBox<String> _endHour;
+	private JComboBox _startHour;
+	private JComboBox _endHour;
 
 
 	public AddEventDialog(CalendarGui gui){
@@ -95,10 +91,10 @@ public class AddEventDialog{
 			}
 		}
 
-		_startHour = new JComboBox<String>(strings);
+		_startHour = new JComboBox(strings);
 		_startHour.setSelectedIndex(10);
 
-		_endHour = new JComboBox<String>(strings);
+		_endHour = new JComboBox(strings);
 		_endHour.setSelectedIndex(20);
 
 		JPanel times = new JPanel();
@@ -209,7 +205,8 @@ public class AddEventDialog{
 			_calendar.add(button);
 		}
 
-		_dialog.revalidate();
+		_dialog.invalidate();
+		_dialog.validate();
 		_dialog.pack();
 		_calendar.revalidate();
 	}

@@ -103,6 +103,11 @@ public class Event extends CalendarGroup<CalendarSlots> {
 		
 	}
 	
+	public void init(){
+		initColors();
+		//TODO: is this what we really want?
+	}
+	
 	public String getURL(){ return _url; }
 	public int getID(){ return _id; }
 	public String getName(){ return _name; }
@@ -152,7 +157,7 @@ public class Event extends CalendarGroup<CalendarSlots> {
 
 	public void paint(Graphics2D brush, DayPanel d, int day){
 		_colors.clear();
-		initColors();
+		//initColors();
 
 		ArrayList<CalendarSlots> cals = this.getCalendars();
 		int numSlotsInDay = cals.get(0).getSlotsInDay();
@@ -180,7 +185,7 @@ public class Event extends CalendarGroup<CalendarSlots> {
 			CalendarSlots cal = cals.get(i);
 			
 			//set color of cal for use in friend bar
-			Color color = _colors.get(i % _colors.size());
+			//Color color = _colors.get(i % _colors.size());
 			//cal.setColor(color);
 			
 			if(cal.isVisible()){

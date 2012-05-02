@@ -39,6 +39,7 @@ public class FriendBar extends JPanel {
 	
 	private void initLabels(){
 		_friendLabels.clear();
+		this.removeAll();
 		SequentialGroup horizGrp = _layout.createSequentialGroup();
 		ParallelGroup vertGrp = _layout.createParallelGroup(GroupLayout.Alignment.BASELINE);
 		
@@ -59,6 +60,9 @@ public class FriendBar extends JPanel {
 		//add to bar
 		_layout.setHorizontalGroup(horizGrp);
 		_layout.setVerticalGroup(vertGrp);
+		
+		this.revalidate();
+		_gui.repaint();
 	}
 	
 	public void setEvent(Event event){

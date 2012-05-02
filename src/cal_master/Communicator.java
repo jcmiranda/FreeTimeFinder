@@ -9,7 +9,10 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 
+import javax.swing.JFrame;
+import javax.swing.JLabel;
 import javax.swing.JOptionPane;
+import javax.swing.JPanel;
 
 import org.joda.time.DateTime;
 
@@ -40,7 +43,7 @@ import ftf.TimeFinderSlots;
 
 public class Communicator {
 
-	private CalendarsImporter<CalendarResponses> _userCalImporter;
+	private CalendarsImporter<CalendarResponses> _userCalImporter = null;
 	private StoredDataType _userCalImporterType; // = IndexType.GCalImporter;
 	private CalendarGroup<CalendarResponses> _userCal = null;
 	private String _userCalID = "userCal", _indexID = "index", 
@@ -54,15 +57,36 @@ public class Communicator {
 	private TimeFinderSlots _timeFinder = new TimeFinderSlots();
 	private ProgramOwner _progOwner = new ProgramOwner();
 	
+	private JFrame _loadingFrame = new JFrame();
+	private JLabel _loadingLabel = new JLabel();
+	
 	private XStream _xstream = new XStream();
 	//private Index _index = new Index();
 	
 	private static final double ATTENDEE_PERCENTAGE = 0;
 	private static final int NUM_SUGGESTIONS = 5;
 	
+	
 	public Communicator() {
-		_userCalImporter = null;
+		//_userCalImporter = null;
 		//_userCalImporterType = null;
+		JPanel loadingPanel = new JPanel();
+		loadingPanel.add(_loadingLabel);
+		_loadingFrame.add(loadingPanel);
+
+		_loadingFrame.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
+		//_loadingFrame.pack();
+	}
+	
+	private void showLoadingLabel(String msg){
+		_loadingLabel.setText(msg);
+		_loadingFrame.pack();
+		_loadingFrame.setLocationRelativeTo(null);
+		_loadingFrame.setVisible(true);
+	}
+	
+	private void hideLoadingLabel(){
+		_loadingFrame.setVisible(false);
 	}
 	
 	
@@ -94,11 +118,13 @@ public class Communicator {
 		// If have an index, recreate index
 		Index index = recreateIndex();
 		
+		showLoadingLabel("Loading...");
+		
 		// Pull in XML and create when2meet events from XML
 		// Pull in XML for user cal, and create user cal
 		for(String id : index.getFiles()) {
 			StoredDataType type = index.getType(id);
-			//System.out.println("Type: " + type);
+			System.out.println("ID: " + id + "\tType: " + type);
 			assert type != null;
 			Object o = _xstream.fromXML(new File(id + ".xml"));
 			switch(type) {
@@ -127,6 +153,8 @@ public class Communicator {
 				
 		}
 		
+		hideLoadingLabel();
+		
 		if(_progOwner == null) {
 			getNewOwnerName();
 		}
@@ -154,11 +182,14 @@ public class Communicator {
 					saveOneItem(_userCalImporter, _userCalImporterID, _userCalImporterType);
 					//this.pullCal(DateTime.now(), DateTime.now().plusDays(30));
 					try {
+						showLoadingLabel("Retrieving calendar...");
 						
 						_userCal = ((GCalImporter)_userCalImporter).importMyGCal(DateTime.now(), DateTime.now().plusDays(30));
+						
 						// Save their calendar importer to save their updated auth codes
 						saveOneItem(_userCalImporter, _userCalImporterID, _userCalImporterType);
 						
+						hideLoadingLabel();
 						
 					} catch (IOException e) {
 					} catch (ServiceException e) {
@@ -358,6 +389,8 @@ public class Communicator {
 		//TODO: deal with URL exception
 		// Update all when2meet events
 		When2MeetEvent temp = null;
+		showLoadingLabel("Retrieving Events...");
+		
 		for(Event event : _events.values()){
 			//repull info
 			if(event.getCalGroupType() == CalGroupType.When2MeetEvent) {
@@ -367,6 +400,9 @@ public class Communicator {
 			else
 				System.out.println("Invalid event type - not when2meet");
 		}
+		
+		hideLoadingLabel();
+		
 		// Update user calendar
 		if(_userCal != null){
 			pullCal(_userCal.getStartTime(), _userCal.getEndTime());
@@ -585,8 +621,12 @@ public class Communicator {
 	}
 	
 	public void pullCal(DateTime start, DateTime end){
+		showLoadingLabel("Retrieving calendar...");
+		
 		_userCal = _userCalImporter.refresh(start, end);
 		saveOneItem(_userCal, _userCalID, calGroupTypeToIndexType(_userCal.getCalGroupType()));
 		saveOneItem(_userCalImporter, _userCalImporterID, _userCalImporterType);
+		
+		hideLoadingLabel();
 	}
 }
