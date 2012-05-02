@@ -95,6 +95,12 @@ public class Event extends CalendarGroup<CalendarSlots> {
 		_colors.add(GuiConstants.PEACH);
 		
 		
+		ArrayList<CalendarSlots> calendars = this.getCalendars();
+		
+		for(int i=0; i< calendars.size(); i++){
+			calendars.get(i).setColor(_colors.get(i % _colors.size()));
+		}
+		
 	}
 	
 	public String getURL(){ return _url; }
@@ -175,11 +181,10 @@ public class Event extends CalendarGroup<CalendarSlots> {
 			
 			//set color of cal for use in friend bar
 			Color color = _colors.get(i % _colors.size());
-			cal.setColor(color);
+			//cal.setColor(color);
 			
 			if(cal.isVisible()){
-				System.out.println("Cal " + cal.getOwner().getName() + " is visible");
-				brush.setColor(color);
+				brush.setColor(cal.getColor());
 				// Fill in availabilities
 				for(int slot = 0; slot < numSlotsInDay; slot++) {
 					int s = slot*2+1;

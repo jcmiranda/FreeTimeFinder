@@ -1,5 +1,6 @@
 package gui;
 
+import java.awt.Color;
 import java.awt.Graphics;
 import java.util.ArrayList;
 
@@ -12,7 +13,6 @@ import javax.swing.LayoutStyle;
 import calendar.CalendarSlots;
 import calendar.Event;
 import calendar.Event.CalByThatNameNotFoundException;
-import calendar.When2MeetEvent;
 
 public class FriendBar extends JPanel {
 	
@@ -25,6 +25,15 @@ public class FriendBar extends JPanel {
 	public FriendBar(CalendarGui gui){
 		_gui = gui;
 		this.setLayout(_layout);
+	}
+	
+	public void setLabelColor(String labelName, Color color){
+		for(FriendLabel label : _friendLabels){
+			if(label.getText() == labelName){
+				label.setColor(color);
+				break;
+			}
+		}
 	}
 	
 	

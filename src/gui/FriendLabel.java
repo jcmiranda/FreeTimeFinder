@@ -23,6 +23,10 @@ public class FriendLabel extends JLabel implements MouseListener{
 		this.addMouseListener(this);
 	}
 
+	public void setColor(Color color){
+		_textColor = color;
+	}
+	
 	@Override
 	public void mouseClicked(MouseEvent arg0) {
 		// Toggle visibility of this calendar
