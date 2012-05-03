@@ -126,9 +126,10 @@ public class CalendarGui {
 
 	public void setEvent(Event event){
 		_slotGroup= event;
-		_slotGroup.init();
+		if(_slotGroup != null)
+			_slotGroup.init();
 		_responseGroup = _communicator.getUserCal();
-		_replyPanel.setSlots(event);
+		_replyPanel.setSlots(_slotGroup);
 		System.out.println("Setting event for reply panel");
 		_replyPanel.setResps(_responseGroup);
 		_replyPanel.repaint();
@@ -307,7 +308,8 @@ public class CalendarGui {
 	}
 	
 	public void replyToEvent(){
-		_communicator.submitResponse(Integer.toString(((When2MeetEvent) _slotGroup).getID()), _replyPanel.getClicks());
+		if(_slotGroup != null && _replyPanel.getClicks() != null)
+			_communicator.submitResponse(Integer.toString(((When2MeetEvent) _slotGroup).getID()), _replyPanel.getClicks());
 	}
 
 
@@ -320,10 +322,11 @@ public class CalendarGui {
 	}
 
 	public void setBestTimes(int duration){
-		CalendarResponses bestTimes = _communicator.getBestTimes(String.valueOf(_slotGroup.getID()), duration);
-		//bestTimes.print();
-		_replyPanel.setBestTimes(bestTimes);
-		repaint();
+		if(_slotGroup != null){
+			CalendarResponses bestTimes = _communicator.getBestTimes(String.valueOf(_slotGroup.getID()), duration);
+			_replyPanel.setBestTimes(bestTimes);
+			repaint();
+		}
 	}
 	
 	private class SubmitListener implements ActionListener {
@@ -343,7 +346,8 @@ public class CalendarGui {
 
 		@Override
 		public void actionPerformed(ActionEvent e) {
-			_replyPanel.nextWeek();
+			if(_slotGroup != null)
+				_replyPanel.nextWeek();
 		}
 		
 	}
@@ -351,7 +355,8 @@ public class CalendarGui {
 
 		@Override
 		public void actionPerformed(ActionEvent e) {
-			_replyPanel.prevWeek();
+			if(_slotGroup != null)
+				_replyPanel.prevWeek();
 		}
 		
 	}
@@ -371,11 +376,12 @@ public class CalendarGui {
 		public void actionPerformed(ActionEvent arg0) {
 			_communicator.refresh();
 			// Reget this when2meet in case it has changed
-			setEvent(_communicator.getW2M(""+_slotGroup.getID()));
-			System.out.println("After setting event in GUI");
-			_slotGroup.printUpdates();
-			System.out.println("=====");
-			
+			if(_slotGroup != null){
+				setEvent(_communicator.getW2M(""+_slotGroup.getID()));
+				System.out.println("After setting event in GUI");
+				_slotGroup.printUpdates();
+				System.out.println("=====");
+			}
 			
 			repaint();
 		}
