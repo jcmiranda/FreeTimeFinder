@@ -129,13 +129,20 @@ public class CalendarGui {
 		if(_slotGroup != null)
 			_slotGroup.init();
 		_responseGroup = _communicator.getUserCal();
+		System.out.println("SLOT GROUP IN SET EVENT: " + _slotGroup);
 		_replyPanel.setSlots(_slotGroup);
 		System.out.println("Setting event for reply panel");
 		_replyPanel.setResps(_responseGroup);
 		_replyPanel.repaint();
 		//_replyPanel.configDays();
-		_startHour = event.getStartTime().getHourOfDay();
-		_numHours = event.getCalendars().get(0).getNumHours();
+		if(_slotGroup != null){
+			_startHour = event.getStartTime().getHourOfDay();
+			_numHours = event.getCalendars().get(0).getNumHours();
+		}
+		else{
+			_startHour = 9;
+			_numHours = 8;
+		}
 		_updatesPanel.setEvent(_slotGroup);
 		_friendBar.setEvent(_slotGroup);
 		//_endHour = event.getEndTime().getHourOfDay();

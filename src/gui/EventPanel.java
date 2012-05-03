@@ -13,7 +13,6 @@ import java.net.MalformedURLException;
 import java.util.ArrayList;
 
 import javax.swing.GroupLayout;
-import javax.swing.GroupLayout.Group;
 import javax.swing.GroupLayout.ParallelGroup;
 import javax.swing.GroupLayout.SequentialGroup;
 import javax.swing.JButton;
@@ -53,7 +52,7 @@ public class EventPanel extends JPanel {
 
 		_titleLabel.setFont(newLabelFont);
 		_scrollPaneInner = new JPanel();
-		_scrollPaneInner.setLayout(new GridLayout(10,1));
+		_scrollPaneInner.setLayout(new GridLayout(10,2));
 		_eventsScrollPane = new JScrollPane(_scrollPaneInner);
 		
 		//this.setLayout(new GridLayout(0,1));
@@ -62,10 +61,14 @@ public class EventPanel extends JPanel {
 	}
 	
 	private void setUp() {
+		_scrollPaneInner.removeAll();
 		
 		int i=0;
 		for(EventLabel label : _eventLabels){
+			RemoveEventLabel rLabel = _removeLabels.get(i);
+			_scrollPaneInner.add(rLabel);
 			_scrollPaneInner.add(label);
+			i++;
 		}
 		
 		this.setLayout(_layout);
@@ -82,31 +85,16 @@ public class EventPanel extends JPanel {
 		horizParGrp.addComponent(_eventsScrollPane);
 		vertSeqGrp.addComponent(_eventsScrollPane);
 		vertSeqGrp.addGroup(_layout.createParallelGroup().addComponent(_addButton).addComponent(_createButton));
-//		vertSeqGrp.addComponent();
-		//vertSeqGrp.addPreferredGap(LayoutStyle.ComponentPlacement.UNRELATED,
-        //        GroupLayout.DEFAULT_SIZE, 15);
+
 		horizParGrp.addGroup(_layout.createSequentialGroup().addComponent(_addButton).addComponent(_createButton));
-//		horizParGrp.addComponent(_addButton);
-//		horizParGrp.addComponent(_createButton);
-	
-		/*for(EventLabel label : _eventLabels){
-			RemoveEventLabel rLabel = _removeLabels.get(i);
-			
-			vertSeqGrp.addGroup(_layout.createParallelGroup(GroupLayout.Alignment.LEADING)
-					.addComponent(rLabel).addComponent(label));
-			horizParGrp.addGroup(_layout.createSequentialGroup()
-					.addComponent(rLabel).addComponent(label));
-			
-			i++;
-			
-//			
-//			vertSeqGrp.addComponent(label);
-//			horizParGrp.addComponent(label);
-		}*/
 
 		_layout.setHorizontalGroup(horizParGrp);
 		_layout.setVerticalGroup(vertSeqGrp);
+		
+		this.revalidate();
+		_gui.repaint();
 	}
+	
 	
 	public void addEvent(EventLabel label){
 		_eventLabels.add(label);
@@ -116,6 +104,9 @@ public class EventPanel extends JPanel {
 	
 	public void addEvents(ArrayList<EventLabel> events){
 		_eventLabels.addAll(events);
+		for(EventLabel label : events){
+			_removeLabels.add(new RemoveEventLabel(label.getID()));
+		}
 		setUp();
 	}
 	
@@ -125,7 +116,8 @@ public class EventPanel extends JPanel {
 				_eventLabels.remove(i);
 				_removeLabels.remove(i);
 				if (_eventLabels.size()==0){
-					//TODO DEAL with Null event
+					_gui.setEvent(null);
+					_gui.repaint();
 				} else {
 					_eventLabels.get(Math.max(0, i-1)).setEvent();
 				}
@@ -210,7 +202,7 @@ public class EventPanel extends JPanel {
 			int selection = JOptionPane.showConfirmDialog(null,"Are you sure you want to remove this event?", "", 
 					JOptionPane.YES_NO_OPTION);
 			if(selection == JOptionPane.YES_OPTION){
-//				_communicator.removeWhen2Meet(_eventID);
+				_communicator.removeWhen2Meet(_eventID);
 				removeEvent(_eventID);
 				System.out.println("HA jk");
 			}

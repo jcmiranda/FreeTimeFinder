@@ -69,11 +69,13 @@ public class ReplyPanel extends CalPanel{
 
 	public void setSlots(CalendarGroup<CalendarSlots> slotCals){
 		_slotCals = slotCals;
-
-		_startHour = _slotCals.getStartTime().getHourOfDay();
-		_endHour = _slotCals.getEndTime().getHourOfDay();
-		_numHours = _slotCals.getCalendars().get(0).getNumHours();
-
+		System.out.println("PASSED INTO SET SLOTS: " + slotCals);
+		System.out.println("SLOT CALS : " + _slotCals);
+		if(_slotCals != null){
+			_startHour = _slotCals.getStartTime().getHourOfDay();
+			_endHour = _slotCals.getEndTime().getHourOfDay();
+			_numHours = _slotCals.getCalendars().get(0).getNumHours();
+		}
 		//		_thisMonday = _slotCals.getStartTime().minusDays(_slotCals.getStartTime().getDayOfWeek()-1);
 
 		setViewDate();

@@ -54,12 +54,18 @@ public class UpdatesPanel extends JPanel {
 	}
 	
 	private void setText(){
-		_titleLabel.setText(_event.getName() + " Updates");
-		_textArea.setText("");
-		ArrayList<EventUpdate> updates = _event.getUpdates();
-		String newText = ""; // _event.getName() + " Updates";
-		for(EventUpdate update : updates){
-			newText += " " + update.getMessage() + '\n';
+		String eventName = "";
+		if(_event != null)
+			eventName = _event.getName();
+		_titleLabel.setText(eventName + " Updates");
+		
+		String newText = "";
+		
+		if(_event != null){
+			ArrayList<EventUpdate> updates = _event.getUpdates();
+			for(EventUpdate update : updates){
+				newText += " " + update.getMessage() + '\n';
+			}
 		}
 		_textArea.setText(newText);
 	}
