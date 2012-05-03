@@ -43,19 +43,20 @@ public class FriendBar extends JPanel {
 		SequentialGroup horizGrp = _layout.createSequentialGroup();
 		ParallelGroup vertGrp = _layout.createParallelGroup(GroupLayout.Alignment.BASELINE);
 		
-		for(CalendarSlots cal : _event.getCalendars()){
-			
-			FriendLabel toAdd = new FriendLabel(this, cal.getOwner().getName(), cal.getColor());
-			toAdd.setVisible(true);
-			
-			_friendLabels.add(toAdd);
-			
-			vertGrp.addComponent(toAdd);
-			horizGrp.addComponent(toAdd);
-			horizGrp.addPreferredGap(LayoutStyle.ComponentPlacement.UNRELATED,
-	                GroupLayout.DEFAULT_SIZE, 15);
-			
-		}
+		if(_event != null)
+			for(CalendarSlots cal : _event.getCalendars()){
+				
+				FriendLabel toAdd = new FriendLabel(this, cal.getOwner().getName(), cal.getColor());
+				toAdd.setVisible(true);
+				
+				_friendLabels.add(toAdd);
+				
+				vertGrp.addComponent(toAdd);
+				horizGrp.addComponent(toAdd);
+				horizGrp.addPreferredGap(LayoutStyle.ComponentPlacement.UNRELATED,
+		                GroupLayout.DEFAULT_SIZE, 15);
+				
+			}
 		
 		//add to bar
 		_layout.setHorizontalGroup(horizGrp);
@@ -67,8 +68,7 @@ public class FriendBar extends JPanel {
 	
 	public void setEvent(Event event){
 		_event = event;
-		if(_event != null)
-			initLabels();
+		initLabels();
 	}
 	
 	public void setCalVisible(String name, boolean visible){
