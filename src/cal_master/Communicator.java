@@ -61,7 +61,6 @@ public class Communicator {
 	private JLabel _loadingLabel = new JLabel();
 	
 	private XStream _xstream = new XStream();
-	//private Index _index = new Index();
 	
 	private static final double ATTENDEE_PERCENTAGE = 0;
 	private static final int NUM_SUGGESTIONS = 5;
@@ -120,6 +119,7 @@ public class Communicator {
 	public void startUp() {
 		
 		setUpXStream();
+		
 		// If have an index, recreate index
 		Index index = recreateIndex();
 		
@@ -172,8 +172,6 @@ public class Communicator {
 					"", JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE, null,
 					options, options[0]);
 			if(n == 0) {
-				// TODO import the users calendar
-				//JOptionPane.showMessageDialog(null, "Now I should import a calendar");
 				
 				// from where would you like to import?
 				Object[] calOptions = {"Google Calendar" };
@@ -185,7 +183,7 @@ public class Communicator {
 					this.setCalImporter(new GCalImporter());
 					_userCalImporterType = StoredDataType.GCalImporter;
 					saveOneItem(_userCalImporter, _userCalImporterID, _userCalImporterType);
-					//this.pullCal(DateTime.now(), DateTime.now().plusDays(30));
+					
 					try {
 						showLoadingLabel("Retrieving calendar...");
 						
@@ -203,16 +201,16 @@ public class Communicator {
 			}
 		}
 		
-		if(this.hasEvent() == false)
-			try {
-				this.addEvent("http://www.when2meet.com/?426631-GoPHt");
-			} catch (URLAlreadyExistsException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			} catch (IOException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
+//		if(!this.hasEvent())
+//			try {
+//				this.addEvent("http://www.when2meet.com/?426631-GoPHt");
+//			} catch (URLAlreadyExistsException e) {
+//				// TODO Auto-generated catch block
+//				e.printStackTrace();
+//			} catch (IOException e) {
+//				// TODO Auto-generated catch block
+//				e.printStackTrace();
+//			}
 		
 		// TODO
 		// Refresh when2meet events

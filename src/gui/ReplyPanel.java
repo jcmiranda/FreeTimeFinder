@@ -20,7 +20,7 @@ public class ReplyPanel extends CalPanel{
 
 	private CalendarGroup<CalendarSlots> _slotCals;
 	private CalendarGroup<CalendarResponses> _respCals;
-	private CalendarGroup<CalendarSlots> _clicks;
+	private CalendarGroup<CalendarSlots> _clicks = null;
 	private Day[] _bigDays;
 
 
@@ -29,6 +29,7 @@ public class ReplyPanel extends CalPanel{
 		this.setLayout(new GridLayout(1,7,DAY_SPACING,0));
 		this.setBackground(LINE_COLOR);
 	}
+	
 	public ReplyPanel(CalendarGroup<CalendarResponses> respCals,
 			CalendarGroup<CalendarSlots> slotCals) {
 		super();
@@ -40,9 +41,14 @@ public class ReplyPanel extends CalPanel{
 
 		setViewDate();
 
-		_startHour = _slotCals.getStartTime().getHourOfDay();
-		_endHour = _slotCals.getEndTime().getHourOfDay();
-		_numHours = _slotCals.getCalendars().get(0).getNumHours();
+		if(_slotCals != null){
+			_startHour = _slotCals.getStartTime().getHourOfDay();
+			_endHour = _slotCals.getEndTime().getHourOfDay();
+			_numHours = _slotCals.getCalendars().get(0).getNumHours();
+		}
+		else{
+			
+		}
 
 		configDays();
 	}
@@ -128,12 +134,18 @@ public class ReplyPanel extends CalPanel{
 	//	}
 
 	public void setViewDate(){
-		_startDay =  _slotCals.getStartTime();
+		
 		if (_slotCals!=null){
+			_startDay =  _slotCals.getStartTime();
+			
 			if (CalendarSlots.getDaysBetween(_slotCals.getStartTime(), _slotCals.getEndTime()) < 7)
 				_endDay = _slotCals.getEndTime();
 			else
 				_endDay = _slotCals.getStartTime().plusDays(6);	
+		}
+		else {
+			_startDay = DateTime.now();
+			_endDay = _startDay.plusDays(6);
 		}
 	}
 
@@ -167,7 +179,7 @@ public class ReplyPanel extends CalPanel{
 			_bigDays[i].setStartHour(_startHour);
 			_bigDays[i].setNumHours(_numHours);
 			_bigDays[i].setDay(_startDay.plusDays(i));
-			if (_startDay.plusDays(i).isAfter(_slotCals.getEndTime())){
+			if ((_slotCals != null &&_startDay.plusDays(i).isAfter(_slotCals.getEndTime())) || (_slotCals == null && _startDay.plusDays(i).isAfter(_endDay))){
 				_bigDays[i].setActive(false);
 				//				//=======
 				//				//		for (int i=0; i<14; i+=2){
@@ -189,17 +201,19 @@ public class ReplyPanel extends CalPanel{
 				_bigDays[i].getClickableDay().setResponses(_respCals);
 				_bigDays[i].getDay().setEvent((Event) _slotCals, ctr);
 
-				_clicks = new CalendarGroup<CalendarSlots>(_slotCals.getStartTime(), _slotCals.getEndTime(), CalGroupType.When2MeetEvent);
+				if(_slotCals != null)
+					_clicks = new CalendarGroup<CalendarSlots>(_slotCals.getStartTime(), _slotCals.getEndTime(), CalGroupType.When2MeetEvent);
 
-				if(((When2MeetEvent) _slotCals).getUserResponse() != null) {
+				if(_slotCals != null && ((When2MeetEvent) _slotCals).getUserResponse() != null) {
 					_clicks.addCalendar(((When2MeetEvent) _slotCals).getUserResponse());
 				}
-				else {
+				else if (_slotCals != null){
 					_clicks.addCalendar(new CalendarSlots(_slotCals.getStartTime(),
 							_slotCals.getEndTime(),
 							_slotCals.getCalendars().get(0).getMinInSlot(),
 							Availability.busy));
 				}
+				
 				_bigDays[i].getClickableDay().setSlots(_clicks);
 				ctr++;
 			}

@@ -67,15 +67,18 @@ public class FriendBar extends JPanel {
 	
 	public void setEvent(Event event){
 		_event = event;
-		initLabels();
+		if(_event != null)
+			initLabels();
 	}
 	
 	public void setCalVisible(String name, boolean visible){
 		CalendarSlots cal;
 		try {
-			cal = _event.getCalByName(name);
-			cal.setVisible(visible);
-			_gui.repaint();
+			if(_event != null){
+				cal = _event.getCalByName(name);
+				cal.setVisible(visible);
+				_gui.repaint();
+			}
 		} catch (CalByThatNameNotFoundException e) {
 			//TODO handle this
 		}
@@ -83,12 +86,13 @@ public class FriendBar extends JPanel {
 	}
 	
 	public void hideAllVisible(String calToKeep){
-		for(CalendarSlots cal : _event.getCalendars()){
-			if(cal.isVisible() && !cal.getOwner().getName().equals(calToKeep)){
-				_tempInvisible.add(cal);
-				cal.setVisible(false);
+		if(_event != null)
+			for(CalendarSlots cal : _event.getCalendars()){
+				if(cal.isVisible() && !cal.getOwner().getName().equals(calToKeep)){
+					_tempInvisible.add(cal);
+					cal.setVisible(false);
+				}
 			}
-		}
 		_gui.repaint();
 	}
 	

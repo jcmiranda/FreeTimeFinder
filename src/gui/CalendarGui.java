@@ -32,10 +32,9 @@ import calendar.When2MeetEvent;
 
 public class CalendarGui {
 
-	private CalendarGroup<CalendarResponses> _responseGroup;
-	private Event _slotGroup;
+	private CalendarGroup<CalendarResponses> _responseGroup = null;
+	private Event _slotGroup = null;
 	private int _startHour = 0;
-	//private int _endHour = 24;
 	private int _numHours = 24;
 	private JFrame _frame;
 	private ReplyPanel _replyPanel;
@@ -53,9 +52,6 @@ public class CalendarGui {
 	private JButton _refreshButton = new JButton("Refresh");
 	public static enum DaysOfWeek {Monday, Tuesday, Wednesday, Thursday, Friday, Saturday, Sunday};
 
-	// Represents the monday of the current week
-//	private DateTime _thisMonday;
-
 	public CalendarGui(){
 		_communicator.startUp();
 
@@ -64,22 +60,19 @@ public class CalendarGui {
 			Event toReturn = _communicator.getW2M(_communicator.getFirstEventID());
 			_slotGroup = toReturn;
 			_slotGroup.init();
-			//_slotGroup=_communicator.getFirstEvent();
-//			_thisMonday = _slotGroup.getStartTime().minusDays(_slotGroup.getStartTime().getDayOfWeek()-1);
 			_startHour = _slotGroup.getStartTime().getHourOfDay();
 			_friendBar.setEvent(_slotGroup);
-			//_endHour = _slotGroup.getEndTime().getHourOfDay();
 		}
-//		else {
-//			_thisMonday = new DateTime();
-//			_thisMonday = _thisMonday.minusDays(_thisMonday.getDayOfWeek()-1);
-//		}
+		else {
+			_startHour = 9;
+			_friendBar.setEvent(null);
+		}
 
 		if(_communicator.hasUserCal())
 			_responseGroup=_communicator.getUserCal();
 
-		assert _responseGroup != null;
-		assert _slotGroup != null;
+//		assert _responseGroup != null;
+//		assert _slotGroup != null;
 		
 		_replyPanel = new ReplyPanel(_responseGroup, _slotGroup);
 
@@ -96,7 +89,10 @@ public class CalendarGui {
 		
 		_refreshButton.addActionListener(new RefreshListener());
 		//_eventPanel.addEvent(new EventLabel("TESTING TESTING", "1234", _communicator, this));
-		_numHours = _slotGroup.getCalendars().get(0).getNumHours();
+		if(_slotGroup != null)
+			_numHours = _slotGroup.getCalendars().get(0).getNumHours();
+		else
+			_numHours = 8;
 //		makeDayLabels();
 		makeHourLabels();
 		buildFrame();
