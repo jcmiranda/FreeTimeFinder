@@ -29,7 +29,7 @@ public class GCalAuth {
 	
 	public TokenResponse getRefreshToken() {
 		 try {
-			 System.out.println("refresh toke = "+_refreshToken);
+			 //System.out.println("refresh toke = "+_refreshToken);
 			return new GoogleRefreshTokenRequest(new NetHttpTransport(), new JacksonFactory(), _refreshToken,CLIENT_ID, CLIENT_SECRET).execute();
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
@@ -102,7 +102,7 @@ public class GCalAuth {
 		    GoogleTokenResponse request = toke.execute();
 		    request.setExpiresInSeconds((long) 9000);
 		    _refreshToken = request.getRefreshToken();
-		    System.out.println("refresh toke = "+_refreshToken);
+		   // System.out.println("refresh toke = "+_refreshToken);
 		    //return token for client
 		    server.exit();
 		    return request;

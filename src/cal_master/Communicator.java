@@ -79,10 +79,15 @@ public class Communicator {
 	}
 	
 	private void showLoadingLabel(String msg){
+		System.out.println("MESSAGE: " + msg);
 		_loadingLabel.setText(msg);
+		_loadingLabel.revalidate();
 		_loadingFrame.pack();
 		_loadingFrame.setLocationRelativeTo(null);
+		
 		_loadingFrame.setVisible(true);
+		//_loadingFrame.repaint();
+		//_loadingLabel.repaint();
 	}
 	
 	private void hideLoadingLabel(){
@@ -124,7 +129,6 @@ public class Communicator {
 		// Pull in XML for user cal, and create user cal
 		for(String id : index.getFiles()) {
 			StoredDataType type = index.getType(id);
-			System.out.println("ID: " + id + "\tType: " + type);
 			assert type != null;
 			Object o = _xstream.fromXML(new File(id + ".xml"));
 			switch(type) {
@@ -144,6 +148,7 @@ public class Communicator {
 			} 
 			case GCalImporter: {
 				_userCalImporter = (GCalImporter) o;
+				_userCalImporterType = StoredDataType.GCalImporter;
 				break;
 			}
 			default: {
@@ -225,7 +230,7 @@ public class Communicator {
 	}
 	
 	public CalendarGroup<CalendarSlots> getFirstEvent() {
-		System.out.println("Num events: " + _events.values().size());
+		//System.out.println("Num events: " + _events.values().size());
 		for(CalendarGroup<CalendarSlots> cal : _events.values())
 			return cal;
 		return null;
@@ -364,7 +369,7 @@ public class Communicator {
 	}
 	
 	public void setCalImporter(CalendarsImporter<CalendarResponses> importer){
-		System.out.println("Cal importer set");
+		//System.out.println("Cal importer set");
 		_userCalImporter = importer;
 		StoredDataType type = null;
 		if(_userCalImporter.getClass() == GCalImporter.class)
@@ -403,10 +408,13 @@ public class Communicator {
 		
 		hideLoadingLabel();
 		
+		
 		// Update user calendar
 		if(_userCal != null){
+			showLoadingLabel("Retrieving calendar...");
 			pullCal(_userCal.getStartTime(), _userCal.getEndTime());
 			saveOneItem(_userCal, _userCalID, StoredDataType.GCal);
+			hideLoadingLabel();
 		}
 		
 		// Rebuild index and store all files
@@ -565,9 +573,9 @@ public class Communicator {
 		} 
 		
 		// response.setOwner(new When2MeetOwner(_owner.getName(), -1));
-		System.out.println("Response Owner: " + response.getOwner().getName());
-		System.out.println("Event User: " + event.getUserResponse().getOwner().getName());
-		System.out.println("Event ID: " + event.getID());
+		//System.out.println("Response Owner: " + response.getOwner().getName());
+		//System.out.println("Event User: " + event.getUserResponse().getOwner().getName());
+		//System.out.println("Event ID: " + event.getID());
 		
 		if(event.getCalGroupType() == CalGroupType.When2MeetEvent) {
 			boolean didNotPost = true;
@@ -621,12 +629,11 @@ public class Communicator {
 	}
 	
 	public void pullCal(DateTime start, DateTime end){
-		showLoadingLabel("Retrieving calendar...");
+		
 		
 		_userCal = _userCalImporter.refresh(start, end);
 		saveOneItem(_userCal, _userCalID, calGroupTypeToIndexType(_userCal.getCalGroupType()));
 		saveOneItem(_userCalImporter, _userCalImporterID, _userCalImporterType);
 		
-		hideLoadingLabel();
 	}
 }
