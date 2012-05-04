@@ -2,7 +2,10 @@ package gui;
 
 import java.awt.Graphics;
 
+
 import static gui.GuiConstants.LINE_COLOR;
+import static gui.GuiConstants.DEFAULT_START_HOUR;
+import static gui.GuiConstants.DEFAULT_END_HOUR;
 
 import javax.swing.JPanel;
 
@@ -10,9 +13,9 @@ import org.joda.time.DateTime;
 
 public abstract class CalPanel extends JPanel{
 
-	protected int _startHour = 0;
-	protected int _endHour = 24;
-	protected int _numHours = 24;
+	protected int _startHour = DEFAULT_START_HOUR;
+	protected int _endHour = DEFAULT_END_HOUR;
+	protected int _numHours =  DEFAULT_END_HOUR - DEFAULT_START_HOUR;
 //	protected DateTime _thisMonday;
 	protected DateTime _startDay;
 	protected DateTime _endDay;

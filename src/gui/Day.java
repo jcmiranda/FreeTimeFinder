@@ -4,6 +4,7 @@ import java.awt.Graphics;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.GridLayout;
+import java.awt.Insets;
 
 import javax.swing.JLabel;
 import javax.swing.JPanel;
@@ -43,14 +44,16 @@ public class Day extends JPanel{
 		
 		c.fill = GridBagConstraints.HORIZONTAL;
 		c.weighty = 0.0;
-		c.weightx = 1.0;	
+		c.weightx = 1.0;
+		c.insets = new Insets(0,0,1,0);
 		c.gridx = 0;
-		c.gridy = 0;		
+		c.gridy = 0;
 		add(_labelPanel, c);
 
 		c.fill = GridBagConstraints.BOTH;
 		c.weightx = 1.0;
 		c.weighty = 1.0;
+		c.insets = new Insets(0,0,0,0);
 		c.gridx = 0;
 		c.gridy = 1;
 		add(dayGroup, c);
@@ -92,7 +95,7 @@ public class Day extends JPanel{
 		_day.setDay(today);
 		_clickableDay.setDay(today);
 		_today = today;
-		_label.setText(_today.dayOfWeek().getAsText() + " " + _today.monthOfYear().getAsShortText() + " " + _today.getDayOfMonth());
+		_label.setText(_today.dayOfWeek().getAsShortText() + " " + _today.monthOfYear().getAsShortText() + " " + _today.getDayOfMonth());
 		this.repaint();
 	}
 
