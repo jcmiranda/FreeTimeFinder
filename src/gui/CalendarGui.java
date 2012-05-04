@@ -129,41 +129,6 @@ public class CalendarGui {
 		_responseGroup= responseGroup;
 		_replyPanel.setResps(_responseGroup);
 	}
-//
-//	public void updateDayLabels(){
-//		_dayOfWeekLabels.removeAll();
-//		_dayOfWeekLabels.setLayout(new GridLayout(1, 7, GuiConstants.LINE_SPACING, 0));
-//
-//		int counter=0;
-//		for (DaysOfWeek d: DaysOfWeek.values()){
-//			JPanel dayLabel = new JPanel();
-//			dayLabel.add(new JLabel(d.name() +" "  + _thisMonday.plusDays(counter).monthOfYear().getAsShortText() + " " + _thisMonday.plusDays(counter).dayOfMonth().get(), SwingConstants.CENTER));
-//			dayLabel.setBackground(GuiConstants.LABEL_COLOR);
-//			_dayOfWeekLabels.add(dayLabel);
-//			counter++;			
-//		}
-//		_dayOfWeekLabels.revalidate();
-//		this.repaint();
-//	}
-//
-//	public void makeDayLabels(){
-//
-//		_dayOfWeekLabels = new JPanel();
-//		_dayOfWeekLabels.setBackground(GuiConstants.LINE_COLOR);
-//		_dayOfWeekLabels.setLayout(new GridLayout(1, 7, GuiConstants.LINE_SPACING, 0));
-//
-//		int counter=0;
-//		for (DaysOfWeek d: DaysOfWeek.values()){
-//			System.out.println(d);
-//			JPanel dayLabel = new JPanel();
-//			dayLabel.add(new JLabel(d.name() +" "  + _thisMonday.plusDays(counter).monthOfYear().getAsShortText() + " " + _thisMonday.plusDays(counter).dayOfMonth().get(), SwingConstants.CENTER));
-//			dayLabel.setBackground(GuiConstants.LABEL_COLOR);
-//			_dayOfWeekLabels.add(dayLabel);
-//			counter++;
-//
-//		}
-//	}
-
 	
 	
 	public void updateHourLabels(){
@@ -271,10 +236,6 @@ public class CalendarGui {
 		_frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		_frame.setSize(FRAME_WIDTH, FRAME_HEIGHT);
 		_frame.setVisible(true);
-	}
-
-	public void CreateEvent(String name, ArrayList<DateTime> dates, int startTime, int endTime){
-		//TODO Finish this method
 	}
 	
 	public void replyToEvent(){

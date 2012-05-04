@@ -24,6 +24,8 @@ import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 
+import org.joda.time.DateTime;
+
 import cal_master.Communicator;
 import cal_master.Communicator.URLAlreadyExistsException;
 import calendar.Event;
@@ -121,6 +123,17 @@ public class EventPanel extends JPanel {
 		setUp();
 	}
 	
+	public void addEvent(Event newEvent){
+		EventLabel newLabel = new EventLabel(newEvent.getName(), String.valueOf(newEvent.getID()), _communicator, _gui);
+		_eventLabels.add(newLabel);
+		_removeLabels.add(new RemoveEventLabel(newLabel.getID()));
+		setUp();
+	}
+	
+	public void createEvent(String name, ArrayList<DateTime> selectedDates, int startHour, int endHour){
+		addEvent(_communicator.createEvent(name, selectedDates, startHour, endHour));
+	}
+	
 	public void addEvents(ArrayList<EventLabel> events){
 		_eventLabels.addAll(events);
 		for(EventLabel label : events){
@@ -128,6 +141,7 @@ public class EventPanel extends JPanel {
 			_openLabels.add(new OpenEventInBrowserLabel(label.getID()));
 		}
 		setUp();
+		_gui.repaint();
 	}
 	
 	/**
@@ -198,7 +212,7 @@ public class EventPanel extends JPanel {
 
 		@Override
 		public void actionPerformed(ActionEvent e) {
-			new CreateEventDialog(_gui);
+			new CreateEventDialog(EventPanel.this);
 		}
 		
 	}
@@ -235,9 +249,7 @@ public class EventPanel extends JPanel {
 				if(newEvent.getName() == null){
 					newEvent.setName("BLOOP");
 				}
-				EventLabel newLabel = new EventLabel(newEvent.getName(), String.valueOf(newEvent.getID()), _communicator, _gui);
-				addEvent(newLabel);
-				_gui.repaint();
+				addEvent(newEvent);
 			}
 			
 			
