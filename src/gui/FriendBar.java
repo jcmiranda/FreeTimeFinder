@@ -43,19 +43,20 @@ public class FriendBar extends JPanel {
 		SequentialGroup horizGrp = _layout.createSequentialGroup();
 		ParallelGroup vertGrp = _layout.createParallelGroup(GroupLayout.Alignment.BASELINE);
 		
-		for(CalendarSlots cal : _event.getCalendars()){
-			
-			FriendLabel toAdd = new FriendLabel(this, cal.getOwner().getName(), cal.getColor());
-			toAdd.setVisible(true);
-			
-			_friendLabels.add(toAdd);
-			
-			vertGrp.addComponent(toAdd);
-			horizGrp.addComponent(toAdd);
-			horizGrp.addPreferredGap(LayoutStyle.ComponentPlacement.UNRELATED,
-	                GroupLayout.DEFAULT_SIZE, 15);
-			
-		}
+		if(_event != null)
+			for(CalendarSlots cal : _event.getCalendars()){
+				
+				FriendLabel toAdd = new FriendLabel(this, cal.getOwner().getName(), cal.getColor());
+				toAdd.setVisible(true);
+				
+				_friendLabels.add(toAdd);
+				
+				vertGrp.addComponent(toAdd);
+				horizGrp.addComponent(toAdd);
+				horizGrp.addPreferredGap(LayoutStyle.ComponentPlacement.UNRELATED,
+		                GroupLayout.DEFAULT_SIZE, 15);
+				
+			}
 		
 		//add to bar
 		_layout.setHorizontalGroup(horizGrp);
@@ -73,9 +74,11 @@ public class FriendBar extends JPanel {
 	public void setCalVisible(String name, boolean visible){
 		CalendarSlots cal;
 		try {
-			cal = _event.getCalByName(name);
-			cal.setVisible(visible);
-			_gui.repaint();
+			if(_event != null){
+				cal = _event.getCalByName(name);
+				cal.setVisible(visible);
+				_gui.repaint();
+			}
 		} catch (CalByThatNameNotFoundException e) {
 			//TODO handle this
 		}
@@ -83,12 +86,13 @@ public class FriendBar extends JPanel {
 	}
 	
 	public void hideAllVisible(String calToKeep){
-		for(CalendarSlots cal : _event.getCalendars()){
-			if(cal.isVisible() && !cal.getOwner().getName().equals(calToKeep)){
-				_tempInvisible.add(cal);
-				cal.setVisible(false);
+		if(_event != null)
+			for(CalendarSlots cal : _event.getCalendars()){
+				if(cal.isVisible() && !cal.getOwner().getName().equals(calToKeep)){
+					_tempInvisible.add(cal);
+					cal.setVisible(false);
+				}
 			}
-		}
 		_gui.repaint();
 	}
 	

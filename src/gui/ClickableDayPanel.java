@@ -36,15 +36,17 @@ public class ClickableDayPanel extends DayPanel{
 
 
 	public void flipAvail(int slotNum){
-		int day = getDaysBetween(getSlots().getStartTime(), getDay());
-
-		CalendarSlots cal = getSlots().getCalendars().get(0);
-		if(day >=0 && day < cal.numDays()){
-			Availability avail = cal.getAvail(day, slotNum);
-			if (avail == Availability.busy) {
-				cal.setAvail(day, slotNum, Availability.free);
-			} else {
-				cal.setAvail(day, slotNum, Availability.busy);
+		if(getSlots() != null){
+			int day = getDaysBetween(getSlots().getStartTime(), getDay());
+	
+			CalendarSlots cal = getSlots().getCalendars().get(0);
+			if(day >=0 && day < cal.numDays()){
+				Availability avail = cal.getAvail(day, slotNum);
+				if (avail == Availability.busy) {
+					cal.setAvail(day, slotNum, Availability.free);
+				} else {
+					cal.setAvail(day, slotNum, Availability.busy);
+				}
 			}
 		}
 	}
@@ -78,7 +80,7 @@ public class ClickableDayPanel extends DayPanel{
 				slotNum = Math.max(0, slotNum);
 
 				for (int i=Math.min(originalSlot,slotNum); i<=Math.min(Math.max(originalSlot,slotNum), getSlots().getCalendars().get(0).getSlotsInDay()-1); i++){
-					if (getSlots().getCalendars().get(0).getAvail(getDaysBetween(getSlots().getStartTime(), getDay()), i) != flipMode) {
+					if (getSlots() != null && getSlots().getCalendars().get(0).getAvail(getDaysBetween(getSlots().getStartTime(), getDay()), i) != flipMode) {
 						flipAvail(i);
 						repaint();
 					}	

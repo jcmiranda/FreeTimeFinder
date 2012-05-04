@@ -32,10 +32,9 @@ import calendar.When2MeetEvent;
 
 public class CalendarGui {
 
-	private CalendarGroup<CalendarResponses> _responseGroup;
-	private Event _slotGroup;
+	private CalendarGroup<CalendarResponses> _responseGroup = null;
+	private Event _slotGroup = null;
 	private int _startHour = 0;
-	//private int _endHour = 24;
 	private int _numHours = 24;
 	private JFrame _frame;
 	private ReplyPanel _replyPanel;
@@ -53,33 +52,24 @@ public class CalendarGui {
 	private JButton _refreshButton = new JButton("Refresh");
 	public static enum DaysOfWeek {Monday, Tuesday, Wednesday, Thursday, Friday, Saturday, Sunday};
 
-	// Represents the monday of the current week
-//	private DateTime _thisMonday;
-
 	public CalendarGui(){
 		_communicator.startUp();
 
-		if(_communicator.hasEvent())  {
-
-			Event toReturn = _communicator.getW2M(_communicator.getFirstEventID());
-			_slotGroup = toReturn;
-			_slotGroup.init();
-			//_slotGroup=_communicator.getFirstEvent();
-//			_thisMonday = _slotGroup.getStartTime().minusDays(_slotGroup.getStartTime().getDayOfWeek()-1);
-			_startHour = _slotGroup.getStartTime().getHourOfDay();
-			_friendBar.setEvent(_slotGroup);
-			//_endHour = _slotGroup.getEndTime().getHourOfDay();
-		}
+//		if(_communicator.hasEvent())  {
+//
+//			Event toReturn = _communicator.getW2M(_communicator.getFirstEventID());
+//			_slotGroup = toReturn;
+//			_slotGroup.init();
+//			_startHour = _slotGroup.getStartTime().getHourOfDay();
+//			_friendBar.setEvent(_slotGroup);
+//		}
 //		else {
-//			_thisMonday = new DateTime();
-//			_thisMonday = _thisMonday.minusDays(_thisMonday.getDayOfWeek()-1);
+			_startHour = 9;
+			_friendBar.setEvent(null);
 //		}
 
 		if(_communicator.hasUserCal())
 			_responseGroup=_communicator.getUserCal();
-
-		assert _responseGroup != null;
-		assert _slotGroup != null;
 		
 		_replyPanel = new ReplyPanel(_responseGroup, _slotGroup);
 
@@ -96,55 +86,40 @@ public class CalendarGui {
 		
 		_refreshButton.addActionListener(new RefreshListener());
 		//_eventPanel.addEvent(new EventLabel("TESTING TESTING", "1234", _communicator, this));
-		_numHours = _slotGroup.getCalendars().get(0).getNumHours();
+		if(_slotGroup != null)
+			_numHours = _slotGroup.getCalendars().get(0).getNumHours();
+		else
+			_numHours = 8;
 //		makeDayLabels();
 		makeHourLabels();
 		buildFrame();
 	}
 
-	/*
-	public CalendarGui(CalendarGroup<CalendarResponses> responseGroup, CalendarGroup<CalendarSlots> slotGroup){
-		_slotGroup=slotGroup;
-		_responseGroup=responseGroup;
-		_thisMonday = _slotGroup.getStartTime().minusDays(_slotGroup.getStartTime().getDayOfWeek()-1);
-
-		//		_myCal = new MyPanel(_thisMonday, _responseGroup);
-		_when2MeetCal = new ReplyPanel(_thisMonday, _responseGroup, _slotGroup);
-
-		_startHour = slotGroup.getStartTime().getHourOfDay();
-		_endHour = slotGroup.getEndTime().getHourOfDay();
-
-		_communicator.startUp();
-		ArrayList<NameIDPair> pairs = _communicator.getNameIDPairs();
-		for(NameIDPair pair : pairs) {
-			_eventPanel.addEvent(new EventLabel(pair.getName(), pair.getID(), _communicator, this));
-		}
-
-
-		_eventPanel.addEvent(new EventLabel("TESTING TESTING", "1234", _communicator, this));
-
-		makeDayLabels();
-		makeHourLabels();
-		buildFrame();
-	}*/
-
+	public Event getEvent(){
+		return _slotGroup;
+	}
+	
 	public void setEvent(Event event){
 		_slotGroup= event;
-		_slotGroup.init();
+		if(_slotGroup != null)
+			_slotGroup.init();
 		_responseGroup = _communicator.getUserCal();
-		_replyPanel.setSlots(event);
+		System.out.println("SLOT GROUP IN SET EVENT: " + _slotGroup);
+		_replyPanel.setSlots(_slotGroup);
 		System.out.println("Setting event for reply panel");
 		_replyPanel.setResps(_responseGroup);
 		_replyPanel.repaint();
-		//_replyPanel.configDays();
-		_startHour = event.getStartTime().getHourOfDay();
-		_numHours = event.getCalendars().get(0).getNumHours();
+		if(_slotGroup != null){
+			_startHour = event.getStartTime().getHourOfDay();
+			_numHours = event.getCalendars().get(0).getNumHours();
+		}
+		else{
+			_startHour = 9;
+			_numHours = 8;
+		}
 		_updatesPanel.setEvent(_slotGroup);
 		_friendBar.setEvent(_slotGroup);
-		//_endHour = event.getEndTime().getHourOfDay();
-//		_thisMonday = event.getStartTime().minusDays(event.getStartTime().getDayOfWeek()-1);
 		updateHourLabels();
-//		updateDayLabels();
 		_eventPanel.refresh();
 		
 	}
@@ -174,11 +149,8 @@ public class CalendarGui {
 	public void makeHourLabels(){
 		_hourOfDayLabels = new JPanel();
 		_hourOfDayLabels.setBackground(GuiConstants.LINE_COLOR);
-//		_hourOfDayLabels.setBackground(Color.GREEN);
 		_hourOfDayLabels.setLayout(new GridLayout(_numHours, 1, 0, 1));
 		_hourOfDayLabels.setBorder(new EmptyBorder(0,0,0,0));
-
-		//System.out.println("End Hour: " + _endHour);
 		
 		for (int i=_startHour; i<_startHour + _numHours; i++){
 			JPanel hourLabel = new JPanel();
@@ -267,7 +239,8 @@ public class CalendarGui {
 	}
 	
 	public void replyToEvent(){
-		_communicator.submitResponse(Integer.toString(((When2MeetEvent) _slotGroup).getID()), _replyPanel.getClicks());
+		if(_slotGroup != null && _replyPanel.getClicks() != null)
+			_communicator.submitResponse(Integer.toString(((When2MeetEvent) _slotGroup).getID()), _replyPanel.getClicks());
 	}
 
 
@@ -280,10 +253,11 @@ public class CalendarGui {
 	}
 
 	public void setBestTimes(int duration){
-		CalendarResponses bestTimes = _communicator.getBestTimes(String.valueOf(_slotGroup.getID()), duration);
-		//bestTimes.print();
-		_replyPanel.setBestTimes(bestTimes);
-		repaint();
+		if(_slotGroup != null){
+			CalendarResponses bestTimes = _communicator.getBestTimes(String.valueOf(_slotGroup.getID()), duration);
+			_replyPanel.setBestTimes(bestTimes);
+			repaint();
+		}
 	}
 	
 	private class SubmitListener implements ActionListener {
@@ -303,7 +277,8 @@ public class CalendarGui {
 
 		@Override
 		public void actionPerformed(ActionEvent e) {
-			_replyPanel.nextWeek();
+			if(_slotGroup != null)
+				_replyPanel.nextWeek();
 		}
 		
 	}
@@ -311,7 +286,8 @@ public class CalendarGui {
 
 		@Override
 		public void actionPerformed(ActionEvent e) {
-			_replyPanel.prevWeek();
+			if(_slotGroup != null)
+				_replyPanel.prevWeek();
 		}
 		
 	}
@@ -330,12 +306,13 @@ public class CalendarGui {
 		@Override
 		public void actionPerformed(ActionEvent arg0) {
 			_communicator.refresh();
-			// Reget this when2meet in case it has changed
-			setEvent(_communicator.getW2M(""+_slotGroup.getID()));
-			System.out.println("After setting event in GUI");
-			_slotGroup.printUpdates();
-			System.out.println("=====");
-			
+			// Retrieve this when2meet in case it has changed
+			if(_slotGroup != null){
+				setEvent(_communicator.getW2M(""+_slotGroup.getID()));
+				System.out.println("After setting event in GUI");
+				_slotGroup.printUpdates();
+				System.out.println("=====");
+			}
 			
 			repaint();
 		}

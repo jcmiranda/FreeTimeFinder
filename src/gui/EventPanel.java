@@ -13,7 +13,6 @@ import java.net.MalformedURLException;
 import java.util.ArrayList;
 
 import javax.swing.GroupLayout;
-import javax.swing.GroupLayout.Group;
 import javax.swing.GroupLayout.ParallelGroup;
 import javax.swing.GroupLayout.SequentialGroup;
 import javax.swing.JButton;
@@ -36,10 +35,10 @@ public class EventPanel extends JPanel {
 	private JButton _addButton;
 	private JButton _createButton;
 	private CalendarGui _gui;
-	private GroupLayout _layout= new GroupLayout(this);
 	private JLabel _titleLabel;
 	private JScrollPane _eventsScrollPane;
-	private JPanel _scrollPaneInner;
+	private JPanel _scrollPaneInner = new JPanel();
+	private GroupLayout _layout= new GroupLayout(this), _spiLayout = new GroupLayout(_scrollPaneInner);
 	
 	public EventPanel(Communicator communicator, CalendarGui gui){
 		_communicator = communicator;
@@ -54,21 +53,35 @@ public class EventPanel extends JPanel {
 				_titleLabel.getFont().getSize());  
 
 		_titleLabel.setFont(newLabelFont);
-		_scrollPaneInner = new JPanel();
-		_scrollPaneInner.setLayout(new GridLayout(10,1));
+		
+		GridLayout sPILayout = new GridLayout(10, 2);
+		sPILayout.setVgap(0);
+		
+		_scrollPaneInner.setLayout(sPILayout);
 		_eventsScrollPane = new JScrollPane(_scrollPaneInner);
 		
-		//this.setLayout(new GridLayout(0,1));
-		//this.add(buttonPanel);
-			this.setUp();
+		this.setUp();
 	}
 	
 	private void setUp() {
+		_scrollPaneInner.removeAll();
+		_scrollPaneInner.setLayout(_spiLayout);
+		_spiLayout.setAutoCreateGaps(true);
+		_spiLayout.setAutoCreateContainerGaps(true);
+		
+		SequentialGroup spiVSGrp = _spiLayout.createSequentialGroup();
+		ParallelGroup spiHPGrp =  _layout.createParallelGroup(GroupLayout.Alignment.LEADING);
 		
 		int i=0;
 		for(EventLabel label : _eventLabels){
-			_scrollPaneInner.add(label);
+			RemoveEventLabel rLabel = _removeLabels.get(i);
+			spiVSGrp.addGroup(_spiLayout.createParallelGroup().addComponent(rLabel).addComponent(label));
+			spiHPGrp.addGroup(_spiLayout.createSequentialGroup().addComponent(rLabel).addComponent(label));
+			i++;
 		}
+		
+		_spiLayout.setVerticalGroup(spiVSGrp);
+		_spiLayout.setHorizontalGroup(spiHPGrp);
 		
 		this.setLayout(_layout);
 		_layout.setAutoCreateGaps(true);
@@ -84,31 +97,16 @@ public class EventPanel extends JPanel {
 		horizParGrp.addComponent(_eventsScrollPane);
 		vertSeqGrp.addComponent(_eventsScrollPane);
 		vertSeqGrp.addGroup(_layout.createParallelGroup().addComponent(_addButton).addComponent(_createButton));
-//		vertSeqGrp.addComponent();
-		//vertSeqGrp.addPreferredGap(LayoutStyle.ComponentPlacement.UNRELATED,
-        //        GroupLayout.DEFAULT_SIZE, 15);
+
 		horizParGrp.addGroup(_layout.createSequentialGroup().addComponent(_addButton).addComponent(_createButton));
-//		horizParGrp.addComponent(_addButton);
-//		horizParGrp.addComponent(_createButton);
-	
-		/*for(EventLabel label : _eventLabels){
-			RemoveEventLabel rLabel = _removeLabels.get(i);
-			
-			vertSeqGrp.addGroup(_layout.createParallelGroup(GroupLayout.Alignment.LEADING)
-					.addComponent(rLabel).addComponent(label));
-			horizParGrp.addGroup(_layout.createSequentialGroup()
-					.addComponent(rLabel).addComponent(label));
-			
-			i++;
-			
-//			
-//			vertSeqGrp.addComponent(label);
-//			horizParGrp.addComponent(label);
-		}*/
 
 		_layout.setHorizontalGroup(horizParGrp);
 		_layout.setVerticalGroup(vertSeqGrp);
+		
+		this.revalidate();
+		_gui.repaint();
 	}
+	
 	
 	public void addEvent(EventLabel label){
 		_eventLabels.add(label);
@@ -129,6 +127,9 @@ public class EventPanel extends JPanel {
 	
 	public void addEvents(ArrayList<EventLabel> events){
 		_eventLabels.addAll(events);
+		for(EventLabel label : events){
+			_removeLabels.add(new RemoveEventLabel(label.getID()));
+		}
 		setUp();
 		_gui.repaint();
 	}
@@ -138,10 +139,14 @@ public class EventPanel extends JPanel {
 			if(_eventLabels.get(i).getID() == idToRemove){
 				_eventLabels.remove(i);
 				_removeLabels.remove(i);
-				if (_eventLabels.size()==0){
-					//TODO DEAL with Null event
-				} else {
-					_eventLabels.get(Math.max(0, i-1)).setEvent();
+				if(_gui.getEvent() != null)
+					System.out.println("Event to remove: " + idToRemove + "\tGui Event: " + String.valueOf(_gui.getEvent().getID()));
+				else
+					System.out.println("GUI Event NULL");
+				if(_gui.getEvent() != null && String.valueOf(_gui.getEvent().getID()).equals(idToRemove)){
+					System.out.println("Event Panel Setting Event to Null");
+					_gui.setEvent(null);
+					_gui.repaint();
 				}
 				break;
 			}
@@ -222,9 +227,8 @@ public class EventPanel extends JPanel {
 			int selection = JOptionPane.showConfirmDialog(null,"Are you sure you want to remove this event?", "", 
 					JOptionPane.YES_NO_OPTION);
 			if(selection == JOptionPane.YES_OPTION){
-//				_communicator.removeWhen2Meet(_eventID);
+				_communicator.removeWhen2Meet(_eventID);
 				removeEvent(_eventID);
-				System.out.println("HA jk");
 			}
 			
 		}

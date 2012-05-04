@@ -74,7 +74,6 @@ public class DayPanel extends JPanel{
 	}
 
 	public void setEvent(Event event, int day) {
-		System.out.println("Event set");
 		_event = event;
 		_day = day;
 	}
