@@ -116,7 +116,7 @@ public class CalendarGui {
 		_replyPanel.repaint();
 		if(_slotGroup != null){
 			_startHour = event.getStartTime().getHourOfDay();
-			_numHours = event.getCalendars().get(0).getNumHours();
+			_numHours = event.getNumHours();
 		}
 		else{
 			_startHour = 9;
@@ -308,11 +308,12 @@ public class CalendarGui {
 
 		@Override
 		public void actionPerformed(ActionEvent e) {
-			int selection = JOptionPane.showConfirmDialog(null,"Are you sure you want to submit?", "", 
-					JOptionPane.YES_NO_OPTION);
-			if(selection == JOptionPane.YES_OPTION)
-				replyToEvent();
-
+			if(_slotGroup != null){
+				int selection = JOptionPane.showConfirmDialog(null,"Are you sure you want to submit?", "", 
+						JOptionPane.YES_NO_OPTION);
+				if(selection == JOptionPane.YES_OPTION)
+					replyToEvent();
+			}
 		}
 
 	}
@@ -340,7 +341,8 @@ public class CalendarGui {
 
 		@Override
 		public void actionPerformed(ActionEvent arg0) {
-			SliderPane sliderPane = new SliderPane(_numHours, CalendarGui.this);
+			if(_slotGroup != null)
+				new SliderPane(_numHours, CalendarGui.this);
 		}
 
 	}

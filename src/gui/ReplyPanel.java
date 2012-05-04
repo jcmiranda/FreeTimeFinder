@@ -74,13 +74,12 @@ public class ReplyPanel extends CalPanel{
 		if(_slotCals != null){
 			_startHour = _slotCals.getStartTime().getHourOfDay();
 			_endHour = _slotCals.getEndTime().getHourOfDay();
-			
-			if (!_slotCals.getCalendars().isEmpty()){
-				_numHours = _slotCals.getCalendars().get(0).getNumHours();
-			}
-			else{
-				//TODO fix numHours
-			}
+			_numHours = _slotCals.getNumHours();
+//			if (!_slotCals.getCalendars().isEmpty()){
+//				_numHours = _slotCals.getCalendars().get(0).getNumHours();
+//			}
+//			else{
+//			}
 		}
 		//		_thisMonday = _slotCals.getStartTime().minusDays(_slotCals.getStartTime().getDayOfWeek()-1);
 		else{
@@ -199,18 +198,22 @@ public class ReplyPanel extends CalPanel{
 				_bigDays[i].getClickableDay().setResponses(_respCals);
 				_bigDays[i].getDay().setEvent((Event) _slotCals, ctr);
 
-				if(_slotCals != null)
+				if(_slotCals != null){
 					_clicks = new CalendarGroup<CalendarSlots>(_slotCals.getStartTime(), _slotCals.getEndTime(), CalGroupType.When2MeetEvent);
+					if(((When2MeetEvent) _slotCals).getUserResponse() != null) {
+						_clicks.addCalendar(((When2MeetEvent) _slotCals).getUserResponse());
+					}
+					else{
+						_clicks.addCalendar(new CalendarSlots(_slotCals.getStartTime(),
+								_slotCals.getEndTime(),
+								_slotCals.getCalendars().get(0).getMinInSlot(),
+								Availability.busy));
+					}
+				}
+				else
+					_clicks = null;
 
-				if(_slotCals != null && ((When2MeetEvent) _slotCals).getUserResponse() != null) {
-					_clicks.addCalendar(((When2MeetEvent) _slotCals).getUserResponse());
-				}
-				else if (_slotCals != null){
-					_clicks.addCalendar(new CalendarSlots(_slotCals.getStartTime(),
-							_slotCals.getEndTime(),
-							_slotCals.getCalendars().get(0).getMinInSlot(),
-							Availability.busy));
-				}
+				
 
 				_bigDays[i].getClickableDay().setSlots(_clicks);
 				ctr++;

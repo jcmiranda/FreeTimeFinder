@@ -269,6 +269,7 @@ public class CreateEventDialog{
 				_dialog.dispose();
 				if (_selectedDates.size() != 0){
 					Collections.sort(_selectedDates);
+					
 					_eventPanel.createEvent(_eventName.getText(), _selectedDates, _startHour.getSelectedIndex(), _endHour.getSelectedIndex());
 				}
 			}

@@ -257,6 +257,17 @@ public class Communicator {
 	public CalendarGroup<CalendarResponses> getUserCal() {
 		return _userCal;
 	}
+	
+	public void setSelectedInUserCal(String calRespName, boolean selected){
+		if(_userCal != null){
+			ArrayList<CalendarResponses> cals = _userCal.getCalendars();
+			for(CalendarResponses calResp : cals){
+				if(calResp.getName().equals(calRespName)){
+					// TODO calResp.setSelected(selected);
+				}
+			}
+		}
+	}
 
 	/** SAVING **/
 
@@ -583,14 +594,25 @@ public class Communicator {
 				startHour, 0);
 		
 		DateTime endDay = selectedDates.get(selectedDates.size()-1);
-		DateTime endTime = new DateTime (endDay.getYear(), endDay.getMonthOfYear(), endDay.getDayOfMonth(),
+		DateTime endTime;
+		if(endHour == 24)
+			endTime = new DateTime (endDay.getYear(), endDay.getMonthOfYear(), endDay.getDayOfMonth(),
+					23, 59);
+		else
+			endTime = new DateTime (endDay.getYear(), endDay.getMonthOfYear(), endDay.getDayOfMonth(),
 				endHour, 0);
 		
-		//TODO FINISH THIS
-		When2MeetEvent newEvent = new When2MeetEvent(startTime, endTime, name, -1, null, null, null);
+		//When2MeetEvent newEvent = new When2MeetEvent(startTime, endTime, name, -1, null, null, null);
 		
-		_exporter.postNewEvent(newEvent);
-		return addEvent(newEvent.getURL());
+		String URL = _exporter.postNewEvent(name, startTime, endTime);
+		if(URL != null)
+			return addEvent(URL);
+		else{
+			//TODO : deal with return value SaveNewEvent.php not matching
+			System.out.println("Whoops...");
+			return null;
+		}
+			
 	}
 
 	public void submitResponse(String eventID, CalendarSlots response) {
@@ -661,7 +683,7 @@ public class Communicator {
 
 	public void pullCal(DateTime start, DateTime end){
 
-
+		//TODO _userCalImporter.refresh(start, end, _userCal);
 		_userCal = _userCalImporter.refresh(start, end);
 		saveOneItem(_userCal, _userCalID, calGroupTypeToIndexType(_userCal.getCalGroupType()));
 		saveOneItem(_userCalImporter, _userCalImporterID, _userCalImporterType);

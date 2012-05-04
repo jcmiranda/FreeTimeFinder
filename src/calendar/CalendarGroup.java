@@ -32,6 +32,17 @@ public class CalendarGroup<C extends Calendar> {
 		return _end;
 	}
 	
+	private int lenDayInMinutes() {
+		if(_end.getMinuteOfDay() == 0)
+			return 24*60 - _start.getMinuteOfDay();
+		else
+			return _end.getMinuteOfDay() - _start.getMinuteOfDay();
+	}
+	
+	public int getNumHours(){
+		return (lenDayInMinutes() + 1) / 60;
+	}
+	
 	public ArrayList<C> getCalendars(){
 		return _calendars;
 	}
