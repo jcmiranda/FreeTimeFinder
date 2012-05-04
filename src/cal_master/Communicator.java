@@ -44,7 +44,8 @@ import ftf.TimeFinderSlots;
 public class Communicator {
 
 	private CalendarsImporter<CalendarResponses> _userCalImporter = null;
-	private StoredDataType _userCalImporterType; // = IndexType.GCalImporter;
+	private StoredDataType _userCalImporterType = null;
+	
 	private CalendarGroup<CalendarResponses> _userCal = null;
 	private String _userCalID = "userCal", _indexID = "index", 
 			_userCalImporterID = "userCalImporter", _progOwnerID = "progOwner";
@@ -67,16 +68,17 @@ public class Communicator {
 	
 	
 	public Communicator() {
-		//_userCalImporter = null;
-		//_userCalImporterType = null;
 		JPanel loadingPanel = new JPanel();
 		loadingPanel.add(_loadingLabel);
 		_loadingFrame.add(loadingPanel);
-
 		_loadingFrame.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
-		//_loadingFrame.pack();
 	}
 	
+	/**
+	 * Display loading message to the user while refreshing/starting the program
+	 * 
+	 * @param msg -- message to display to the user
+	 */
 	private void showLoadingLabel(String msg){
 		System.out.println("MESSAGE: " + msg);
 		_loadingLabel.setText(msg);
@@ -88,6 +90,7 @@ public class Communicator {
 		//_loadingFrame.repaint();
 		//_loadingLabel.repaint();
 	}
+	
 	
 	private void hideLoadingLabel(){
 		_loadingFrame.setVisible(false);
@@ -108,6 +111,7 @@ public class Communicator {
 		_xstream.alias("avail", Availability.class);
 	}
 	
+	
 	public Index recreateIndex() {
 		File indexFile = new File(_indexID+".xml");
 		if(indexFile.exists())
@@ -116,6 +120,9 @@ public class Communicator {
 			return new Index();
 	}
 	
+	/**
+	 * Initializes program by pulling in all saved data and creating objects from it
+	 */
 	public void startUp() {
 		
 		setUpXStream();
@@ -164,7 +171,7 @@ public class Communicator {
 			getNewOwnerName();
 		}
 		
-		
+		//if no calendar, pull in users calendar	
 		if(_userCal == null) {
 			// TODO add a never option
 			Object[] options = {"Yes", "Not now"};
@@ -200,35 +207,28 @@ public class Communicator {
 				}
 			}
 		}
-		
-//		if(!this.hasEvent())
-//			try {
-//				this.addEvent("http://www.when2meet.com/?426631-GoPHt");
-//			} catch (URLAlreadyExistsException e) {
-//				// TODO Auto-generated catch block
-//				e.printStackTrace();
-//			} catch (IOException e) {
-//				// TODO Auto-generated catch block
-//				e.printStackTrace();
-//			}
-		
-		// TODO
-		// Refresh when2meet events
-		// Refresh calendars -> if no calendar, pull in users calendar	
+				
+		// Refresh when2meet events and calendars
 		refresh();
 			
 	}
 	
+	/**
+	 * Returns whether there are any events stored in the program
+	 */
 	public boolean hasEvent() {
 		return _events != null && _events.size() > 0;
 	}
 	
+	/**
+	 * 
+	 * @return whether the user has chosen to store their calendar in the program
+	 */
 	public boolean hasUserCal() {
 		return _userCal != null;
 	}
 	
 	public CalendarGroup<CalendarSlots> getFirstEvent() {
-		//System.out.println("Num events: " + _events.values().size());
 		for(CalendarGroup<CalendarSlots> cal : _events.values())
 			return cal;
 		return null;
@@ -308,6 +308,14 @@ public class Communicator {
 		
 	}
 	
+	/**
+	 * Adds an event to the program to be stored based on a URL
+	 * 
+	 * @param url -- URL of the event you want to add
+	 * @return -- Object representation of the event you want
+	 * @throws URLAlreadyExistsException
+	 * @throws IOException
+	 */
 	public Event addEvent(String url) throws URLAlreadyExistsException, IOException {
 		// Check if we have this url already
 		// If we do, throw an error
@@ -329,6 +337,7 @@ public class Communicator {
 			return null;
 		}
 
+		// add event to the xml for storage
 		StoredDataType eventType = calGroupTypeToIndexType(newEvent.getCalGroupType());
 		String id = newEvent.getID() + "";
 		_events.put(id, newEvent);
@@ -390,7 +399,7 @@ public class Communicator {
 	
 	public void refresh() {
 		//TODO: deal with URL exception
-		// Update all when2meet events
+		// Update and save all when2meet events
 		When2MeetEvent temp = null;
 		showLoadingLabel("Retrieving Events...");
 		
@@ -407,7 +416,7 @@ public class Communicator {
 		hideLoadingLabel();
 		
 		
-		// Update user calendar
+		// Update and save user calendar
 		if(_userCal != null){
 			showLoadingLabel("Retrieving calendar...");
 			pullCal(_userCal.getStartTime(), _userCal.getEndTime());
@@ -415,8 +424,6 @@ public class Communicator {
 			hideLoadingLabel();
 		}
 		
-		// Rebuild index and store all files
-		//saveAll();
 	}
 	
 	public void calToW2M(String eventID){
@@ -428,16 +435,22 @@ public class Communicator {
 		}
 	}
 	
+	
+	/**
+	 * Check to make sure the data we have stored for the userCal includes the range of dates of the event
+	 * @param eventID -- ID of the event we want to check
+	 */
 	private void checkUserCal(String eventID){
 		Event w2m = _events.get(eventID);
 		if(w2m != null && _userCal != null){
-			//check to see that w2m in range of userCal
-			//If it isn't, pullCall before 
+			
 			DateTime wStart = w2m.getStartTime();
 			DateTime wEnd = w2m.getEndTime();
 			DateTime cStart = _userCal.getStartTime();
 			DateTime cEnd = _userCal.getEndTime();
 			
+			//check to see that w2m in range of userCal
+			//If it isn't, pullCal to include the largest range given the two start and two end times 
 			if(wStart.isBefore(cStart) || wEnd.isAfter(cEnd)){
 				DateTime start, end;
 				
@@ -456,14 +469,16 @@ public class Communicator {
 		}
 	}
 	
+	
 	public Event getEventByID(String id){
 		return _events.get(id);
 	}
 	
+	
 	public Event getW2M(String id){
 		Event toReturn = _events.get(id);
 		
-		
+		//if we don't have a stored response for the user
 		if(toReturn.getUserResponse() == null){
 			
 			//ask user if they've responded to the event
@@ -482,7 +497,6 @@ public class Communicator {
 						"", JOptionPane.INFORMATION_MESSAGE, null,
 						responseNames, responseNames[0]);
 				
-				//System.out.println("SELECTED: " + selected);
 				//take the selected cal, remove it from the list, and set it to be the userResponse
 				if(selected != null){
 					CalendarSlots user = null;
@@ -493,7 +507,6 @@ public class Communicator {
 						e.printStackTrace();
 					}
 					assert user.getOwner() != null;
-					//toReturn.removeCalendar(user);
 					toReturn.setUserResponse(user);
 					toReturn.setUserSubmitted(true);
 					saveOneItem(toReturn, toReturn.getID()+"", calGroupTypeToIndexType(toReturn.getCalGroupType()));
@@ -522,7 +535,6 @@ public class Communicator {
 	}
 	
 	private void getNewUserName(When2MeetEvent event, String currName){
-		//TODO : set newName to something useful (i.e. actually ask for user response)
 		String newName = JOptionPane.showInputDialog("The name '" + currName + "' has already been used. Please enter another name.");
 		boolean isValidName = true;
 		CalendarSlots userResp = event.getUserResponse();
@@ -569,11 +581,6 @@ public class Communicator {
 				getNewOwnerName();
 			response.getOwner().setName(getOwnerName());
 		} 
-		
-		// response.setOwner(new When2MeetOwner(_owner.getName(), -1));
-		//System.out.println("Response Owner: " + response.getOwner().getName());
-		//System.out.println("Event User: " + event.getUserResponse().getOwner().getName());
-		//System.out.println("Event ID: " + event.getID());
 		
 		if(event.getCalGroupType() == CalGroupType.When2MeetEvent) {
 			boolean didNotPost = true;

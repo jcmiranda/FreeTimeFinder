@@ -10,11 +10,14 @@ import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.io.IOException;
 import java.net.MalformedURLException;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.util.ArrayList;
 
 import javax.swing.GroupLayout;
 import javax.swing.GroupLayout.ParallelGroup;
 import javax.swing.GroupLayout.SequentialGroup;
+import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
@@ -29,6 +32,7 @@ public class EventPanel extends JPanel {
 
 	private ArrayList<EventLabel> _eventLabels = new ArrayList<EventLabel>();
 	private ArrayList<RemoveEventLabel> _removeLabels = new ArrayList<RemoveEventLabel>();
+	private ArrayList<OpenEventInBrowserLabel> _openLabels = new ArrayList<OpenEventInBrowserLabel>();
 	private Communicator _communicator;
 	private JButton _addButton;
 	private JButton _createButton;
@@ -61,6 +65,9 @@ public class EventPanel extends JPanel {
 		this.setUp();
 	}
 	
+	/**
+	 * Sets up display (clearing what's there and rebuilding the layouts)
+	 */
 	private void setUp() {
 		_scrollPaneInner.removeAll();
 		_scrollPaneInner.setLayout(_spiLayout);
@@ -73,8 +80,9 @@ public class EventPanel extends JPanel {
 		int i=0;
 		for(EventLabel label : _eventLabels){
 			RemoveEventLabel rLabel = _removeLabels.get(i);
-			spiVSGrp.addGroup(_spiLayout.createParallelGroup().addComponent(rLabel).addComponent(label));
-			spiHPGrp.addGroup(_spiLayout.createSequentialGroup().addComponent(rLabel).addComponent(label));
+			OpenEventInBrowserLabel oLabel = _openLabels.get(i);
+			spiVSGrp.addGroup(_spiLayout.createParallelGroup().addComponent(rLabel).addComponent(oLabel).addComponent(label));
+			spiHPGrp.addGroup(_spiLayout.createSequentialGroup().addComponent(rLabel).addComponent(oLabel).addComponent(label));
 			i++;
 		}
 		
@@ -109,6 +117,7 @@ public class EventPanel extends JPanel {
 	public void addEvent(EventLabel label){
 		_eventLabels.add(label);
 		_removeLabels.add(new RemoveEventLabel(label.getID()));
+		_openLabels.add(new OpenEventInBrowserLabel(label.getID()));
 		setUp();
 	}
 	
@@ -116,19 +125,25 @@ public class EventPanel extends JPanel {
 		_eventLabels.addAll(events);
 		for(EventLabel label : events){
 			_removeLabels.add(new RemoveEventLabel(label.getID()));
+			_openLabels.add(new OpenEventInBrowserLabel(label.getID()));
 		}
 		setUp();
 	}
 	
+	/**
+	 * Remove event based on id. Called by RemoveEventLabel associated with this event
+	 * @param idToRemove - id f event to remove
+	 */
 	public void removeEvent(String idToRemove){
+		
+		//search through list for the event with given id
 		for(int i=0; i<_eventLabels.size(); i++){
 			if(_eventLabels.get(i).getID() == idToRemove){
 				_eventLabels.remove(i);
 				_removeLabels.remove(i);
-				if(_gui.getEvent() != null)
-					System.out.println("Event to remove: " + idToRemove + "\tGui Event: " + String.valueOf(_gui.getEvent().getID()));
-				else
-					System.out.println("GUI Event NULL");
+				_openLabels.remove(i);
+				
+				//If gui is displaying this event, set the gui's event to NULL
 				if(_gui.getEvent() != null && String.valueOf(_gui.getEvent().getID()).equals(idToRemove)){
 					System.out.println("Event Panel Setting Event to Null");
 					_gui.setEvent(null);
@@ -140,6 +155,24 @@ public class EventPanel extends JPanel {
 		setUp();
 	}
 	
+	public void openEventInBrowser(String idToOpen){
+
+		Event toOpen = _communicator.getEventByID(idToOpen);
+		
+		if(toOpen != null && toOpen.getURL() != null){
+			URI uri;
+			try {
+				uri = new URI(toOpen.getURL());
+				java.awt.Desktop.getDesktop().browse(uri);
+			} catch (URISyntaxException e) {
+				//TODO
+			} catch (IOException e) {
+				//TODO
+			}
+		}
+				
+	}
+	
 	public void refresh() {
 		for(EventLabel label : _eventLabels){
 			label.refresh();
@@ -148,20 +181,32 @@ public class EventPanel extends JPanel {
 	
 	public void paintComponent(Graphics g){
 		super.paintComponent(g);
+		int i=0;
 		for(EventLabel label: _eventLabels){
 			label.repaint();
+			_removeLabels.get(i).repaint();
+			_openLabels.get(i).repaint();
+			i++;
 		}
 	}
 	
+	/**
+	 * Click Listener for "Create Event" button
+	 *
+	 */
 	private class CreateEventListener implements ActionListener {
 
 		@Override
 		public void actionPerformed(ActionEvent e) {
-			AddEventDialog aEDialog = new AddEventDialog(_gui);
+			new CreateEventDialog(_gui);
 		}
 		
 	}
 	
+	/**
+	 * ClickListener for the "Add Event" button
+	 *
+	 */
 	private class AddEventListener implements ActionListener {
 
 		@Override
@@ -186,6 +231,7 @@ public class EventPanel extends JPanel {
 			}
 			
 			if(newEvent != null){
+				//TODO do something more useful than "BLOOP"
 				if(newEvent.getName() == null){
 					newEvent.setName("BLOOP");
 				}
@@ -199,8 +245,11 @@ public class EventPanel extends JPanel {
 		
 	}
 	
+	/**
+	 * Represents the "X" the user clicks to remove an event from the program
+	 *
+	 */
 	private class RemoveEventLabel extends JLabel implements MouseListener{
-
 		
 		private String _eventID;
 		
@@ -221,6 +270,10 @@ public class EventPanel extends JPanel {
 			
 		}
 
+		/*
+		 * Color-change alerts user to mouse-over (whether or not the mouse is in a position to click on it)
+		 */
+		
 		@Override
 		public void mouseEntered(MouseEvent arg0) {
 			this.setForeground(Color.RED);
@@ -237,6 +290,48 @@ public class EventPanel extends JPanel {
 		@Override
 		public void mouseReleased(MouseEvent arg0) {}
 		
+	}
+	
+	private class OpenEventInBrowserLabel extends JLabel implements MouseListener {
+
+		private String _eventID;
+		
+		
+		public OpenEventInBrowserLabel(String eventID){
+//			super("O");
+			_eventID = eventID;
+			this.addMouseListener(this);
+			ImageIcon icon = new ImageIcon("open-in-new-window.png");
+			System.out.println("Icon is null: " + (icon == null));
+			this.setIcon(icon);
+			
+		}
+
+
+		@Override
+		public void mouseClicked(MouseEvent arg0) {
+			openEventInBrowser(_eventID);
+		}
+
+
+		@Override
+		public void mouseEntered(MouseEvent arg0) {
+			this.setForeground(Color.GREEN);
+		}
+
+
+		@Override
+		public void mouseExited(MouseEvent arg0) {
+			this.setForeground(Color.BLACK);
+		}
+
+
+		@Override
+		public void mousePressed(MouseEvent arg0) { }
+
+
+		@Override
+		public void mouseReleased(MouseEvent arg0) { }
 		
 	}
 }

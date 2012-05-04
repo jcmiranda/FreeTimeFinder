@@ -21,7 +21,7 @@ import javax.swing.JToggleButton;
 
 import org.joda.time.DateTime;
 
-public class AddEventDialog{
+public class CreateEventDialog{
 
 	private JFrame _parent;
 	private JPanel _calendar;
@@ -39,7 +39,7 @@ public class AddEventDialog{
 	private JComboBox _endHour;
 
 
-	public AddEventDialog(CalendarGui gui){
+	public CreateEventDialog(CalendarGui gui){
 		_today = new DateTime();
 		_calendar = new JPanel();
 		_gui = gui;
