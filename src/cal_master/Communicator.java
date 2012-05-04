@@ -58,8 +58,9 @@ public class Communicator {
 	private TimeFinderSlots _timeFinder = new TimeFinderSlots();
 	private ProgramOwner _progOwner = new ProgramOwner();
 
-	private JFrame _loadingFrame = new JFrame();
-	private JLabel _loadingLabel = new JLabel();
+	private JFrame _loadingFrame;
+	private JLabel _loadingLabel;
+	private JPanel _loadingPanel;
 
 	private XStream _xstream = new XStream();
 
@@ -68,9 +69,13 @@ public class Communicator {
 
 
 	public Communicator() {
-		JPanel loadingPanel = new JPanel();
-		loadingPanel.add(_loadingLabel);
-		_loadingFrame.add(loadingPanel);
+
+		_loadingLabel = new JLabel();
+		_loadingFrame = new JFrame();
+		_loadingFrame.setSize(150, 50);
+		//_loadingPanel = new JPanel();
+		//_loadingPanel.add(_loadingLabel);
+		_loadingFrame.add(_loadingLabel);
 		_loadingFrame.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
 	}
 	
@@ -80,15 +85,34 @@ public class Communicator {
 	 * @param msg -- message to display to the user
 	 */
 	private void showLoadingLabel(String msg){
+		
 		System.out.println("MESSAGE: " + msg);
+		//_loadingLabel.setText("");
 		_loadingLabel.setText(msg);
-		_loadingLabel.revalidate();
-		_loadingFrame.pack();
+//		_loadingLabel.revalidate();
+		//_loadingFrame.invalidate();
+//		_loadingFrame.validate();
+		//_loadingFrame.pack();
+		//_loadingFrame.remove(_loadingLabel);
+		_loadingFrame.add(_loadingLabel);
+		_loadingFrame.validate();
+		
+		
 		_loadingFrame.setLocationRelativeTo(null);
-
+		_loadingLabel.setVisible(true);
 		_loadingFrame.setVisible(true);
-		//_loadingFrame.repaint();
-		//_loadingLabel.repaint();
+//		_loadingLabel.setVisible(true);
+	
+//		_loadingLabel.setText("");
+//		_loadingLabel.setText(msg);
+//		_loadingLabel.revalidate();
+	
+//		_loadingFrame.invalidate();
+//		_loadingFrame.validate();
+//		_loadingFrame.repaint();
+//		_loadingLabel.repaint();
+		
+		System.out.println("MESSAGE MAGIC: " + _loadingLabel.getText());
 	}
 
 
@@ -403,7 +427,7 @@ public class Communicator {
 		//TODO: deal with URL exception
 		// Update and save all when2meet events
 		When2MeetEvent temp = null;
-		showLoadingLabel("Retrieving Events...");
+		//showLoadingLabel("Retrieving Events...");
 
 		for(Event event : _events.values()){
 			//repull info
@@ -415,7 +439,7 @@ public class Communicator {
 				System.out.println("Invalid event type - not when2meet");
 		}
 
-		hideLoadingLabel();
+		//hideLoadingLabel();
 
 		// Update and save user calendar
 		if(_userCal != null){
@@ -576,10 +600,10 @@ public class Communicator {
 				endHour, 0);
 		
 		//TODO FINISH THIS
-		When2MeetEvent newEvent = new When2MeetEvent(startTime, endTime, _indexID, 0, _indexID, null, null);
-		
-		
+		When2MeetEvent newEvent = new When2MeetEvent(startTime, endTime, name, -1, null, null, null);
+	
 		_exporter.postNewEvent(newEvent);
+		addEvent(newEvent.getURL());
 		return newEvent;
 	}
 
