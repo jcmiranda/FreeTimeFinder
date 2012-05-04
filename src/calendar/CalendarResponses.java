@@ -14,6 +14,7 @@ public class CalendarResponses implements Calendar {
 	private DateTime _startTime;
 	private DateTime _endTime;
 	private String _name;
+	private boolean _selected;
 
 	private ArrayList<Response> _responses = new ArrayList<Response>();
 
@@ -21,8 +22,17 @@ public class CalendarResponses implements Calendar {
 		_startTime = st;
 		_endTime = et;
 		_name = name;
+		_selected = false;
 	}
 
+	public void setSelected(boolean selected) {
+		_selected = selected;
+	}
+	
+	public boolean getSelected() {
+		return _selected;
+	}
+	
 	public DateTime getStartTime() {
 		return _startTime;
 	}
