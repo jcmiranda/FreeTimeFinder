@@ -122,7 +122,15 @@ public class EventPanel extends JPanel {
 	}
 	
 	public void createEvent(String name, ArrayList<DateTime> selectedDates, int startHour, int endHour){
-		addEvent(_communicator.createEvent(name, selectedDates, startHour, endHour));
+		try {
+			addEvent(_communicator.createEvent(name, selectedDates, startHour, endHour));
+		} catch (URLAlreadyExistsException e) {
+			// TODO Auto-generated catch block
+			System.out.println("You did something wrong");
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 	}
 	
 	public void addEvents(ArrayList<EventLabel> events){

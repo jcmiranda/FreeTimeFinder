@@ -19,8 +19,9 @@ public class CalendarGroup<C extends Calendar> {
 	
 	public CalendarGroup(DateTime start, DateTime end, Collection<C> cals, CalGroupType type){
 		this(start, end, type);
-		for(C c : cals)
-			_calendars.add(c);
+		if(cals != null)
+			for(C c : cals)
+				_calendars.add(c);
 	}
 	
 	public DateTime getStartTime(){

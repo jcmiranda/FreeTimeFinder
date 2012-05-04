@@ -83,7 +83,6 @@ public class Communicator {
 		_loadingLabel.revalidate();
 		_loadingFrame.pack();
 		_loadingFrame.setLocationRelativeTo(null);
-
 		_loadingFrame.setVisible(true);
 		//_loadingFrame.repaint();
 		//_loadingLabel.repaint();
@@ -157,7 +156,6 @@ public class Communicator {
 			}
 
 		}
-
 		hideLoadingLabel();
 
 		if(_progOwner == null) {
@@ -217,7 +215,6 @@ public class Communicator {
 	}
 
 	public CalendarGroup<CalendarSlots> getFirstEvent() {
-		//System.out.println("Num events: " + _events.values().size());
 		for(CalendarGroup<CalendarSlots> cal : _events.values())
 			return cal;
 				return null;
@@ -251,7 +248,6 @@ public class Communicator {
 		try {
 			out = new BufferedWriter(new FileWriter(filename+".xml"));
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 		_xstream.toXML(o, out);	
@@ -544,7 +540,7 @@ public class Communicator {
 		return _progOwner.getName();
 	}
 
-	public Event createEvent(String name, ArrayList<DateTime> selectedDates, int startHour, int endHour){
+	public Event createEvent(String name, ArrayList<DateTime> selectedDates, int startHour, int endHour) throws URLAlreadyExistsException, IOException{
 		DateTime startDay = selectedDates.get(0);
 		DateTime startTime = new DateTime (startDay.getYear(), startDay.getMonthOfYear(), startDay.getDayOfMonth(),
 				startHour, 0);
@@ -554,11 +550,11 @@ public class Communicator {
 				endHour, 0);
 		
 		//TODO FINISH THIS
-		When2MeetEvent newEvent = new When2MeetEvent(startTime, endTime, _indexID, 0, _indexID, null, null);
-		
+		When2MeetEvent newEvent = new When2MeetEvent(startTime, endTime, name, -1, null, null, null);
 		
 		_exporter.postNewEvent(newEvent);
-		return newEvent;
+		return addEvent(newEvent.getURL());
+		
 	}
 
 	public void submitResponse(String eventID, CalendarSlots response) {
