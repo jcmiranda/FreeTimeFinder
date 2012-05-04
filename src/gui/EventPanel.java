@@ -80,13 +80,14 @@ public class EventPanel extends JPanel {
 		ParallelGroup spiHPGrp =  _layout.createParallelGroup(GroupLayout.Alignment.LEADING);
 		
 		int i=0;
-		for(EventLabel label : _eventLabels){
-			RemoveEventLabel rLabel = _removeLabels.get(i);
-			OpenEventInBrowserLabel oLabel = _openLabels.get(i);
-			spiVSGrp.addGroup(_spiLayout.createParallelGroup().addComponent(rLabel).addComponent(oLabel).addComponent(label));
-			spiHPGrp.addGroup(_spiLayout.createSequentialGroup().addComponent(rLabel).addComponent(oLabel).addComponent(label));
-			i++;
-		}
+		if(_eventLabels.size() > 0)
+			for(EventLabel label : _eventLabels){
+				RemoveEventLabel rLabel = _removeLabels.get(i);
+				OpenEventInBrowserLabel oLabel = _openLabels.get(i);
+				spiVSGrp.addGroup(_spiLayout.createParallelGroup().addComponent(rLabel).addComponent(oLabel).addComponent(label));
+				spiHPGrp.addGroup(_spiLayout.createSequentialGroup().addComponent(rLabel).addComponent(oLabel).addComponent(label));
+				i++;
+			}
 		
 		_spiLayout.setVerticalGroup(spiVSGrp);
 		_spiLayout.setHorizontalGroup(spiHPGrp);
@@ -127,6 +128,7 @@ public class EventPanel extends JPanel {
 		EventLabel newLabel = new EventLabel(newEvent.getName(), String.valueOf(newEvent.getID()), _communicator, _gui);
 		_eventLabels.add(newLabel);
 		_removeLabels.add(new RemoveEventLabel(newLabel.getID()));
+		_openLabels.add(new OpenEventInBrowserLabel(newLabel.getID()));
 		setUp();
 	}
 	
@@ -166,6 +168,7 @@ public class EventPanel extends JPanel {
 				break;
 			}
 		}
+		System.out.println("NUM LABELS: " + _eventLabels.size());
 		setUp();
 	}
 	

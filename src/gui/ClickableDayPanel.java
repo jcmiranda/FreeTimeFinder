@@ -59,7 +59,7 @@ public class ClickableDayPanel extends DayPanel{
 
 		@Override
 		public void mousePressed(MouseEvent arg0) {
-			if (isActive()){
+			if (isActive() && getSlots() != null){
 				if (!(arg0.getY()<0 || arg0.getY()>ClickableDayPanel.this.getHeight() ||
 						arg0.getX()<0 || arg0.getX()>ClickableDayPanel.this.getWidth())){
 					originalSlot = (int) ((double) arg0.getY()/getHeight()*_numHours*4);
@@ -75,12 +75,12 @@ public class ClickableDayPanel extends DayPanel{
 
 		@Override
 		public void mouseDragged(MouseEvent arg0) {
-			if (isActive()){
+			if (isActive() && getSlots() != null){
 				int slotNum = (int) ((double) arg0.getY()/getHeight()*_numHours*4);
 				slotNum = Math.max(0, slotNum);
 
 				for (int i=Math.min(originalSlot,slotNum); i<=Math.min(Math.max(originalSlot,slotNum), getSlots().getCalendars().get(0).getSlotsInDay()-1); i++){
-					if (getSlots() != null && getSlots().getCalendars().get(0).getAvail(getDaysBetween(getSlots().getStartTime(), getDay()), i) != flipMode) {
+					if (getSlots().getCalendars().get(0).getAvail(getDaysBetween(getSlots().getStartTime(), getDay()), i) != flipMode) {
 						flipAvail(i);
 						repaint();
 					}	
