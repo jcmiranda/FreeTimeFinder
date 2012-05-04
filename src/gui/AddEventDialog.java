@@ -9,6 +9,7 @@ import java.awt.event.ActionListener;
 import java.awt.event.FocusEvent;
 import java.awt.event.FocusListener;
 import java.util.ArrayList;
+import java.util.Collections;
 
 import javax.swing.JButton;
 import javax.swing.JComboBox;
@@ -31,18 +32,18 @@ public class AddEventDialog{
 	private JButton _okButton;
 	private JButton _cancelButton;
 	private JDialog _dialog;
-	private CalendarGui _gui;
+	private EventPanel _eventPanel;
 	private DateTime _today;
 	private DateTime _firstOfMonth;
-	private ArrayList<DateTime> _selected = new ArrayList<DateTime>();
+	private ArrayList<DateTime> _selectedDates = new ArrayList<DateTime>();
 	private JComboBox _startHour;
 	private JComboBox _endHour;
 
 
-	public AddEventDialog(CalendarGui gui){
+	public AddEventDialog(EventPanel eventPanel){
 		_today = new DateTime();
 		_calendar = new JPanel();
-		_gui = gui;
+		_eventPanel = eventPanel;
 
 		_calPane = new JPanel();
 		_firstOfMonth = _today.minusDays(_today.getDayOfMonth()-1);
@@ -197,7 +198,7 @@ public class AddEventDialog{
 			if (button.getDate().isBefore(_today)){
 				button.setEnabled(false);
 			}
-			for (DateTime date: _selected){
+			for (DateTime date: _selectedDates){
 				if (button.getDate().equals(date))
 					button.setSelected(true);
 			}
@@ -216,9 +217,9 @@ public class AddEventDialog{
 		public void actionPerformed(ActionEvent e) {
 
 			if (((DateButton) e.getSource()).isSelected()==true)
-				_selected.add(((DateButton) e.getSource()).getDate());
+				_selectedDates.add(((DateButton) e.getSource()).getDate());
 			else {
-				_selected.remove(((DateButton) e.getSource()).getDate());
+				_selectedDates.remove(((DateButton) e.getSource()).getDate());
 			}
 		}
 
@@ -266,7 +267,10 @@ public class AddEventDialog{
 		public void actionPerformed(ActionEvent e) {
 			if (e.getActionCommand().equals("OK")){
 				_dialog.dispose();
-				_gui.CreateEvent(_eventName.getText(), _selected, _startHour.getSelectedIndex(), _endHour.getSelectedIndex());
+				if (_selectedDates.size() != 0){
+					Collections.sort(_selectedDates);
+					_eventPanel.createEvent(_eventName.getText(), _selectedDates, _startHour.getSelectedIndex(), _endHour.getSelectedIndex());
+				}
 			}
 			else if (e.getActionCommand().equals("Cancel")){
 				_dialog.dispose();

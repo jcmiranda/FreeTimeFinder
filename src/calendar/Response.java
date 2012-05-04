@@ -1,5 +1,6 @@
 package calendar;
 import static gui.GuiConstants.LINE_COLOR;
+import static gui.GuiConstants.INTERLINE_SPACING;
 import static gui.GuiConstants.RESPONSE_NAME_COLOR;
 import static gui.GuiConstants.RESPONSE_NAME_SPACING;
 import static gui.GuiConstants.RESPONSE_SPACING;
@@ -7,7 +8,13 @@ import gui.DayPanel;
 
 import java.awt.Color;
 import java.awt.Graphics2D;
+import java.awt.font.FontRenderContext;
+import java.awt.font.LineBreakMeasurer;
+import java.awt.font.TextAttribute;
+import java.awt.font.TextLayout;
 import java.awt.geom.Rectangle2D;
+import java.text.AttributedCharacterIterator;
+import java.text.AttributedString;
 
 import org.joda.time.DateTime;
 
@@ -88,11 +95,38 @@ public class Response implements Comparable<Response>{
 		brush.fill(rect);
 		brush.setColor(RESPONSE_NAME_COLOR);
 		if (getName()!=null){
-			brush.drawString(this.getName(), startX + RESPONSE_SPACING+RESPONSE_NAME_SPACING, (int) (startY + brush.getFont().getSize() + RESPONSE_NAME_SPACING));
+			drawStringRect(brush,
+					(int) (startXDbl+spaceDbl + RESPONSE_NAME_SPACING),
+					(int) (startY + RESPONSE_NAME_SPACING),
+					(int) (endXDbl - spaceDbl - RESPONSE_NAME_SPACING),
+					(int) (endY - brush.getFont().getSize() - RESPONSE_NAME_SPACING),
+					INTERLINE_SPACING,
+					this.getName());
 		}
 		brush.setColor(LINE_COLOR);
 		brush.draw(rect);
-
 	}
+	
+	 private void drawStringRect(Graphics2D graphics, int x1, int y1, int x2, int y2, 
+		        float interline, String txt) {
+		        AttributedString as = new AttributedString(txt);
+		        as.addAttribute(TextAttribute.FOREGROUND, graphics.getPaint());
+		        as.addAttribute(TextAttribute.FONT, graphics.getFont());
+		        AttributedCharacterIterator aci = as.getIterator();
+		        FontRenderContext frc = new FontRenderContext(null, true, false);
+		        LineBreakMeasurer lbm = new LineBreakMeasurer(aci, frc);
+		        float width = x2 - x1;
+
+		        while (lbm.getPosition() < txt.length()) {
+		            TextLayout tl = lbm.nextLayout(width);
+		            y1 += tl.getAscent();
+		            tl.draw(graphics, x1, y1);
+		            y1 += tl.getDescent() + tl.getLeading() + (interline - 1.0f) * tl.getAscent();
+		            if (y1 > y2) {
+		                break;
+		            }
+		        }
+		    }
+	
 
 }
