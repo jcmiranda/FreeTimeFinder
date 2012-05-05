@@ -29,8 +29,8 @@ public class UserCalLabel extends JLabel implements MouseListener{
 	public UserCalLabel(String name, Communicator communicator){
 		_calName = name;
 		_communicator = communicator;
-		_checkIcon = new ImageIcon("CheckMark.png");
-		_blankIcon = new ImageIcon("GreySquare.png"); 
+		_checkIcon = new ImageIcon("check_mark.png");
+		_blankIcon = new ImageIcon("grey_square.png"); 
 		_background = this.getBackground();
 		
 		this.setText(_calName);
