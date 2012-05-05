@@ -5,6 +5,8 @@ import java.util.Collection;
 
 import org.joda.time.DateTime;
 
+import calendar.Event.CalByThatNameNotFoundException;
+
 public class CalendarGroup<C extends Calendar> {
 
 	protected ArrayList<C> _calendars = new ArrayList<C>();
@@ -75,5 +77,4 @@ public class CalendarGroup<C extends Calendar> {
 	public CalGroupType getCalGroupType() {
 		return _calGroupType;
 	}
-	
 }
