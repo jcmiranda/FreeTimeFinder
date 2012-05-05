@@ -219,7 +219,7 @@ public class GCalImporter implements CalendarsImporter<CalendarResponses> {
             allCalendars.addCalendar(currCal);
             
             //TEST
-             currCal.print();
+             //currCal.print();
           }
         return allCalendars;
 	}

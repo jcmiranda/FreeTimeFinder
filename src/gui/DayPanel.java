@@ -4,6 +4,9 @@ import static gui.GuiConstants.BG_COLOR;
 import static gui.GuiConstants.GRAY_OUT_COLOR;
 import static gui.GuiConstants.LINE_COLOR;
 
+import static gui.GuiConstants.DEFAULT_START_HOUR;
+import static gui.GuiConstants.DEFAULT_END_HOUR;
+
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 
@@ -20,8 +23,8 @@ public class DayPanel extends JPanel{
 
 	DateTime _today;
 	int _day = 0;
-	int _startHour = 0;
-	int _numHours = 24;
+	int _startHour = DEFAULT_START_HOUR;
+	int _numHours = DEFAULT_END_HOUR - DEFAULT_START_HOUR;
 	private Event _event;
 	private CalendarGroup<CalendarSlots> _slots;
 	private CalendarGroup<CalendarResponses> _responses;
@@ -74,7 +77,6 @@ public class DayPanel extends JPanel{
 	}
 
 	public void setEvent(Event event, int day) {
-		System.out.println("Event set");
 		_event = event;
 		_day = day;
 	}

@@ -163,22 +163,22 @@ public class When2MeetExporter {
 		createNewUser(event, cal, "");
 	}
 	
-	private String startTime() {
-		return ""+_event.getStartTime().getHourOfDay();
+	private String startTime(DateTime time) {
+		return ""+time.getHourOfDay();
 	}
 	
-	private String endTime() {
-		if(_event.getEndTime().getMinuteOfHour() == 59)
+	private String endTime(DateTime time) {
+		if(time.getMinuteOfHour() == 59)
 			return ""+0;
 		else
-			return ""+_event.getEndTime().getHourOfDay();
+			return ""+time.getHourOfDay();
 	}
 	
 	// TODO fix to deal with non consecutive dates. Fix to deal with dates not in the same year
-	private String possibleDates() {
-		DateTime curDate = _event.getStartTime();
+	private String possibleDates(DateTime st, DateTime et) {
+		DateTime curDate = st;
 		String ret = "";
-		for(int i = _event.getStartTime().getDayOfYear(); i <= _event.getEndTime().getDayOfYear(); i++) {
+		for(int i = st.getDayOfYear(); i <= et.getDayOfYear(); i++) {
 			ret += curDate.getYear() + "-"+curDate.getMonthOfYear()+"-"+curDate.getDayOfMonth()+"|";
 			curDate = curDate.plusDays(1);
 		}
@@ -203,26 +203,31 @@ public class When2MeetExporter {
 		this.postAvailability(cal, freeSlots, Availability.free);
 	}
 	
-	public void postNewEvent(When2MeetEvent event) {
-		_event = event;
+	public String postNewEvent(String name, DateTime st, DateTime et) {
+		//_event = event;
 		ArrayList<KeyValue> keyValues = new ArrayList<KeyValue>();
-		keyValues.add(new KeyValue("NewEventName", _event.getName()));
+		keyValues.add(new KeyValue("NewEventName", name));
 		keyValues.add(new KeyValue("DateTypes", "SpecificDates"));
-		keyValues.add(new KeyValue("PossibleDates", possibleDates()));
-		keyValues.add(new KeyValue("NoEarlierThan", startTime()));
-		keyValues.add(new KeyValue("NoLaterThan", endTime()));
+		keyValues.add(new KeyValue("PossibleDates", possibleDates(st, et)));
+		keyValues.add(new KeyValue("NoEarlierThan", startTime(st)));
+		keyValues.add(new KeyValue("NoLaterThan", endTime(et)));
 		String toParse = this.post(keyValues, "http://www.when2meet.com/SaveNewEvent.php");
 		
 		Pattern eventIDPattern = Pattern.compile("<html><body onload=\\\"window.location='/\\?(\\d+)-([a-zA-Z0-9]*)'\\\"></body></html>");
 		Matcher matcher = eventIDPattern.matcher(toParse);
 		if(matcher.matches()) {
 			int id = Integer.parseInt(matcher.group(1));
-			_event.setID(id);
+			//_event.setID(id);
 			String second = matcher.group(2);
-			_event.setURL("http://www.when2meet.com/?"+id+"-"+second);
-			System.out.println("URL set to: " + _event.getURL());
+			//_event.setURL("http://www.when2meet.com/?"+id+"-"+second);
+			
+			String URL = "http://www.when2meet.com/?"+id+"-"+second;
+			System.out.println("URL set to: " + URL);
+			return URL;
 			
 		}
+		
+		return null;
 		
 	}
 	

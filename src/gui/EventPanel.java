@@ -10,17 +10,21 @@ import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.io.IOException;
 import java.net.MalformedURLException;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.util.ArrayList;
 
 import javax.swing.GroupLayout;
-import javax.swing.GroupLayout.Group;
 import javax.swing.GroupLayout.ParallelGroup;
 import javax.swing.GroupLayout.SequentialGroup;
+import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
+
+import org.joda.time.DateTime;
 
 import cal_master.Communicator;
 import cal_master.Communicator.URLAlreadyExistsException;
@@ -30,14 +34,15 @@ public class EventPanel extends JPanel {
 
 	private ArrayList<EventLabel> _eventLabels = new ArrayList<EventLabel>();
 	private ArrayList<RemoveEventLabel> _removeLabels = new ArrayList<RemoveEventLabel>();
+	private ArrayList<OpenEventInBrowserLabel> _openLabels = new ArrayList<OpenEventInBrowserLabel>();
 	private Communicator _communicator;
 	private JButton _addButton;
 	private JButton _createButton;
 	private CalendarGui _gui;
-	private GroupLayout _layout= new GroupLayout(this);
 	private JLabel _titleLabel;
 	private JScrollPane _eventsScrollPane;
-	private JPanel _scrollPaneInner;
+	private JPanel _scrollPaneInner = new JPanel();
+	private GroupLayout _layout= new GroupLayout(this), _spiLayout = new GroupLayout(_scrollPaneInner);
 	
 	public EventPanel(Communicator communicator, CalendarGui gui){
 		_communicator = communicator;
@@ -52,21 +57,40 @@ public class EventPanel extends JPanel {
 				_titleLabel.getFont().getSize());  
 
 		_titleLabel.setFont(newLabelFont);
-		_scrollPaneInner = new JPanel();
-		_scrollPaneInner.setLayout(new GridLayout(10,1));
+		
+		GridLayout sPILayout = new GridLayout(10, 2);
+		sPILayout.setVgap(0);
+		
+		_scrollPaneInner.setLayout(sPILayout);
 		_eventsScrollPane = new JScrollPane(_scrollPaneInner);
 		
-		//this.setLayout(new GridLayout(0,1));
-		//this.add(buttonPanel);
-			this.setUp();
+		this.setUp();
 	}
 	
+	/**
+	 * Sets up display (clearing what's there and rebuilding the layouts)
+	 */
 	private void setUp() {
+		_scrollPaneInner.removeAll();
+		_scrollPaneInner.setLayout(_spiLayout);
+		_spiLayout.setAutoCreateGaps(true);
+		_spiLayout.setAutoCreateContainerGaps(true);
+		
+		SequentialGroup spiVSGrp = _spiLayout.createSequentialGroup();
+		ParallelGroup spiHPGrp =  _layout.createParallelGroup(GroupLayout.Alignment.LEADING);
 		
 		int i=0;
-		for(EventLabel label : _eventLabels){
-			_scrollPaneInner.add(label);
-		}
+		if(_eventLabels.size() > 0)
+			for(EventLabel label : _eventLabels){
+				RemoveEventLabel rLabel = _removeLabels.get(i);
+				OpenEventInBrowserLabel oLabel = _openLabels.get(i);
+				spiVSGrp.addGroup(_spiLayout.createParallelGroup().addComponent(rLabel).addComponent(oLabel).addComponent(label));
+				spiHPGrp.addGroup(_spiLayout.createSequentialGroup().addComponent(rLabel).addComponent(oLabel).addComponent(label));
+				i++;
+			}
+		
+		_spiLayout.setVerticalGroup(spiVSGrp);
+		_spiLayout.setHorizontalGroup(spiHPGrp);
 		
 		this.setLayout(_layout);
 		_layout.setAutoCreateGaps(true);
@@ -82,57 +106,96 @@ public class EventPanel extends JPanel {
 		horizParGrp.addComponent(_eventsScrollPane);
 		vertSeqGrp.addComponent(_eventsScrollPane);
 		vertSeqGrp.addGroup(_layout.createParallelGroup().addComponent(_addButton).addComponent(_createButton));
-//		vertSeqGrp.addComponent();
-		//vertSeqGrp.addPreferredGap(LayoutStyle.ComponentPlacement.UNRELATED,
-        //        GroupLayout.DEFAULT_SIZE, 15);
+
 		horizParGrp.addGroup(_layout.createSequentialGroup().addComponent(_addButton).addComponent(_createButton));
-//		horizParGrp.addComponent(_addButton);
-//		horizParGrp.addComponent(_createButton);
-	
-		/*for(EventLabel label : _eventLabels){
-			RemoveEventLabel rLabel = _removeLabels.get(i);
-			
-			vertSeqGrp.addGroup(_layout.createParallelGroup(GroupLayout.Alignment.LEADING)
-					.addComponent(rLabel).addComponent(label));
-			horizParGrp.addGroup(_layout.createSequentialGroup()
-					.addComponent(rLabel).addComponent(label));
-			
-			i++;
-			
-//			
-//			vertSeqGrp.addComponent(label);
-//			horizParGrp.addComponent(label);
-		}*/
 
 		_layout.setHorizontalGroup(horizParGrp);
 		_layout.setVerticalGroup(vertSeqGrp);
+		
+		this.revalidate();
+		_gui.repaint();
 	}
+	
 	
 	public void addEvent(EventLabel label){
 		_eventLabels.add(label);
 		_removeLabels.add(new RemoveEventLabel(label.getID()));
+		_openLabels.add(new OpenEventInBrowserLabel(label.getID()));
 		setUp();
+	}
+	
+	public void addEvent(Event newEvent){
+		EventLabel newLabel = new EventLabel(newEvent.getName(), String.valueOf(newEvent.getID()), _communicator, _gui);
+		_eventLabels.add(newLabel);
+		_removeLabels.add(new RemoveEventLabel(newLabel.getID()));
+		_openLabels.add(new OpenEventInBrowserLabel(newLabel.getID()));
+		setUp();
+	}
+	
+	public void createEvent(String name, ArrayList<DateTime> selectedDates, int startHour, int endHour){
+		try {
+			addEvent(_communicator.createEvent(name, selectedDates, startHour, endHour));
+		} catch (URLAlreadyExistsException e) {
+			// TODO Auto-generated catch block
+			System.out.println("You did something wrong");
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 	}
 	
 	public void addEvents(ArrayList<EventLabel> events){
 		_eventLabels.addAll(events);
+		for(EventLabel label : events){
+			_removeLabels.add(new RemoveEventLabel(label.getID()));
+			_openLabels.add(new OpenEventInBrowserLabel(label.getID()));
+		}
 		setUp();
+		_gui.repaint();
 	}
 	
+	/**
+	 * Remove event based on id. Called by RemoveEventLabel associated with this event
+	 * @param idToRemove - id f event to remove
+	 */
 	public void removeEvent(String idToRemove){
+		
+		//search through list for the event with given id
 		for(int i=0; i<_eventLabels.size(); i++){
 			if(_eventLabels.get(i).getID() == idToRemove){
 				_eventLabels.remove(i);
 				_removeLabels.remove(i);
-				if (_eventLabels.size()==0){
-					//TODO DEAL with Null event
-				} else {
-					_eventLabels.get(Math.max(0, i-1)).setEvent();
+				_openLabels.remove(i);
+				
+				//If gui is displaying this event, set the gui's event to NULL
+				if(_gui.getEvent() != null && String.valueOf(_gui.getEvent().getID()).equals(idToRemove)){
+					System.out.println("Event Panel Setting Event to Null");
+					_gui.setEvent(null);
+					_gui.repaint();
 				}
 				break;
 			}
 		}
+		System.out.println("NUM LABELS: " + _eventLabels.size());
 		setUp();
+	}
+	
+	public void openEventInBrowser(String idToOpen){
+
+		Event toOpen = _communicator.getEventByID(idToOpen);
+		
+		if(toOpen != null && toOpen.getURL() != null){
+			URI uri;
+			try {
+				uri = new URI(toOpen.getURL());
+				java.awt.Desktop.getDesktop().browse(uri);
+			} catch (URISyntaxException e) {
+				//TODO
+			} catch (IOException e) {
+				//TODO
+			}
+		}
+				
 	}
 	
 	public void refresh() {
@@ -143,20 +206,32 @@ public class EventPanel extends JPanel {
 	
 	public void paintComponent(Graphics g){
 		super.paintComponent(g);
+		int i=0;
 		for(EventLabel label: _eventLabels){
 			label.repaint();
+			_removeLabels.get(i).repaint();
+			_openLabels.get(i).repaint();
+			i++;
 		}
 	}
 	
+	/**
+	 * Click Listener for "Create Event" button
+	 *
+	 */
 	private class CreateEventListener implements ActionListener {
 
 		@Override
 		public void actionPerformed(ActionEvent e) {
-			AddEventDialog aEDialog = new AddEventDialog(_gui);
+			new CreateEventDialog(EventPanel.this);
 		}
 		
 	}
 	
+	/**
+	 * ClickListener for the "Add Event" button
+	 *
+	 */
 	private class AddEventListener implements ActionListener {
 
 		@Override
@@ -181,12 +256,11 @@ public class EventPanel extends JPanel {
 			}
 			
 			if(newEvent != null){
+				//TODO do something more useful than "BLOOP"
 				if(newEvent.getName() == null){
 					newEvent.setName("BLOOP");
 				}
-				EventLabel newLabel = new EventLabel(newEvent.getName(), String.valueOf(newEvent.getID()), _communicator, _gui);
-				addEvent(newLabel);
-				_gui.repaint();
+				addEvent(newEvent);
 			}
 			
 			
@@ -194,8 +268,11 @@ public class EventPanel extends JPanel {
 		
 	}
 	
+	/**
+	 * Represents the "X" the user clicks to remove an event from the program
+	 *
+	 */
 	private class RemoveEventLabel extends JLabel implements MouseListener{
-
 		
 		private String _eventID;
 		
@@ -210,13 +287,16 @@ public class EventPanel extends JPanel {
 			int selection = JOptionPane.showConfirmDialog(null,"Are you sure you want to remove this event?", "", 
 					JOptionPane.YES_NO_OPTION);
 			if(selection == JOptionPane.YES_OPTION){
-//				_communicator.removeWhen2Meet(_eventID);
+				_communicator.removeWhen2Meet(_eventID);
 				removeEvent(_eventID);
-				System.out.println("HA jk");
 			}
 			
 		}
 
+		/*
+		 * Color-change alerts user to mouse-over (whether or not the mouse is in a position to click on it)
+		 */
+		
 		@Override
 		public void mouseEntered(MouseEvent arg0) {
 			this.setForeground(Color.RED);
@@ -233,6 +313,48 @@ public class EventPanel extends JPanel {
 		@Override
 		public void mouseReleased(MouseEvent arg0) {}
 		
+	}
+	
+	private class OpenEventInBrowserLabel extends JLabel implements MouseListener {
+
+		private String _eventID;
+		
+		
+		public OpenEventInBrowserLabel(String eventID){
+//			super("O");
+			_eventID = eventID;
+			this.addMouseListener(this);
+			ImageIcon icon = new ImageIcon("open-in-new-window.png");
+			System.out.println("Icon is null: " + (icon == null));
+			this.setIcon(icon);
+			
+		}
+
+
+		@Override
+		public void mouseClicked(MouseEvent arg0) {
+			openEventInBrowser(_eventID);
+		}
+
+
+		@Override
+		public void mouseEntered(MouseEvent arg0) {
+			this.setForeground(Color.GREEN);
+		}
+
+
+		@Override
+		public void mouseExited(MouseEvent arg0) {
+			this.setForeground(Color.BLACK);
+		}
+
+
+		@Override
+		public void mousePressed(MouseEvent arg0) { }
+
+
+		@Override
+		public void mouseReleased(MouseEvent arg0) { }
 		
 	}
 }

@@ -19,8 +19,9 @@ public class CalendarGroup<C extends Calendar> {
 	
 	public CalendarGroup(DateTime start, DateTime end, Collection<C> cals, CalGroupType type){
 		this(start, end, type);
-		for(C c : cals)
-			_calendars.add(c);
+		if(cals != null)
+			for(C c : cals)
+				_calendars.add(c);
 	}
 	
 	public DateTime getStartTime(){
@@ -29,6 +30,17 @@ public class CalendarGroup<C extends Calendar> {
 	
 	public DateTime getEndTime(){
 		return _end;
+	}
+	
+	private int lenDayInMinutes() {
+		if(_end.getMinuteOfDay() == 0)
+			return 24*60 - _start.getMinuteOfDay();
+		else
+			return _end.getMinuteOfDay() - _start.getMinuteOfDay();
+	}
+	
+	public int getNumHours(){
+		return (lenDayInMinutes() + 1) / 60;
 	}
 	
 	public ArrayList<C> getCalendars(){
