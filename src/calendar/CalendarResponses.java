@@ -9,6 +9,8 @@ import java.util.Collections;
 
 import org.joda.time.DateTime;
 
+import calendar.Event.CalByThatNameNotFoundException;
+
 public class CalendarResponses implements Calendar {
 
 	private DateTime _startTime;
@@ -181,5 +183,4 @@ public class CalendarResponses implements Calendar {
 			}
 		}
 	}
-
 }

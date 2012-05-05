@@ -178,6 +178,7 @@ public class GCalImporter implements CalendarsImporter<CalendarResponses> {
 	        _listFrame.add(buttonPanel, BorderLayout.SOUTH);
 	        _listFrame.add(scrollCalList, BorderLayout.CENTER);
 	        _listFrame.add(directionsPanel, BorderLayout.NORTH);
+	        _listFrame.setLocationRelativeTo(null);
 	        _listFrame.setVisible(true);
 	        _listFrame.pack();
 	        ////////////
