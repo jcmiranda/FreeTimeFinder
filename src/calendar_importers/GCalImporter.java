@@ -1,10 +1,24 @@
 package calendar_importers;
 
+import java.awt.BorderLayout;
+import java.awt.Dimension;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
+
+import javax.swing.JButton;
+import javax.swing.JFrame;
+import javax.swing.JLabel;
+import javax.swing.JList;
+import javax.swing.JPanel;
+import javax.swing.JScrollPane;
+import javax.swing.ListSelectionModel;
+
+import org.joda.time.DateTime;
 
 import calendar.CalendarGroup;
 import calendar.CalendarResponses;
@@ -31,6 +45,10 @@ public class GCalImporter implements CalendarsImporter<CalendarResponses> {
 	int MAX_RESPONSES = Integer.MAX_VALUE;
 	private Owner _owner;
 	private GCalAuth _auth;
+	private JList _calList;
+	private JFrame _listFrame;
+	private int[] _selectedInd;
+	private boolean _buttonClicked;
 	
 	public GCalImporter() {
 		//connect to client
@@ -46,7 +64,7 @@ public class GCalImporter implements CalendarsImporter<CalendarResponses> {
 		}
 		_client.setAuthSubToken(toke.getAccessToken());
 		//import calendars -- make calendar group
-		return this.importCalendarGroup(startTime, endTime);
+		return this.importCalendarGroup(startTime, endTime, null);
 	}
 	
 //	private synchronized void timeOut() {
@@ -101,7 +119,7 @@ public class GCalImporter implements CalendarsImporter<CalendarResponses> {
 //		return resp.toString();
 //	}
 	
-	public CalendarGroup<CalendarResponses> importCalendarGroup(org.joda.time.DateTime st, org.joda.time.DateTime et) throws IOException, ServiceException, com.google.gdata.util.ServiceException {
+	public CalendarGroup<CalendarResponses> importCalendarGroup(org.joda.time.DateTime st, org.joda.time.DateTime et, CalendarGroup calgroup) throws IOException, ServiceException, com.google.gdata.util.ServiceException {
 		//calendar group
 		GoogleCalendars allCalendars = new GoogleCalendars(st, et, _owner);
 		//set URL to get calendars
@@ -117,9 +135,69 @@ public class GCalImporter implements CalendarsImporter<CalendarResponses> {
 		//calendarentry = calendar in a list of calendars
 		//calendar event entry = event in single calendar
 		
-		//go through feed results and make calendars
-        for (int i = 0; i < resultFeed.getEntries().size(); i++) {
-            CalendarEntry calendar = resultFeed.getEntries().get(i);            
+		ArrayList<CalendarEntry> selectedCals = new ArrayList<CalendarEntry>();
+		ArrayList<String> allCals_titles = new ArrayList<String>();
+		ArrayList<CalendarEntry> allCals = new ArrayList<CalendarEntry>();
+		
+			
+		if (calgroup != null) {
+			//go through feed results and make calendars
+	        for (int i = 0; i < resultFeed.getEntries().size(); i++) {
+	            CalendarEntry calendar = resultFeed.getEntries().get(i);  
+	            allCals_titles.add(calendar.getTitle().getPlainText());
+	            allCals.add(calendar);
+	            if (((CalendarResponses)calgroup.getCalendars().get(i)).isSelected()) {
+	            	selectedCals.add(calendar);
+	            }
+	        }
+		}
+		else {
+			_buttonClicked = false;
+	        for (int i = 0; i < resultFeed.getEntries().size(); i++) {
+	            CalendarEntry calendar = resultFeed.getEntries().get(i);  
+	            allCals_titles.add(calendar.getTitle().getPlainText());
+	            allCals.add(calendar);
+	        }
+	        //GUI//////
+	    	JButton submit = new JButton("Submit");
+	        submit.addActionListener(new SelectCalListener());
+	        JPanel buttonPanel = new JPanel();
+			buttonPanel.setPreferredSize(new Dimension(300, 45));
+	        buttonPanel.add(submit);
+	        JPanel directionsPanel = new JPanel();
+	        directionsPanel.setPreferredSize(new Dimension(300,45));
+	        directionsPanel.setLayout(new BorderLayout());
+	        JLabel directions = new JLabel("Select calendars to import");
+	        JLabel moreDirections = new JLabel("(use CTRL to select multiple calendars)");
+	        directionsPanel.add(directions, BorderLayout.NORTH);
+	        directionsPanel.add(moreDirections, BorderLayout.CENTER);
+	        _calList = new JList(allCals_titles.toArray());
+	        JScrollPane scrollCalList = new JScrollPane(_calList);
+	        _calList.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
+	        _listFrame = new JFrame();
+	        _listFrame.setLayout(new BorderLayout());
+	        _listFrame.add(buttonPanel, BorderLayout.SOUTH);
+	        _listFrame.add(scrollCalList, BorderLayout.CENTER);
+	        _listFrame.add(directionsPanel, BorderLayout.NORTH);
+	        _listFrame.setVisible(true);
+	        _listFrame.pack();
+	        ////////////
+	        
+	        while (!_buttonClicked) {
+	        	try {
+					Thread.sleep(100);
+				} catch (InterruptedException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+	        }
+	        for (int i : _selectedInd) {
+	        	selectedCals.add(allCals.get(i));
+	        }	        
+		}
+
+        for (int i = 0; i < allCals.size(); i++) {
+            CalendarEntry calendar = allCals.get(i); 
             
             //NOTE:
             //for java.util.date month zero indexed, year is something + 1900
@@ -127,9 +205,15 @@ public class GCalImporter implements CalendarsImporter<CalendarResponses> {
             //make new calendar
             CalendarResponses currCal = new CalendarResponses(st, et, calendar.getTitle().getPlainText());          
            
-            //get events for calendar
-            ArrayList<Response> calResponses = this.getEvents(st, et, calendar.getId());
-            currCal.setResponses(calResponses);            
+            for (CalendarEntry c : selectedCals) {
+            	if (calendar == c) {
+            		//get events for calendar
+            		System.out.println("HERE");
+                    ArrayList<Response> calResponses = this.getEvents(st, et, calendar.getId());
+                    currCal.setResponses(calResponses);  
+            	}
+            }
+                      
             
             //add calendar to group of calendars
             allCalendars.addCalendar(currCal);
@@ -187,11 +271,11 @@ public class GCalImporter implements CalendarsImporter<CalendarResponses> {
     	myImporter.refresh(startTime, endTime);
     }
 	
-	public CalendarGroup<CalendarResponses> refresh(org.joda.time.DateTime st, org.joda.time.DateTime et) {
+	public CalendarGroup<CalendarResponses> refresh(org.joda.time.DateTime st, org.joda.time.DateTime et, CalendarGroup calgroup) {
 		TokenResponse toke = _auth.getRefreshToken();
 		_client.setAuthSubToken(toke.getAccessToken());
 		try {
-			return this.importCalendarGroup(st, et);
+			return this.importCalendarGroup(st, et, calgroup);
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -212,6 +296,31 @@ public class GCalImporter implements CalendarsImporter<CalendarResponses> {
 	@Override
 	public CalendarGroup<CalendarResponses> importNewEvent(String url)
 			throws MalformedURLException, IOException {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	
+	private class SelectCalListener implements ActionListener {
+		@Override
+		public void actionPerformed(ActionEvent arg0) {
+			Object[] titles = _calList.getSelectedValues();
+			int[] ints = _calList.getSelectedIndices();
+			for (Object i : titles) {
+				System.out.println(i.toString());
+			}
+			for (int i : ints) {
+				System.out.println(i);
+			}
+			_selectedInd = ints;
+			_listFrame.setVisible(false);
+			_buttonClicked = true;
+		}
+	}
+
+
+	@Override
+	public CalendarGroup<CalendarResponses> refresh(DateTime st, DateTime et) {
 		// TODO Auto-generated method stub
 		return null;
 	}

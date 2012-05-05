@@ -1,14 +1,10 @@
 package calendar_importers;
 
-import java.awt.BorderLayout;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URLEncoder;
-
-import javax.swing.JEditorPane;
-import javax.swing.JFrame;
 
 import com.google.api.client.auth.oauth2.TokenResponse;
 import com.google.api.client.googleapis.auth.oauth2.GoogleAuthorizationCodeTokenRequest;

@@ -29,7 +29,7 @@ public class CalendarResponses implements Calendar {
 		_selected = selected;
 	}
 	
-	public boolean getSelected() {
+	public boolean isSelected() {
 		return _selected;
 	}
 	

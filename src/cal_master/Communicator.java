@@ -1,5 +1,6 @@
 package cal_master;
 
+import java.awt.Frame;
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileWriter;
@@ -88,7 +89,6 @@ public class Communicator {
 	private void hideLoadingLabel(){
 		_loadingFrame.setVisible(false);
 	}
-	
 	
 	private void setUpXStream() {
 		// TODO add Kelly's gcal and date time classes

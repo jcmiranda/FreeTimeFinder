@@ -38,7 +38,7 @@ public class LocalServer {
         		_code = codeQuery[1];
         	}
         	else if (codeQuery[0].equals("error")) {
-        		String response = "Kairos will not import your Google Calendar.";
+        		String response = "<html><head><title>Test</title></head><body><p>Kairos will not import your Google Calendar. </p></body></html>";
                 t.sendResponseHeaders(200, response.length());
                 OutputStream os = t.getResponseBody();
                 os.write(response.getBytes());
@@ -47,7 +47,7 @@ public class LocalServer {
                 _code = "error";
         	}
         	System.out.println("code = "+_code);
-            String response = "Thank you, this window can now be closed.";
+            String response = "<html><head><title>Test</title></head><body><p>Thank you, this window can now be closed.</p></body></html>";
             t.sendResponseHeaders(200, response.length());
             OutputStream os = t.getResponseBody();
             os.write(response.getBytes());
