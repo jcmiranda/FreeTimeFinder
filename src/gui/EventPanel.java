@@ -324,7 +324,7 @@ public class EventPanel extends JPanel {
 //			super("O");
 			_eventID = eventID;
 			this.addMouseListener(this);
-			ImageIcon icon = new ImageIcon("open-in-new-window.png");
+			ImageIcon icon = new ImageIcon("open-in-new-window-copy.png");
 			System.out.println("Icon is null: " + (icon == null));
 			this.setIcon(icon);
 			

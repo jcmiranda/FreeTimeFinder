@@ -15,6 +15,14 @@ import cal_master.Communicator;
 import calendar.CalendarGroup;
 import calendar.CalendarResponses;
 
+/**
+ * 
+ * Represents the panel that stores all the labels representing the sub-calendars of the user's calendar.
+ * Includes a title (to alert the user of the use of this panel) and a scroll pane containing the names of all
+ * the user's subcalendars with check marks beside those the user wishes to display
+ *
+ */
+
 public class UserCalPanel extends JPanel {
 	
 	private ArrayList<UserCalLabel> _labels = new ArrayList<UserCalLabel>();
@@ -38,7 +46,9 @@ public class UserCalPanel extends JPanel {
 		this.initLabels();
 	}
 	
-	
+	/**
+	 * Sets up the layout of all the labels (grid layout inside scrollpane, title label above scroll pane)
+	 */
 	private void setUp(){
 		_scrollPaneInner.removeAll();
 		_scrollPaneInner.setLayout(new GridLayout(0, 1));
@@ -69,6 +79,11 @@ public class UserCalPanel extends JPanel {
 		_gui.repaint();
 	}
 	
+	/**
+	 * Adds a label for every subcalendar of the userCal stored in the communicator, setting the labels 
+	 * with check marks based on whether the user has chosen to display the calendar as of the last save
+	 * 
+	 */
 	public void initLabels(){
 		_labels.clear();
 		

@@ -1,5 +1,6 @@
 package gui;
 
+import java.awt.Color;
 import java.awt.Font;
 import java.util.ArrayList;
 
@@ -30,6 +31,7 @@ public class UpdatesPanel extends JPanel {
 		_titleLabel.setFont(newLabelFont);
 		_titleLabel.setText("Updates");
 		_textArea.setText(" none");
+		_textArea.setBackground(_titleLabel.getBackground());
 		
 		GroupLayout layout = new GroupLayout(this);
 		this.setLayout(layout);

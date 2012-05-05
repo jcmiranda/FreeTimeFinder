@@ -364,6 +364,7 @@ public class CalendarGui {
 			}
 			
 			setResponses(_communicator.getUserCal());
+			_userCalPanel.initLabels();
 
 			repaint();
 		}
