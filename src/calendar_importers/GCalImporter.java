@@ -139,7 +139,6 @@ public class GCalImporter implements CalendarsImporter<CalendarResponses> {
 		ArrayList<String> allCals_titles = new ArrayList<String>();
 		ArrayList<CalendarEntry> allCals = new ArrayList<CalendarEntry>();
 		
-			
 		if (calgroup != null) {
 			//go through feed results and make calendars
 	        for (int i = 0; i < resultFeed.getEntries().size(); i++) {
@@ -182,7 +181,7 @@ public class GCalImporter implements CalendarsImporter<CalendarResponses> {
 	        _listFrame.setVisible(true);
 	        _listFrame.pack();
 	        ////////////
-	        
+	        //wait for the button to be clicked
 	        while (!_buttonClicked) {
 	        	try {
 					Thread.sleep(100);
@@ -191,30 +190,26 @@ public class GCalImporter implements CalendarsImporter<CalendarResponses> {
 					e.printStackTrace();
 				}
 	        }
+	        //add cals at selected indices to list of selected calendars
 	        for (int i : _selectedInd) {
 	        	selectedCals.add(allCals.get(i));
 	        }	        
 		}
 
         for (int i = 0; i < allCals.size(); i++) {
-            CalendarEntry calendar = allCals.get(i); 
-            
-            //NOTE:
-            //for java.util.date month zero indexed, year is something + 1900
-            
-            //make new calendar
+            CalendarEntry calendar = allCals.get(i);             
+            //make new calendar (for ALL calendars)
             CalendarResponses currCal = new CalendarResponses(st, et, calendar.getTitle().getPlainText());          
            
             for (CalendarEntry c : selectedCals) {
             	if (calendar == c) {
-            		//get events for calendar
-            		System.out.println("HERE");
+            		currCal.setSelected(true);
+            		//get events for calendar (ONLY if selected)
                     ArrayList<Response> calResponses = this.getEvents(st, et, calendar.getId());
                     currCal.setResponses(calResponses);  
             	}
             }
                       
-            
             //add calendar to group of calendars
             allCalendars.addCalendar(currCal);
             

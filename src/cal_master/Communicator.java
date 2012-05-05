@@ -263,7 +263,8 @@ public class Communicator {
 			ArrayList<CalendarResponses> cals = _userCal.getCalendars();
 			for(CalendarResponses calResp : cals){
 				if(calResp.getName().equals(calRespName)){
-					// TODO calResp.setSelected(selected);
+					// TODO 
+					calResp.setSelected(selected);
 				}
 			}
 		}
@@ -683,8 +684,8 @@ public class Communicator {
 
 	public void pullCal(DateTime start, DateTime end){
 
-		//TODO _userCalImporter.refresh(start, end, _userCal);
-		_userCal = _userCalImporter.refresh(start, end);
+		_userCal = _userCalImporter.refresh(start, end, _userCal);
+		//_userCal = _userCalImporter.refresh(start, end);
 		saveOneItem(_userCal, _userCalID, calGroupTypeToIndexType(_userCal.getCalGroupType()));
 		saveOneItem(_userCalImporter, _userCalImporterID, _userCalImporterType);
 

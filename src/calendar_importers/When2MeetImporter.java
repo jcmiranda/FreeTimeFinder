@@ -356,4 +356,11 @@ public class When2MeetImporter implements CalendarsImporter {
 		return null;
 	}
 
+	@Override
+	public CalendarGroup refresh(DateTime st, DateTime et,
+			CalendarGroup calgroup) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
 }
