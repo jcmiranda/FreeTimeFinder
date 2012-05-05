@@ -49,6 +49,7 @@ public class CalendarGui {
 	private JPanel _hourOfDayLabels;
 	private ArrayList<Integer> _hoursOfDay = new ArrayList<Integer>();
 	private Communicator _communicator = new Communicator();
+	private UserCalPanel _userCalPanel;
 	private EventPanel _eventPanel = new EventPanel(_communicator, this);
 	private UpdatesPanel _updatesPanel = new UpdatesPanel();
 	private FriendBar _friendBar = new FriendBar(this);
@@ -85,6 +86,7 @@ public class CalendarGui {
 			_eventPanel.addEvent(new EventLabel(pair.getName(), pair.getID(), _communicator, this));
 		}
 
+		_userCalPanel = new UserCalPanel(_communicator, this);
 
 		_submitButton.addActionListener(new SubmitListener());
 		_timeFindButton.addActionListener(new TimeFindListener());
@@ -272,6 +274,7 @@ public class CalendarGui {
 		_frame.add(northPanel, BorderLayout.NORTH);
 
 		JPanel eastPanel = new JPanel(new GridLayout(0,1));
+		eastPanel.add(_userCalPanel);
 		eastPanel.add(_eventPanel);
 		eastPanel.add(_updatesPanel);
 		eastPanel.setPreferredSize(new Dimension((int) (FRAME_WIDTH*.25 - _hourOfDayLabels.getPreferredSize().width), 700));
@@ -341,7 +344,7 @@ public class CalendarGui {
 
 		@Override
 		public void actionPerformed(ActionEvent arg0) {
-			if(_slotGroup != null)
+			if(_slotGroup != null && !_slotGroup.getCalendars().isEmpty() && !(_slotGroup.getCalendars().size() ==1 && _slotGroup.userHasSubmitted()))
 				new SliderPane(_numHours, CalendarGui.this);
 		}
 
@@ -359,6 +362,8 @@ public class CalendarGui {
 				_slotGroup.printUpdates();
 				System.out.println("=====");
 			}
+			
+			setResponses(_communicator.getUserCal());
 
 			repaint();
 		}

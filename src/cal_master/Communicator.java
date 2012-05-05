@@ -501,7 +501,7 @@ public class Communicator {
 		Event toReturn = _events.get(id);
 		
 		//if we don't have a stored response for the user
-		if(toReturn.getUserResponse() == null){
+		if(toReturn.getUserResponse() == null && !toReturn.getCalendars().isEmpty()){
 
 			//ask user if they've responded to the event
 			int resp = JOptionPane.showConfirmDialog(null, "Have you already responded to this When2Meet?", "", JOptionPane.YES_NO_OPTION);
@@ -676,10 +676,6 @@ public class Communicator {
 
 	public Collection<String> getEventIDs() {
 		return _events.keySet();
-	}
-
-	public CalendarGroup<CalendarResponses> getCal(){
-		return _userCal;
 	}
 
 	public void pullCal(DateTime start, DateTime end){
