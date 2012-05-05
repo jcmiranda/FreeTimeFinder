@@ -1,10 +1,9 @@
 package gui;
 
+import static gui.GuiConstants.DEFAULT_END_HOUR;
+import static gui.GuiConstants.DEFAULT_START_HOUR;
 import static gui.GuiConstants.FRAME_HEIGHT;
 import static gui.GuiConstants.FRAME_WIDTH;
-
-import static gui.GuiConstants.DEFAULT_START_HOUR;
-import static gui.GuiConstants.DEFAULT_END_HOUR;
 
 import java.awt.BorderLayout;
 import java.awt.Dimension;
@@ -25,21 +24,18 @@ import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.SwingConstants;
-import javax.swing.border.Border;
-import javax.swing.border.EmptyBorder;
-
-import org.joda.time.DateTime;
 
 import cal_master.Communicator;
 import cal_master.NameIDPair;
 import calendar.CalendarGroup;
 import calendar.CalendarResponses;
 import calendar.Event;
+import calendar.UserCal;
 import calendar.When2MeetEvent;
 
 public class CalendarGui {
 
-	private CalendarGroup<CalendarResponses> _responseGroup = null;
+	private UserCal _responseGroup = null;
 	private Event _slotGroup = null;
 	private int _startHour = DEFAULT_START_HOUR;
 	private int _numHours = DEFAULT_END_HOUR - DEFAULT_START_HOUR;
@@ -132,7 +128,7 @@ public class CalendarGui {
 	}
 
 
-	public void setResponses(CalendarGroup<CalendarResponses> responseGroup){
+	public void setResponses(UserCal responseGroup){
 		_responseGroup= responseGroup;
 		_replyPanel.setResps(_responseGroup);
 	}

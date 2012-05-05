@@ -4,7 +4,7 @@ import java.util.ArrayList;
 
 import org.joda.time.DateTime;
 
-public class GoogleCalendars extends CalendarGroup<CalendarResponses>{
+public class GoogleCalendars extends UserCal{
 	
 	private Owner _owner;
 	private ArrayList<CalendarResponses> _cals = new ArrayList<CalendarResponses>();

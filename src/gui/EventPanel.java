@@ -30,6 +30,13 @@ import cal_master.Communicator;
 import cal_master.Communicator.URLAlreadyExistsException;
 import calendar.Event;
 
+/**
+ * 
+ * Represents the panel that holds all of the event names the user has stored in the program, as well as the
+ * buttons they can use to add an existing event to the program, as well as 
+ *
+ */
+
 public class EventPanel extends JPanel {
 
 	private ArrayList<EventLabel> _eventLabels = new ArrayList<EventLabel>();

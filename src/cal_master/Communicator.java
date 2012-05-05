@@ -1,6 +1,5 @@
 package cal_master;
 
-import java.awt.Frame;
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileWriter;
@@ -27,6 +26,7 @@ import calendar.Event;
 import calendar.Event.CalByThatNameNotFoundException;
 import calendar.EventUpdate;
 import calendar.GoogleCalendars;
+import calendar.UserCal;
 import calendar.When2MeetEvent;
 import calendar.When2MeetOwner;
 import calendar_exporters.When2MeetExporter;
@@ -47,7 +47,7 @@ public class Communicator {
 	private CalendarsImporter<CalendarResponses> _userCalImporter = null;
 	private StoredDataType _userCalImporterType = null;
 	
-	private CalendarGroup<CalendarResponses> _userCal = null;
+	private UserCal _userCal = null;
 	private String _userCalID = "userCal", _indexID = "index", 
 			_userCalImporterID = "userCalImporter", _progOwnerID = "progOwner";
 
@@ -254,7 +254,7 @@ public class Communicator {
 				return null;
 	}
 
-	public CalendarGroup<CalendarResponses> getUserCal() {
+	public UserCal getUserCal() {
 		return _userCal;
 	}
 	
@@ -379,7 +379,7 @@ public class Communicator {
 		return null;
 	}
 
-	public void setUserCal(CalendarGroup<CalendarResponses> userCal){
+	public void setUserCal(UserCal userCal){
 		_userCal = userCal;
 		StoredDataType type = calGroupTypeToIndexType(_userCal.getCalGroupType());
 		saveOneItem(_userCal, _userCalID, type);
@@ -680,7 +680,7 @@ public class Communicator {
 
 	public void pullCal(DateTime start, DateTime end){
 
-		_userCal = _userCalImporter.refresh(start, end, _userCal);
+		_userCal = (UserCal) _userCalImporter.refresh(start, end, _userCal);
 		//_userCal = _userCalImporter.refresh(start, end);
 		saveOneItem(_userCal, _userCalID, calGroupTypeToIndexType(_userCal.getCalGroupType()));
 		saveOneItem(_userCalImporter, _userCalImporterID, _userCalImporterType);

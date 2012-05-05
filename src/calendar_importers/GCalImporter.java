@@ -25,6 +25,7 @@ import calendar.CalendarResponses;
 import calendar.GoogleCalendars;
 import calendar.Owner;
 import calendar.Response;
+import calendar.UserCal;
 
 import com.google.api.client.auth.oauth2.TokenResponse;
 import com.google.api.client.googleapis.auth.oauth2.GoogleTokenResponse;
@@ -56,7 +57,7 @@ public class GCalImporter implements CalendarsImporter<CalendarResponses> {
 		_auth = new GCalAuth();
 	}
 	
-	public CalendarGroup<CalendarResponses> importMyGCal(org.joda.time.DateTime startTime, org.joda.time.DateTime endTime) throws IOException, ServiceException, com.google.gdata.util.ServiceException {
+	public UserCal importMyGCal(org.joda.time.DateTime startTime, org.joda.time.DateTime endTime) throws IOException, ServiceException, com.google.gdata.util.ServiceException {
 		//authenticate user
 		GoogleTokenResponse toke = (GoogleTokenResponse) _auth.setAuth();
 		if (toke == null) {
@@ -119,7 +120,7 @@ public class GCalImporter implements CalendarsImporter<CalendarResponses> {
 //		return resp.toString();
 //	}
 	
-	public CalendarGroup<CalendarResponses> importCalendarGroup(org.joda.time.DateTime st, org.joda.time.DateTime et, CalendarGroup calgroup) throws IOException, ServiceException, com.google.gdata.util.ServiceException {
+	public UserCal importCalendarGroup(org.joda.time.DateTime st, org.joda.time.DateTime et, CalendarGroup calgroup) throws IOException, ServiceException, com.google.gdata.util.ServiceException {
 		//calendar group
 		GoogleCalendars allCalendars = new GoogleCalendars(st, et, _owner);
 		//set URL to get calendars
@@ -267,7 +268,7 @@ public class GCalImporter implements CalendarsImporter<CalendarResponses> {
     	myImporter.refresh(startTime, endTime);
     }
 	
-	public CalendarGroup<CalendarResponses> refresh(org.joda.time.DateTime st, org.joda.time.DateTime et, CalendarGroup calgroup) {
+	public UserCal refresh(org.joda.time.DateTime st, org.joda.time.DateTime et, CalendarGroup calgroup) {
 		TokenResponse toke = _auth.getRefreshToken();
 		_client.setAuthSubToken(toke.getAccessToken());
 		try {
