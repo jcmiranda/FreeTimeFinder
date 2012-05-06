@@ -29,6 +29,7 @@ import org.joda.time.DateTime;
 import cal_master.Communicator;
 import cal_master.Communicator.URLAlreadyExistsException;
 import calendar.Event;
+import calendar_importers.EventImporter.InvalidURLException;
 
 /**
  * 
@@ -147,7 +148,10 @@ public class EventPanel extends JPanel {
 			System.out.println("You did something wrong");
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
-			e.printStackTrace();
+			System.out.println("You did something wrong");
+		} catch (InvalidURLException e) {
+			// TODO Auto-generated catch block
+			System.out.println("You did something wrong");
 		}
 	}
 	
@@ -259,6 +263,9 @@ public class EventPanel extends JPanel {
 					url = JOptionPane.showInputDialog("That event is already stored. Try Again.");
 				} catch (IOException e) {
 					url = JOptionPane.showInputDialog("Invalid URL. Try Again.");
+				} catch (InvalidURLException e) {
+					// TODO Auto-generated catch block
+					url = JOptionPane.showInputDialog("Invalid URL. Try Again.");
 				}
 			}
 			
@@ -331,7 +338,7 @@ public class EventPanel extends JPanel {
 //			super("O");
 			_eventID = eventID;
 			this.addMouseListener(this);
-			ImageIcon icon = new ImageIcon("open-in-new-window-copy.png");
+			ImageIcon icon = new ImageIcon("open-in-new-window.png");
 			System.out.println("Icon is null: " + (icon == null));
 			this.setIcon(icon);
 			

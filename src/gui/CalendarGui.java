@@ -35,7 +35,6 @@ import calendar.When2MeetEvent;
 
 public class CalendarGui {
 
-	private UserCal _responseGroup = null;
 	private Event _slotGroup = null;
 	private int _startHour = DEFAULT_START_HOUR;
 	private int _numHours = DEFAULT_END_HOUR - DEFAULT_START_HOUR;
@@ -57,23 +56,15 @@ public class CalendarGui {
 	public CalendarGui(){
 		_communicator.startUp();
 
-		//		if(_communicator.hasEvent())  {
-		//
-		//			Event toReturn = _communicator.getW2M(_communicator.getFirstEventID());
-		//			_slotGroup = toReturn;
-		//			_slotGroup.init();
-		//			_startHour = _slotGroup.getStartTime().getHourOfDay();
-		//			_friendBar.setEvent(_slotGroup);
-		//		}
-		//		else {
 		_startHour = 9;
 		_friendBar.setEvent(null);
-		//		}
 
+		UserCal userCal = null;
+		
 		if(_communicator.hasUserCal())
-			_responseGroup=_communicator.getUserCal();
+			userCal =_communicator.getUserCal();
 
-		_replyPanel = new ReplyPanel(_responseGroup, _slotGroup);
+		_replyPanel = new ReplyPanel(userCal, null);
 
 		ArrayList<NameIDPair> pairs = _communicator.getNameIDPairs();
 		for(NameIDPair pair : pairs) {
@@ -93,11 +84,9 @@ public class CalendarGui {
 
 		_refreshButton.addActionListener(new RefreshListener());
 		_refreshButton.setFocusable(false);
-		if(_slotGroup != null)
-			_numHours = _slotGroup.getCalendars().get(0).getNumHours();
-		else
-			_numHours = 8;
-//		makeHourLabels();
+	
+		_numHours = 8;
+		
 		buildFrame();
 	}
 
@@ -109,11 +98,11 @@ public class CalendarGui {
 		_slotGroup= event;
 		if(_slotGroup != null)
 			_slotGroup.init();
-		_responseGroup = _communicator.getUserCal();
 		System.out.println("SLOT GROUP IN SET EVENT: " + _slotGroup);
-		_replyPanel.setSlots(_slotGroup);
+		_replyPanel.setEvent(_slotGroup);
 		System.out.println("Setting event for reply panel");
-		_replyPanel.setResps(_responseGroup);
+		UserCal userCal = _communicator.getUserCal();
+		_replyPanel.setUserCal(userCal);
 		_replyPanel.repaint();
 		if(_slotGroup != null){
 			_startHour = event.getStartTime().getHourOfDay();
@@ -131,10 +120,10 @@ public class CalendarGui {
 	}
 
 
-	public void setResponses(UserCal responseGroup){
-		_responseGroup= responseGroup;
-		_replyPanel.setResps(_responseGroup);
+	public void setUserCal(UserCal userCal){
+		_replyPanel.setUserCal(userCal);
 	}
+
 
 
 	private class InnerWindowListener extends WindowAdapter {
@@ -181,8 +170,6 @@ public class CalendarGui {
 		JPanel prevPanel = new JPanel();
 		prevPanel.add(_prevButton);
 		prevPanel.add(_nextButton);
-//		JPanel nextPanel = new JPanel();
-//		nextPanel.add(_nextButton);
 
 		JPanel refreshPanel = new JPanel();
 		refreshPanel.add(_refreshButton);
@@ -293,7 +280,7 @@ public class CalendarGui {
 				System.out.println("=====");
 			}
 			
-			setResponses(_communicator.getUserCal());
+			setUserCal(_communicator.getUserCal());
 			_userCalPanel.initLabels();
 
 			repaint();

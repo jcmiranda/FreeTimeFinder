@@ -15,6 +15,8 @@ public class GuiConstants {
 	public static final int RESPONSE_NAME_SPACING = 6;	
 	public static final int RESPONSE_CONFLICT_SPACING = 30;
 	public static final float INTERLINE_SPACING = 1.0f;
+	public static final int HOUR_LABEL_SPACING = 5;
+	
 
 	public static final Color OPTIMAL_COLOR = new Color(245, 207, 126, 170); 
 	public static final Color RESPONSE_COLOR = new Color(160, 50, 80, 255); //170);
@@ -39,7 +41,5 @@ public class GuiConstants {
 	public static final Color BRIGHT_ORANGE = new Color(238, 105, 64);
 	public static final Color DARK_BROWN = new Color(49, 21, 0);
 	
-	
-//	public static final int RECT_ARC_DIM = 10;
 
 }

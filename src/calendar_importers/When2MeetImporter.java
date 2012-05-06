@@ -20,13 +20,15 @@ import calendar.CalendarDifferenceCalculator.MismatchedUserIDException;
 import calendar.CalendarDifferenceCalculator.MismatchedUserNamesException;
 import calendar.CalendarGroup;
 import calendar.CalendarSlots;
+import calendar.Event;
 import calendar.Event.CalByThatNameNotFoundException;
 import calendar.EventUpdate;
+import calendar.UserCal;
 import calendar.When2MeetEvent;
 import calendar.When2MeetOwner;
 
 
-public class When2MeetImporter implements CalendarsImporter {
+public class When2MeetImporter implements CalendarsImporter<CalendarSlots> {
 
 	private String _urlString = null, _eventName = null;
 	private int _eventID;
@@ -246,7 +248,7 @@ public class When2MeetImporter implements CalendarsImporter {
 	
 	@Override
 	public When2MeetEvent importNewEvent(String url) throws IOException{
-		_urlString = url;
+		_urlString = url.trim();
 		_IDsToCals.clear();
 		_slotIndexToSlotID.clear();
 		parseHTML();
@@ -357,8 +359,7 @@ public class When2MeetImporter implements CalendarsImporter {
 	}
 
 	@Override
-	public CalendarGroup refresh(DateTime st, DateTime et,
-			CalendarGroup calgroup) {
+	public CalendarGroup refresh(DateTime st, DateTime et, UserCal calgroup) {
 		// TODO Auto-generated method stub
 		return null;
 	}
