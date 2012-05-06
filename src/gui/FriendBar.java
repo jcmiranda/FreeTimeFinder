@@ -1,6 +1,7 @@
 package gui;
 
 import java.awt.Color;
+import java.awt.Dimension;
 import java.awt.Graphics;
 import java.util.ArrayList;
 
@@ -8,7 +9,9 @@ import javax.swing.GroupLayout;
 import javax.swing.GroupLayout.ParallelGroup;
 import javax.swing.GroupLayout.SequentialGroup;
 import javax.swing.JPanel;
+import javax.swing.JScrollPane;
 import javax.swing.LayoutStyle;
+import javax.swing.ScrollPaneConstants;
 
 import calendar.CalendarSlots;
 import calendar.Event;
@@ -19,12 +22,22 @@ public class FriendBar extends JPanel {
 	private Event _event;
 	private ArrayList<FriendLabel> _friendLabels = new ArrayList<FriendLabel>();
 	private ArrayList<CalendarSlots> _tempInvisible = new ArrayList<CalendarSlots>();
-	private GroupLayout _layout = new GroupLayout(this);
+	private JPanel _scrollPaneInner = new JPanel();
+	private JScrollPane _scrollPane;
+	private GroupLayout _layout = new GroupLayout(_scrollPaneInner);
 	private CalendarGui _gui;
 	
 	public FriendBar(CalendarGui gui){
 		_gui = gui;
-		this.setLayout(_layout);
+//		this.setLayout(_layout);
+		_scrollPaneInner.setPreferredSize(new Dimension((int) (GuiConstants.FRAME_WIDTH*0.75), 25));
+//		this.setMaximumSize(new Dimension((int) (GuiConstants.FRAME_WIDTH*0.75), this.getMaximumSize().height));
+		
+//		this.setLayout(new GridLayout(0,(int) (GuiConstants.FRAME_WIDTH*0.75)/5));
+		_scrollPaneInner.setLayout(_layout);
+		_scrollPane = new JScrollPane(_scrollPaneInner);
+		_scrollPane.setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_ALWAYS);
+		this.add(_scrollPane);
 	}
 	
 	public void setLabelColor(String labelName, Color color){
@@ -39,7 +52,11 @@ public class FriendBar extends JPanel {
 	
 	private void initLabels(){
 		_friendLabels.clear();
-		this.removeAll();
+		_scrollPaneInner.removeAll();
+		_scrollPaneInner.setLayout(_layout);
+		_scrollPaneInner.setPreferredSize(new Dimension((int) (GuiConstants.FRAME_WIDTH*0.75), 25));
+//		this.setMaximumSize(new Dimension((int) (GuiConstants.FRAME_WIDTH*0.75), this.getMaximumSize().height));
+//
 		SequentialGroup horizGrp = _layout.createSequentialGroup();
 		ParallelGroup vertGrp = _layout.createParallelGroup(GroupLayout.Alignment.BASELINE);
 		
@@ -50,6 +67,7 @@ public class FriendBar extends JPanel {
 				toAdd.setVisible(true);
 				
 				_friendLabels.add(toAdd);
+				//this.add(toAdd);
 				
 				vertGrp.addComponent(toAdd);
 				horizGrp.addComponent(toAdd);

@@ -36,7 +36,6 @@ import calendar.When2MeetEvent;
 
 public class CalendarGui {
 
-	private UserCal _responseGroup = null;
 	private Event _slotGroup = null;
 	private int _startHour = DEFAULT_START_HOUR;
 	private int _numHours = DEFAULT_END_HOUR - DEFAULT_START_HOUR;
@@ -62,23 +61,15 @@ public class CalendarGui {
 	public CalendarGui(){
 		_communicator.startUp();
 
-		//		if(_communicator.hasEvent())  {
-		//
-		//			Event toReturn = _communicator.getW2M(_communicator.getFirstEventID());
-		//			_slotGroup = toReturn;
-		//			_slotGroup.init();
-		//			_startHour = _slotGroup.getStartTime().getHourOfDay();
-		//			_friendBar.setEvent(_slotGroup);
-		//		}
-		//		else {
 		_startHour = 9;
 		_friendBar.setEvent(null);
-		//		}
 
+		UserCal userCal = null;
+		
 		if(_communicator.hasUserCal())
-			_responseGroup=_communicator.getUserCal();
+			userCal =_communicator.getUserCal();
 
-		_replyPanel = new ReplyPanel(_responseGroup, _slotGroup);
+		_replyPanel = new ReplyPanel(userCal, null);
 
 		ArrayList<NameIDPair> pairs = _communicator.getNameIDPairs();
 		for(NameIDPair pair : pairs) {
@@ -94,10 +85,9 @@ public class CalendarGui {
 		_eventDispButton.addActionListener(new EventDispButtonListener());
 
 		_refreshButton.addActionListener(new RefreshListener());
-		if(_slotGroup != null)
-			_numHours = _slotGroup.getCalendars().get(0).getNumHours();
-		else
-			_numHours = 8;
+	
+		_numHours = 8;
+		
 		makeHourLabels();
 		buildFrame();
 	}
@@ -111,11 +101,11 @@ public class CalendarGui {
 		event.setPaintMethod(_eventDispStyle);
 		if(_slotGroup != null)
 			_slotGroup.init();
-		_responseGroup = _communicator.getUserCal();
 		System.out.println("SLOT GROUP IN SET EVENT: " + _slotGroup);
-		_replyPanel.setSlots(_slotGroup);
+		_replyPanel.setEvent(_slotGroup);
 		System.out.println("Setting event for reply panel");
-		_replyPanel.setResps(_responseGroup);
+		UserCal userCal = _communicator.getUserCal();
+		_replyPanel.setUserCal(userCal);
 		_replyPanel.repaint();
 		if(_slotGroup != null){
 			_startHour = event.getStartTime().getHourOfDay();
@@ -133,9 +123,8 @@ public class CalendarGui {
 	}
 
 
-	public void setResponses(UserCal responseGroup){
-		_responseGroup= responseGroup;
-		_replyPanel.setResps(_responseGroup);
+	public void setUserCal(UserCal userCal){
+		_replyPanel.setUserCal(userCal);
 	}
 
 
@@ -156,28 +145,15 @@ public class CalendarGui {
 	}
 
 	public void makeHourLabels(){
-		//		_hourOfDayLabels = new JPanel();
-		//		_hourOfDayLabels.setBackground(GuiConstants.LINE_COLOR);
-		//		_hourOfDayLabels.setLayout(new GridLayout(_numHours, 1, 0, 1));
-		//		_hourOfDayLabels.setBorder(new EmptyBorder(0,0,0,0));
-		//		
-		//		for (int i=_startHour; i<_startHour + _numHours; i++){
-		//			JPanel hourLabel = new JPanel();
-		//			hourLabel.add(new JLabel(i+ ":00", SwingConstants.CENTER), SwingConstants.CENTER);
-		//			hourLabel.setBorder(new EmptyBorder(0,0,0,0));
-		//			hourLabel.setBackground(GuiConstants.LABEL_COLOR);
-		//			_hourOfDayLabels.add(hourLabel);
-		//		}
+		
 		_hourOfDayLabels = new JPanel();
 		_hourOfDayLabels.setBackground(GuiConstants.LINE_COLOR);
 		_hourOfDayLabels.setLayout(new GridBagLayout());
-//		_hourOfDayLabels.setBorder(new EmptyBorder (0,0,0,0));
 		GridBagConstraints c = new GridBagConstraints();
 
 		for (int i=_startHour; i<_startHour + _numHours; i++){
 			JPanel hourLabel = new JPanel();
 			hourLabel.setBorder(null);
-//			hourLabel.setBorder(new EmptyBorder (0,0,0,0));
 			hourLabel.add(new JLabel(i+ ":00", SwingConstants.CENTER));
 			hourLabel.setBackground(GuiConstants.LABEL_COLOR);
 			c.weightx = 1.0;
@@ -254,8 +230,6 @@ public class CalendarGui {
 		JPanel prevPanel = new JPanel();
 		prevPanel.add(_prevButton);
 		prevPanel.add(_nextButton);
-//		JPanel nextPanel = new JPanel();
-//		nextPanel.add(_nextButton);
 
 		JPanel dispStylePanel = new JPanel();
 		dispStylePanel.add(_eventDispButton);
@@ -382,7 +356,7 @@ public class CalendarGui {
 				System.out.println("=====");
 			}
 			
-			setResponses(_communicator.getUserCal());
+			setUserCal(_communicator.getUserCal());
 			_userCalPanel.initLabels();
 
 			repaint();
