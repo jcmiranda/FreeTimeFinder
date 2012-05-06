@@ -19,8 +19,9 @@ public class EventImporter {
 	public class InvalidURLException extends Exception { };
 	
 	public Event importNewEvent(String url) throws IOException, InvalidURLException {
-		if(_w2mImporter.isWhen2MeetURL(url))
-			return _w2mImporter.importNewEvent(url);
+		String URL = url.trim();
+		if(_w2mImporter.isWhen2MeetURL(URL))
+			return _w2mImporter.importNewEvent(URL);
 		else
 			throw new InvalidURLException();
 	}
