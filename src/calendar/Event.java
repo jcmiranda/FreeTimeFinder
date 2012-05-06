@@ -1,6 +1,7 @@
 package calendar;
 
 import static gui.GuiConstants.SLOT_COLOR;
+import static gui.GuiConstants.MAX_SLOT_OPACITY;
 import gui.DayPanel;
 import gui.GuiConstants;
 
@@ -301,7 +302,7 @@ public class Event extends CalendarGroup<CalendarSlots> {
 				visibleCals.add(cal);
 		}
 		
-		int opacity = 100 / visibleCals.size();
+		int opacity = MAX_SLOT_OPACITY / visibleCals.size();
 		java.awt.Color adjOpacityColor = new java.awt.Color(SLOT_COLOR.getRed(), 
 				SLOT_COLOR.getGreen(), SLOT_COLOR.getBlue(), opacity);
 		
