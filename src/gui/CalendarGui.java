@@ -8,25 +8,22 @@ import static gui.GuiConstants.FRAME_WIDTH;
 import java.awt.BorderLayout;
 import java.awt.Dimension;
 import java.awt.Font;
-import java.awt.GridBagConstraints;
-import java.awt.GridBagLayout;
 import java.awt.GridLayout;
-import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
+import java.net.MalformedURLException;
 import java.net.URISyntaxException;
+import java.net.URL;
 import java.util.ArrayList;
 
 import javax.swing.GroupLayout;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JFrame;
-import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
-import javax.swing.SwingConstants;
 
 import cal_master.Communicator;
 import cal_master.NameIDPair;
@@ -47,7 +44,7 @@ public class CalendarGui {
 //	private ArrayList<Integer> _hoursOfDay = new ArrayList<Integer>();
 	private Communicator _communicator = new Communicator();
 	private UserCalPanel _userCalPanel;
-	private JButton _eventDispButton = new JButton("Toggle Event Display");
+	//private JButton _eventDispButton = new JButton("Toggle Event Display");
 	private PaintMethod _eventDispStyle = PaintMethod.Bars;
 	private EventPanel _eventPanel = new EventPanel(_communicator, this);
 	private UpdatesPanel _updatesPanel = new UpdatesPanel();
@@ -57,20 +54,21 @@ public class CalendarGui {
 	private JButton _nextButton = new JButton(">");
 	private JButton _prevButton = new JButton("<");
 	//private JButton _refreshButton = new JButton("Refresh");
-	ImageIcon check = new ImageIcon("KairosLogo.png");
-	private JButton _refreshButton;
+	//ImageIcon submitIcon = new ImageIcon("KairosLogo.png");
+	//ImageIcon findTimeIcon = new ImageIcon("KairosLogo.png");
+	ImageIcon _toggleIcon = new ImageIcon("small_switch_button.png");
+	ImageIcon _toggleIconInverted = new ImageIcon("small_switch_button_invert.png");
+	ImageIcon _refreshIcon = new ImageIcon("small_refresh_button.png");
+	ImageIcon _refreshIconInverted = new ImageIcon("small_refresh_button_invert");
+	private JButton _refreshButton = new JButton(_refreshIcon);
+	private JButton _eventDispButton = new JButton(_toggleIcon);
 	public static enum DaysOfWeek {Monday, Tuesday, Wednesday, Thursday, Friday, Saturday, Sunday};
 
-
 	public CalendarGui() throws URISyntaxException{
-		_refreshButton = new JButton(check);
-		_refreshButton.setContentAreaFilled(false);
-		_refreshButton.setBorderPainted(false);  
-		_refreshButton.setContentAreaFilled(false);  
-		_refreshButton.setFocusPainted(false);  
-		_refreshButton.setOpaque(false); 
-		 
-		 
+		//buttons
+		this.displayButton(_refreshButton);
+		this.displayButton(_eventDispButton);
+		
 		_communicator.startUp();
 
 		_startHour = 9;
@@ -301,15 +299,23 @@ public class CalendarGui {
 	
 	private class EventDispButtonListener implements ActionListener {
 		public void actionPerformed(ActionEvent arg0) {
-			if(_eventDispStyle == PaintMethod.Bars){
-				_eventDispStyle = PaintMethod.HeatMap;
-			} else if(_eventDispStyle == PaintMethod.HeatMap) {
-				_eventDispStyle = PaintMethod.Bars;
+			if(_slotGroup != null) {
+				if(_eventDispStyle == PaintMethod.Bars){
+					_eventDispStyle = PaintMethod.HeatMap;
+				} else if(_eventDispStyle == PaintMethod.HeatMap) {
+					_eventDispStyle = PaintMethod.Bars;
+				}
+				
+				if(_eventDispButton.getIcon() == _toggleIcon) {
+					_eventDispButton.setIcon(_toggleIconInverted);
+				}
+				else {
+					_eventDispButton.setIcon(_toggleIcon);
+				}
+		
+				CalendarGui.this.getEvent().setPaintMethod(_eventDispStyle);
+				repaint();
 			}
-		
-		CalendarGui.this.getEvent().setPaintMethod(_eventDispStyle);
-		repaint();
-		
 		}
 	}
 
@@ -327,19 +333,33 @@ public class CalendarGui {
 
 		@Override
 		public void actionPerformed(ActionEvent arg0) {
-			_communicator.refresh();
-			// Retrieve this when2meet in case it has changed
-			if(_slotGroup != null){
-				setEvent(_communicator.getW2M(""+_slotGroup.getID()));
-				System.out.println("After setting event in GUI");
-				_slotGroup.printUpdates();
-				System.out.println("=====");
+			URL url=null;
+			try {
+				url = new URL("http://www.google.com");
+			} catch (MalformedURLException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
 			}
-			
-			setUserCal(_communicator.getUserCal());
-			_userCalPanel.initLabels();
-
-			repaint();
+			if (Communicator.webConnected(url)) {
+				_refreshButton.setIcon(_refreshIconInverted);
+				_communicator.refresh();
+				// Retrieve this when2meet in case it has changed
+				if(_slotGroup != null){
+					setEvent(_communicator.getW2M(""+_slotGroup.getID()));
+					System.out.println("After setting event in GUI");
+					_slotGroup.printUpdates();
+					System.out.println("=====");
+				}
+				
+				setUserCal(_communicator.getUserCal());
+				_userCalPanel.initLabels();
+				_refreshButton.setIcon(_refreshIcon);
+				repaint();
+			}
+			else {
+				ImageIcon grey = new ImageIcon("grey_square.png");
+				JOptionPane.showMessageDialog(null, "You are not connected to the Internet.\nKairos cannot import current data.", "Connection Error", JOptionPane.ERROR_MESSAGE, grey);
+			}
 		}
 
 

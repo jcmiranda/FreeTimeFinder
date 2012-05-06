@@ -1,5 +1,7 @@
 package cal_master;
 
+import java.awt.BorderLayout;
+import java.awt.Dimension;
 import java.awt.Font;
 import java.io.BufferedWriter;
 import java.io.File;
@@ -15,6 +17,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 
+import javax.swing.ImageIcon;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
@@ -69,7 +72,7 @@ public class Communicator {
 	private JFrame _loadingFrame;
 	private JLabel _loadingLabel;
 	private JPanel _loadingPanel;
-
+		
 	private XStream _xstream = new XStream();
 
 	private static final double ATTENDEE_PERCENTAGE = 0;
@@ -202,10 +205,7 @@ public class Communicator {
 				// TODO Auto-generated catch block
 				e1.printStackTrace();
 			}
-			if (!webConnected(googleTestURL)) {
-				//add popup
-			}
-			else {
+			if (webConnected(googleTestURL)) {
 				// TODO add a never option
 				Object[] options = {"Yes", "Not now"};
 				int n = JOptionPane.showOptionDialog(null, "Would you like to import your calendar?",
@@ -253,6 +253,10 @@ public class Communicator {
 		// Refresh when2meet events and calendars
 		if (webConnected(testInternetURL)) {
 			refresh();	
+		}
+		else {
+			ImageIcon grey = new ImageIcon("grey_square.png");
+			JOptionPane.showMessageDialog(null, "You are not connected to the Internet.\nKairos cannot import current data.", "Connection Error", JOptionPane.ERROR_MESSAGE, grey);
 		}
 	}
 	
