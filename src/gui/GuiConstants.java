@@ -20,7 +20,7 @@ public class GuiConstants {
 
 	public static final Color OPTIMAL_COLOR = new Color(245, 207, 126, 170); 
 	public static final Color RESPONSE_COLOR = new Color(160, 50, 80, 255); //170);
-	public static final Color SLOT_COLOR = new Color(0, 200, 0, 50);
+	public static Color SLOT_COLOR = new Color(0, 200, 0, 50);
 	//public static final Color GRAY_OUT_COLOR = new Color(100, 100, 100, 75);
 	public static final Color GRAY_OUT_COLOR = new Color(208, 207, 205);
 	public static final Color BG_COLOR = new Color(251, 252, 254); //new Color(253, 236, 228); //new Color(240, 225, 225);

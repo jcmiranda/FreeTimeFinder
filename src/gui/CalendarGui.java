@@ -30,6 +30,7 @@ import cal_master.NameIDPair;
 import calendar.CalendarGroup;
 import calendar.CalendarResponses;
 import calendar.Event;
+import calendar.Event.PaintMethod;
 import calendar.UserCal;
 import calendar.When2MeetEvent;
 
@@ -44,6 +45,8 @@ public class CalendarGui {
 //	private ArrayList<Integer> _hoursOfDay = new ArrayList<Integer>();
 	private Communicator _communicator = new Communicator();
 	private UserCalPanel _userCalPanel;
+	private JButton _eventDispButton = new JButton("Toggle Event Display");
+	private PaintMethod _eventDispStyle = PaintMethod.Bars;
 	private EventPanel _eventPanel = new EventPanel(_communicator, this);
 	private UpdatesPanel _updatesPanel = new UpdatesPanel();
 	private FriendBar _friendBar = new FriendBar(this);
@@ -81,6 +84,7 @@ public class CalendarGui {
 		_nextButton.setFocusable(false);
 		_prevButton.addActionListener(new PrevListener());
 		_prevButton.setFocusable(false);
+		_eventDispButton.addActionListener(new EventDispButtonListener());
 
 		_refreshButton.addActionListener(new RefreshListener());
 		_refreshButton.setFocusable(false);
@@ -96,6 +100,7 @@ public class CalendarGui {
 
 	public void setEvent(Event event){
 		_slotGroup= event;
+		event.setPaintMethod(_eventDispStyle);
 		if(_slotGroup != null)
 			_slotGroup.init();
 		System.out.println("SLOT GROUP IN SET EVENT: " + _slotGroup);
@@ -171,6 +176,9 @@ public class CalendarGui {
 		prevPanel.add(_prevButton);
 		prevPanel.add(_nextButton);
 
+		JPanel dispStylePanel = new JPanel();
+		dispStylePanel.add(_eventDispButton);
+		
 		JPanel refreshPanel = new JPanel();
 		refreshPanel.add(_refreshButton);
 
@@ -178,23 +186,29 @@ public class CalendarGui {
 		JPanel buttonPanel = new JPanel(new GridLayout(1, 0));
 		buttonPanel.add(prevPanel);
 //		buttonPanel.add(nextPanel);
+		buttonPanel.add(dispStylePanel);
 		buttonPanel.add(submitPanel);
 		buttonPanel.add(timeFindPanel);
 		buttonPanel.add(refreshPanel);
 
 		JPanel northPanel = new JPanel(new GridLayout(2,1));
 		northPanel.add(buttonPanel);
-		northPanel.add(_friendBar);
+		//northPanel.add(_friendBar);
 
 		_frame.add(northPanel, BorderLayout.NORTH);
+		
+		//JPanel westPanel = new JPanel();
+		//wes
+		_friendBar.setPreferredSize(new Dimension((int) ((FRAME_WIDTH*.25*.25)), 700));
+		_frame.add(_friendBar, BorderLayout.WEST);
 
 		JPanel eastPanel = new JPanel(new GridLayout(0,1));
 		eastPanel.add(_userCalPanel);
 		eastPanel.add(_eventPanel);
 		eastPanel.add(_updatesPanel);
-		eastPanel.setPreferredSize(new Dimension((int) (FRAME_WIDTH*.25 
-//				-_hourOfDayLabels.getPreferredSize().width
-				), 700));
+
+		eastPanel.setPreferredSize(new Dimension((int) ((FRAME_WIDTH*.25)*.75), 700));
+
 		_frame.add(eastPanel, BorderLayout.EAST);
 
 		_frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -255,6 +269,20 @@ public class CalendarGui {
 				_replyPanel.prevWeek();
 		}
 
+	}
+	
+	private class EventDispButtonListener implements ActionListener {
+		public void actionPerformed(ActionEvent arg0) {
+			if(_eventDispStyle == PaintMethod.Bars){
+				_eventDispStyle = PaintMethod.HeatMap;
+			} else if(_eventDispStyle == PaintMethod.HeatMap) {
+				_eventDispStyle = PaintMethod.Bars;
+			}
+		
+		CalendarGui.this.getEvent().setPaintMethod(_eventDispStyle);
+		repaint();
+		
+		}
 	}
 
 	private class TimeFindListener implements ActionListener {

@@ -17,16 +17,22 @@ public class CalendarResponses implements Calendar {
 	private DateTime _endTime;
 	private String _name;
 	private boolean _selected;
+	private String _id;
 
 	private ArrayList<Response> _responses = new ArrayList<Response>();
 
-	public CalendarResponses(DateTime st, DateTime et, String name) {
+	public CalendarResponses(DateTime st, DateTime et, String name, String id) {
 		_startTime = st;
 		_endTime = et;
 		_name = name;
 		_selected = false;
+		_id = id;
 	}
-
+	
+	public String getId() {
+		return _id;
+	}
+	
 	public void setSelected(boolean selected) {
 		_selected = selected;
 	}
@@ -72,7 +78,7 @@ public class CalendarResponses implements Calendar {
 	}
 
 	public CalendarResponses invert(String newName) {
-		CalendarResponses ret = new CalendarResponses(_startTime, _endTime, newName);
+		CalendarResponses ret = new CalendarResponses(_startTime, _endTime, newName, _id);
 
 		DateTime st = _startTime;
 		DateTime et = _responses.get(0).getStartTime();

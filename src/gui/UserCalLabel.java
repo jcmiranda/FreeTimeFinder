@@ -1,6 +1,7 @@
 package gui;
 
 import java.awt.Color;
+import java.awt.Font;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 
@@ -25,9 +26,11 @@ public class UserCalLabel extends JLabel implements MouseListener{
 	private Communicator _communicator;
 	private Color _background;
 	boolean _selected = false;
+	private String _calId;
 	
-	public UserCalLabel(String name, Communicator communicator){
+	public UserCalLabel(String name, String id, Communicator communicator){
 		_calName = name;
+		_calId = id;
 		_communicator = communicator;
 		_checkIcon = new ImageIcon("check_mark.png");
 		_blankIcon = new ImageIcon("grey_square.png"); 
@@ -56,16 +59,22 @@ public class UserCalLabel extends JLabel implements MouseListener{
 		//toggle check mark
 		setSelected(!_selected);
 		//change stored rep of calendar for refresh
-		_communicator.setSelectedInUserCal(_calName, _selected);
+		_communicator.setSelectedInUserCal(_calId, _selected);
 		this.setBackground(_background);
 		this.repaint();
 	}
 
 	@Override
-	public void mouseEntered(MouseEvent e) { }
+	public void mouseEntered(MouseEvent e) {
+		this.setFont(new Font(this.getFont().getName(), Font.BOLD, this.getFont().getSize()));
+		this.setBackground(_background);
+	}
 
 	@Override
-	public void mouseExited(MouseEvent e) { }
+	public void mouseExited(MouseEvent e) { 
+		this.setFont(new Font(this.getFont().getName(), Font.PLAIN, this.getFont().getSize()));
+		this.setBackground(_background);
+	}
 
 	@Override
 	public void mousePressed(MouseEvent e) { }

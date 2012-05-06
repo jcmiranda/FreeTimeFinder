@@ -258,11 +258,11 @@ public class Communicator {
 		return _userCal;
 	}
 	
-	public void setSelectedInUserCal(String calRespName, boolean selected){
+	public void setSelectedInUserCal(String calRespId, boolean selected){
 		if(_userCal != null){
 			ArrayList<CalendarResponses> cals = _userCal.getCalendars();
 			for(CalendarResponses calResp : cals){
-				if(calResp.getName().equals(calRespName)){
+				if(calResp.getId().equals(calRespId)){
 					// TODO 
 					calResp.setSelected(selected);
 				}

@@ -11,12 +11,18 @@ public class UserCal extends CalendarGroup<CalendarResponses> {
 	}
 	
 	public CalendarResponses getCalByName(String name){
-		
 		for(CalendarResponses cal: this.getCalendars()){
 			if(cal.getName().equals(name))
 				return cal;
 		}
-		
+		return null;
+	}
+	
+	public CalendarResponses getCalById(String id){
+		for(CalendarResponses cal: this.getCalendars()){
+			if(cal.getId().equals(id))
+				return cal;
+		}
 		return null;
 	}
 
