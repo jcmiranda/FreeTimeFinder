@@ -99,7 +99,7 @@ public class TimeFinderSlots {
 			
 		}
 		
-		CalendarResponses ret = new CalendarResponses(_start, firstCal.getEndTime(), "");
+		CalendarResponses ret = new CalendarResponses(_start, firstCal.getEndTime(), "", "");
 		int i=0;
 		int num = Math.min(numToReturn, times.size());
 		while(i<num){

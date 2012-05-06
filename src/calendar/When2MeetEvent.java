@@ -19,7 +19,9 @@ public class When2MeetEvent extends Event {
 	}
 	
 	/** Updates **/
-
+	public int getMinInSlot(){
+		return 15;
+	}
 	
 	public int getSlotID(int slotIndex) {
 		try {

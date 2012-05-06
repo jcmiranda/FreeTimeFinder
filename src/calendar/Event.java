@@ -21,6 +21,7 @@ public class Event extends CalendarGroup<CalendarSlots> {
 	private CalendarSlots _userResponse = null;
 	private boolean _userHasSubmitted = false;
 	private boolean _hasUpdates = false;
+	//protected int _minInSlot = 15;
 	protected String _name, _url;
 	protected int _id;
 	
@@ -28,14 +29,19 @@ public class Event extends CalendarGroup<CalendarSlots> {
 	
 	public Event(DateTime start, DateTime end, CalGroupType type){
 		super(start, end, type);
+		//System.out.println("Here " + _minInSlot);
 		initColors();
 	}
 	
 	public Event(DateTime start, DateTime end, Collection<CalendarSlots> cals, CalGroupType type){
 		super(start, end, cals, type);
+		//System.out.println("There " + _minInSlot);
 		initColors();
 	}
 	
+	public int getMinInSlot(){
+		return -1;
+	}
 	
 	public ArrayList<String> getCalOwnerNames() {
 		ArrayList<String> names = new ArrayList<String>();

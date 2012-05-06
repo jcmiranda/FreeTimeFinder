@@ -1,6 +1,7 @@
 package gui;
 
 import static gui.GuiConstants.BG_COLOR;
+
 import static gui.GuiConstants.GRAY_OUT_COLOR;
 import static gui.GuiConstants.LINE_COLOR;
 

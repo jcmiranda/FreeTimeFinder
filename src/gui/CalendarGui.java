@@ -42,9 +42,8 @@ public class CalendarGui {
 	private int _numHours = DEFAULT_END_HOUR - DEFAULT_START_HOUR;
 	private JFrame _frame;
 	private ReplyPanel _replyPanel;
-	private JPanel _dayOfWeekLabels;
-	private JPanel _hourOfDayLabels;
-	private ArrayList<Integer> _hoursOfDay = new ArrayList<Integer>();
+//	private JPanel _hourOfDayLabels;
+//	private ArrayList<Integer> _hoursOfDay = new ArrayList<Integer>();
 	private Communicator _communicator = new Communicator();
 	private UserCalPanel _userCalPanel;
 	private JButton _eventDispButton = new JButton("Toggle Event Display");
@@ -57,7 +56,6 @@ public class CalendarGui {
 	private JButton _nextButton = new JButton(">");
 	private JButton _prevButton = new JButton("<");
 	private JButton _refreshButton = new JButton("Refresh");
-	public static enum DaysOfWeek {Monday, Tuesday, Wednesday, Thursday, Friday, Saturday, Sunday};
 
 	public CalendarGui(){
 		_communicator.startUp();
@@ -90,16 +88,18 @@ public class CalendarGui {
 		
 		_prevButton.addActionListener(new PrevListener());
 		_prevButton.setFont(new Font(GuiConstants.FONT_NAME, _prevButton.getFont().getStyle(), _prevButton.getFont().getSize()));
-		
+		_prevButton.setFocusable(false);
+
 		_eventDispButton.addActionListener(new EventDispButtonListener());
 		_eventDispButton.setFont(new Font(GuiConstants.FONT_NAME, _eventDispButton.getFont().getStyle(), _eventDispButton.getFont().getSize()));
 
 		_refreshButton.addActionListener(new RefreshListener());
 		_refreshButton.setFont(new Font(GuiConstants.FONT_NAME, _refreshButton.getFont().getStyle(), _refreshButton.getFont().getSize()));
+		_refreshButton.setFocusable(false);
+
 	
 		_numHours = 8;
 		
-		makeHourLabels();
 		buildFrame();
 	}
 
@@ -128,7 +128,7 @@ public class CalendarGui {
 		}
 		_updatesPanel.setEvent(_slotGroup);
 		_friendBar.setEvent(_slotGroup);
-		updateHourLabels();
+//		updateHourLabels();
 		_eventPanel.refresh();
 
 	}
@@ -136,69 +136,6 @@ public class CalendarGui {
 
 	public void setUserCal(UserCal userCal){
 		_replyPanel.setUserCal(userCal);
-	}
-
-
-	public void updateHourLabels(){
-		_hourOfDayLabels.removeAll();
-		_hourOfDayLabels.setLayout(new GridLayout(_numHours, 1, 0, 1));
-
-		for (int i=_startHour; i<_startHour + _numHours; i++){
-			JPanel hourLabel = new JPanel();
-			JLabel hLab = new JLabel(i+ ":00", SwingConstants.CENTER);
-			hLab.setFont(new Font(GuiConstants.FONT_NAME, hLab.getFont().getStyle(), hLab.getFont().getSize()));
-			hourLabel.add(hLab, SwingConstants.CENTER);
-			hourLabel.setBackground(GuiConstants.LABEL_COLOR);
-			_hourOfDayLabels.add(hourLabel);
-		}
-		_hourOfDayLabels.revalidate();
-		_hourOfDayLabels.repaint();
-		this.repaint();
-		System.out.println("BOOOOP");
-	}
-
-	public void makeHourLabels(){
-		
-		_hourOfDayLabels = new JPanel();
-		_hourOfDayLabels.setBackground(GuiConstants.LINE_COLOR);
-		_hourOfDayLabels.setLayout(new GridBagLayout());
-		GridBagConstraints c = new GridBagConstraints();
-
-		for (int i=_startHour; i<_startHour + _numHours; i++){
-			JPanel hourLabel = new JPanel();
-			hourLabel.setBorder(null);
-			JLabel hLab = new JLabel(i+ ":00", SwingConstants.CENTER);
-			hLab.setFont(new Font(GuiConstants.FONT_NAME, hLab.getFont().getStyle(), hLab.getFont().getSize()));
-			hourLabel.add(hLab, SwingConstants.CENTER);
-			hourLabel.setBackground(GuiConstants.LABEL_COLOR);
-			c.weightx = 1.0;
-
-
-			if (i==0){
-				c.fill = GridBagConstraints.BOTH;
-				c.insets = new Insets(0,0,0,0);
-				c.weighty = 1.0;
-			}
-			else if (i==_startHour + _numHours -1) {
-				c.fill = GridBagConstraints.BOTH;
-				c.insets = new Insets(0,0,0,0);
-				c.weighty = 1.0;
-			} else if (i==_startHour + _numHours -2) {
-				c.fill = GridBagConstraints.BOTH;
-				c.insets = new Insets(1,0,1,0);
-				c.weighty = 1.0;
-			}
-			else{
-				c.fill = GridBagConstraints.BOTH;
-				c.insets = new Insets(1,0,0,0);
-				c.weighty = 1.0;
-			}
-			c.gridx = 0;
-			c.gridy = i - _startHour;
-			_hourOfDayLabels.add(hourLabel, c);
-		}
-
-
 	}
 
 
@@ -223,8 +160,8 @@ public class CalendarGui {
 
 		calLayout.setHorizontalGroup(
 				calLayout.createSequentialGroup()
-				.addComponent(_hourOfDayLabels, GroupLayout.PREFERRED_SIZE, _hourOfDayLabels.getPreferredSize().width,
-						GroupLayout.PREFERRED_SIZE)
+//				.addComponent(_hourOfDayLabels, GroupLayout.PREFERRED_SIZE, _hourOfDayLabels.getPreferredSize().width,
+//						GroupLayout.PREFERRED_SIZE)
 						.addComponent(_replyPanel, GroupLayout.PREFERRED_SIZE, (int) (FRAME_WIDTH*.75),
 								GroupLayout.PREFERRED_SIZE));
 
@@ -232,8 +169,9 @@ public class CalendarGui {
 				calLayout.createParallelGroup(GroupLayout.Alignment.TRAILING)
 				.addComponent(_replyPanel, GroupLayout.PREFERRED_SIZE, FRAME_HEIGHT - _replyPanel.getPreferredSize().height,
 						GroupLayout.PREFERRED_SIZE)
-						.addComponent(_hourOfDayLabels, GroupLayout.PREFERRED_SIZE, FRAME_HEIGHT - _replyPanel.getPreferredSize().height - _replyPanel.getWeekDayPanelHeight(),
-								GroupLayout.PREFERRED_SIZE));
+//						.addComponent(_hourOfDayLabels, GroupLayout.PREFERRED_SIZE, FRAME_HEIGHT - _replyPanel.getPreferredSize().height - _replyPanel.getWeekDayPanelHeight(),
+//								GroupLayout.PREFERRED_SIZE)
+								);
 
 		_frame.add(calPanel, BorderLayout.CENTER);
 
@@ -269,14 +207,16 @@ public class CalendarGui {
 		
 		JPanel westPanel = new JPanel(new GridLayout(0, 1));
 		westPanel.add(_friendBar);
-		_friendBar.mySetSize(new Dimension((int) ((FRAME_WIDTH*.25 - _hourOfDayLabels.getPreferredSize().width)*.25), 400));
+		_friendBar.mySetSize(new Dimension((int) ((FRAME_WIDTH*.25*.25)), 400));
 		_frame.add(westPanel, BorderLayout.WEST);
 
 		JPanel eastPanel = new JPanel(new GridLayout(0,1));
 		eastPanel.add(_userCalPanel);
 		eastPanel.add(_eventPanel);
 		eastPanel.add(_updatesPanel);
-		eastPanel.setPreferredSize(new Dimension((int) ((FRAME_WIDTH*.25 - _hourOfDayLabels.getPreferredSize().width)*.75), 700));
+
+		eastPanel.setPreferredSize(new Dimension((int) ((FRAME_WIDTH*.25)*.75), 700));
+
 		_frame.add(eastPanel, BorderLayout.EAST);
 
 		_frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);

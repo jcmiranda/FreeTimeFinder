@@ -91,7 +91,7 @@ public class UserCalPanel extends JPanel {
 		
 		if(userCal != null && !userCal.getCalendars().isEmpty()){
 			for(CalendarResponses calResp : userCal.getCalendars()){
-				UserCalLabel label = new UserCalLabel(calResp.getName(), _communicator);
+				UserCalLabel label = new UserCalLabel(calResp.getName(), calResp.getId(), _communicator);
 				label.setSelected(calResp.isSelected());
 				_labels.add(label);
 			}

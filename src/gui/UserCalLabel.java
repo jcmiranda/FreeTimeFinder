@@ -26,9 +26,11 @@ public class UserCalLabel extends JLabel implements MouseListener{
 	private Communicator _communicator;
 	private Color _background;
 	boolean _selected = false;
+	private String _calId;
 	
-	public UserCalLabel(String name, Communicator communicator){
+	public UserCalLabel(String name, String id, Communicator communicator){
 		_calName = name;
+		_calId = id;
 		_communicator = communicator;
 		_checkIcon = new ImageIcon("check_mark.png");
 		_blankIcon = new ImageIcon("grey_square.png"); 
@@ -58,7 +60,7 @@ public class UserCalLabel extends JLabel implements MouseListener{
 		//toggle check mark
 		setSelected(!_selected);
 		//change stored rep of calendar for refresh
-		_communicator.setSelectedInUserCal(_calName, _selected);
+		_communicator.setSelectedInUserCal(_calId, _selected);
 		this.setBackground(_background);
 		this.repaint();
 	}
