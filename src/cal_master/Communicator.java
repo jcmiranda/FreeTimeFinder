@@ -1,5 +1,6 @@
 package cal_master;
 
+import java.awt.Font;
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileWriter;
@@ -40,6 +41,7 @@ import com.google.gdata.util.ServiceException;
 import com.thoughtworks.xstream.XStream;
 
 import ftf.TimeFinderSlots;
+import gui.GuiConstants;
 
 
 public class Communicator {
@@ -90,6 +92,7 @@ public class Communicator {
 		System.out.println("MESSAGE: " + msg);
 		//_loadingLabel.setText("");
 		_loadingLabel.setText(msg);
+		_loadingLabel.setFont(new Font(GuiConstants.FONT_NAME, _loadingLabel.getFont().getStyle(), _loadingLabel.getFont().getSize()));
 //		_loadingLabel.revalidate();
 		//_loadingFrame.invalidate();
 //		_loadingFrame.validate();
@@ -355,6 +358,8 @@ public class Communicator {
 		// If it's a valid url, pull in that when2meet using an importer
 		// If it's not a valid url, error message to user
 
+		showLoadingLabel("Retrieving event...");
+		
 		Event newEvent;
 		newEvent = _eventImporter.importNewEvent(url);
 
@@ -363,6 +368,8 @@ public class Communicator {
 		String id = newEvent.getID() + "";
 		_events.put(id, newEvent);
 		saveOneItem(newEvent, id, eventType);
+		
+		hideLoadingLabel();
 
 		return newEvent;
 	}
@@ -600,8 +607,12 @@ public class Communicator {
 				endHour, 0);
 		
 		//When2MeetEvent newEvent = new When2MeetEvent(startTime, endTime, name, -1, null, null, null);
+		showLoadingLabel("Creating event...");
 		
 		String URL = _exporter.postNewEvent(name, startTime, endTime);
+		
+		hideLoadingLabel();
+		
 		if(URL != null)
 			return addEvent(URL);
 		else{

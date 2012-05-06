@@ -1,5 +1,6 @@
 package gui;
 
+import java.awt.Font;
 import java.awt.Graphics;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
@@ -18,7 +19,7 @@ public class Day extends JPanel{
 	private DayPanel _day;
 	private ClickableDayPanel _clickableDay;
 	private DateTime _today;
-	private JLabel _label;
+	private JLabel _dateOfWeekLabel;
 	private JPanel _labelPanel;
 	
 	public Day(ClickableDayPanel clickableDay, DayPanel day, DateTime today){
@@ -26,7 +27,8 @@ public class Day extends JPanel{
 		_day = day;
 		_clickableDay = clickableDay;
 		
-		_label=new JLabel(today.dayOfWeek().getAsShortText());
+		_dateOfWeekLabel=new JLabel(today.dayOfWeek().getAsShortText());
+		_dateOfWeekLabel.setFont(new Font(GuiConstants.FONT_NAME, _dateOfWeekLabel.getFont().getStyle(), _dateOfWeekLabel.getFont().getSize() - 1));
 		
 		GridBagConstraints c = new GridBagConstraints();
 
@@ -35,7 +37,7 @@ public class Day extends JPanel{
 
 		_labelPanel = new JPanel();
 		_labelPanel.setBackground(GuiConstants.LABEL_COLOR);
-		_labelPanel.add(_label, JPanel.CENTER_ALIGNMENT);
+		_labelPanel.add(_dateOfWeekLabel, JPanel.CENTER_ALIGNMENT);
 		
 		JPanel dayGroup = new JPanel();
 		dayGroup.setLayout(new GridLayout(1,2,GuiConstants.LINE_SPACING,0));
@@ -95,7 +97,7 @@ public class Day extends JPanel{
 		_day.setDay(today);
 		_clickableDay.setDay(today);
 		_today = today;
-		_label.setText(_today.dayOfWeek().getAsShortText() + " " + _today.monthOfYear().getAsShortText() + " " + _today.getDayOfMonth());
+		_dateOfWeekLabel.setText(_today.dayOfWeek().getAsShortText() + " " + _today.monthOfYear().getAsShortText() + " " + _today.getDayOfMonth());
 		this.repaint();
 	}
 
