@@ -340,8 +340,9 @@ public class Communicator {
 	 * @return -- Object representation of the event you want
 	 * @throws URLAlreadyExistsException
 	 * @throws IOException
+	 * @throws InvalidURLException 
 	 */
-	public Event addEvent(String url) throws URLAlreadyExistsException, IOException {
+	public Event addEvent(String url) throws URLAlreadyExistsException, IOException, InvalidURLException {
 		// Check if we have this url already
 		// If we do, throw an error
 		for(Event event : _events.values())
@@ -355,12 +356,7 @@ public class Communicator {
 		// If it's not a valid url, error message to user
 
 		Event newEvent;
-		try {
-			newEvent = _eventImporter.importNewEvent(url);
-		} catch (InvalidURLException e) {
-			JOptionPane.showMessageDialog(null, "Invalid URL");
-			return null;
-		}
+		newEvent = _eventImporter.importNewEvent(url);
 
 		// add event to the xml for storage
 		StoredDataType eventType = calGroupTypeToIndexType(newEvent.getCalGroupType());
@@ -589,7 +585,7 @@ public class Communicator {
 		return _progOwner.getName();
 	}
 
-	public Event createEvent(String name, ArrayList<DateTime> selectedDates, int startHour, int endHour) throws URLAlreadyExistsException, IOException{
+	public Event createEvent(String name, ArrayList<DateTime> selectedDates, int startHour, int endHour) throws URLAlreadyExistsException, IOException, InvalidURLException{
 		DateTime startDay = selectedDates.get(0);
 		DateTime startTime = new DateTime (startDay.getYear(), startDay.getMonthOfYear(), startDay.getDayOfMonth(),
 				startHour, 0);

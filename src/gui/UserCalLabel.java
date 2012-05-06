@@ -1,6 +1,7 @@
 package gui;
 
 import java.awt.Color;
+import java.awt.Font;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 
@@ -64,10 +65,16 @@ public class UserCalLabel extends JLabel implements MouseListener{
 	}
 
 	@Override
-	public void mouseEntered(MouseEvent e) { }
+	public void mouseEntered(MouseEvent e) {
+		this.setFont(new Font(this.getFont().getName(), Font.BOLD, this.getFont().getSize()));
+		this.setBackground(_background);
+	}
 
 	@Override
-	public void mouseExited(MouseEvent e) { }
+	public void mouseExited(MouseEvent e) { 
+		this.setFont(new Font(this.getFont().getName(), Font.PLAIN, this.getFont().getSize()));
+		this.setBackground(_background);
+	}
 
 	@Override
 	public void mousePressed(MouseEvent e) { }
