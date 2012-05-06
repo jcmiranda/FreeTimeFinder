@@ -57,11 +57,14 @@ public class EventPanel extends JPanel {
 		_gui = gui;
 		_addButton = new JButton("Add Event");
 		_addButton.addActionListener(new AddEventListener());
+		_addButton.setFont(new Font(GuiConstants.FONT_NAME, _addButton.getFont().getStyle(), _addButton.getFont().getSize()));
+		
 		_createButton = new JButton ("Create Event");
 		_createButton.addActionListener(new CreateEventListener());
+		_createButton.setFont(new Font(GuiConstants.FONT_NAME, _createButton.getFont().getStyle(), _createButton.getFont().getSize()));
 		
 		_titleLabel = new JLabel("My Events");
-		Font newLabelFont=new Font(_titleLabel.getFont().getName(),Font.BOLD,
+		Font newLabelFont=new Font(GuiConstants.FONT_NAME,Font.BOLD,
 				_titleLabel.getFont().getSize());  
 
 		_titleLabel.setFont(newLabelFont);
@@ -113,9 +116,14 @@ public class EventPanel extends JPanel {
 	
 		horizParGrp.addComponent(_eventsScrollPane);
 		vertSeqGrp.addComponent(_eventsScrollPane);
-		vertSeqGrp.addGroup(_layout.createParallelGroup().addComponent(_addButton).addComponent(_createButton));
-
-		horizParGrp.addGroup(_layout.createSequentialGroup().addComponent(_addButton).addComponent(_createButton));
+		
+//		vertSeqGrp.addGroup(_layout.createParallelGroup().addComponent(_addButton).addComponent(_createButton));
+//		horizParGrp.addGroup(_layout.createSequentialGroup().addComponent(_addButton).addComponent(_createButton));
+		horizParGrp.addComponent(_addButton);
+		vertSeqGrp.addComponent(_addButton);
+		
+		horizParGrp.addComponent(_createButton);
+		vertSeqGrp.addComponent(_createButton);
 
 		_layout.setHorizontalGroup(horizParGrp);
 		_layout.setVerticalGroup(vertSeqGrp);

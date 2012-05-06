@@ -19,19 +19,23 @@ public class UpdatesPanel extends JPanel {
 	private JTextArea _textArea = new JTextArea();
 	private JLabel _titleLabel = new JLabel();
 	private Event _event = null;
+	private Font _newLabelFont, _textAreaFont;
 	
 	public UpdatesPanel(){
 		super();
 		_scrollPane.setViewportView(_textArea);
 		_textArea.setEditable(false);
 		_textArea.setLineWrap(true);
-		Font newLabelFont=new Font(_titleLabel.getFont().getName(),Font.BOLD,
+		_newLabelFont=new Font(_titleLabel.getFont().getName(),Font.BOLD,
 				_titleLabel.getFont().getSize());  
 
-		_titleLabel.setFont(newLabelFont);
+		_titleLabel.setFont(_newLabelFont);
 		_titleLabel.setText("Updates");
 		_textArea.setText(" none");
 		_textArea.setBackground(_titleLabel.getBackground());
+		
+		_textAreaFont = new Font(GuiConstants.FONT_NAME, _textArea.getFont().getStyle(), _textArea.getFont().getSize());
+		_textArea.setFont(_textAreaFont);
 		
 		GroupLayout layout = new GroupLayout(this);
 		this.setLayout(layout);
@@ -60,6 +64,7 @@ public class UpdatesPanel extends JPanel {
 		if(_event != null)
 			eventName = _event.getName();
 		_titleLabel.setText(eventName + " Updates");
+		_titleLabel.setFont(_newLabelFont);
 		
 		String newText = "";
 		
@@ -70,6 +75,7 @@ public class UpdatesPanel extends JPanel {
 			}
 		}
 		_textArea.setText(newText);
+		_textArea.setFont(_textAreaFont);
 	}
 	
 	public void setEvent(Event event){

@@ -1,6 +1,7 @@
 package gui;
 
 import static gui.GuiConstants.BG_COLOR;
+
 import static gui.GuiConstants.GRAY_OUT_COLOR;
 import static gui.GuiConstants.LINE_COLOR;
 
@@ -159,6 +160,7 @@ public class DayPanel extends JPanel{
 			} 
 
 			if(_slots != null) {
+				int numPeeps = _slots.getCalendars().size();
 				for (CalendarSlots s: _slots.getCalendars()){
 					s.paint(brush, this);
 				}

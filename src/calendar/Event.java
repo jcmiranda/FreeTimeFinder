@@ -1,6 +1,7 @@
 package calendar;
 
 import static gui.GuiConstants.SLOT_COLOR;
+import static gui.GuiConstants.MAX_SLOT_OPACITY;
 import gui.DayPanel;
 import gui.GuiConstants;
 
@@ -21,6 +22,7 @@ public class Event extends CalendarGroup<CalendarSlots> {
 	private CalendarSlots _userResponse = null;
 	private boolean _userHasSubmitted = false;
 	private boolean _hasUpdates = false;
+	//protected int _minInSlot = 15;
 	protected String _name, _url;
 	protected int _id;
 	
@@ -28,14 +30,19 @@ public class Event extends CalendarGroup<CalendarSlots> {
 	
 	public Event(DateTime start, DateTime end, CalGroupType type){
 		super(start, end, type);
+		//System.out.println("Here " + _minInSlot);
 		initColors();
 	}
 	
 	public Event(DateTime start, DateTime end, Collection<CalendarSlots> cals, CalGroupType type){
 		super(start, end, cals, type);
+		//System.out.println("There " + _minInSlot);
 		initColors();
 	}
 	
+	public int getMinInSlot(){
+		return -1;
+	}
 	
 	public ArrayList<String> getCalOwnerNames() {
 		ArrayList<String> names = new ArrayList<String>();
@@ -295,7 +302,7 @@ public class Event extends CalendarGroup<CalendarSlots> {
 				visibleCals.add(cal);
 		}
 		
-		int opacity = 100 / visibleCals.size();
+		int opacity = MAX_SLOT_OPACITY / visibleCals.size();
 		java.awt.Color adjOpacityColor = new java.awt.Color(SLOT_COLOR.getRed(), 
 				SLOT_COLOR.getGreen(), SLOT_COLOR.getBlue(), opacity);
 		
