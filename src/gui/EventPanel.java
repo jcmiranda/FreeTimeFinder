@@ -254,7 +254,7 @@ public class EventPanel extends JPanel {
 				new CreateEventDialog(EventPanel.this);
 			}
 			else {
-				ImageIcon grey = new ImageIcon("grey_square.png");
+				ImageIcon grey = new ImageIcon("small_logo_button.png");
 				JOptionPane.showMessageDialog(null, "You are not connected to the Internet.\nKairos cannot create a new event.", "Connection Error", JOptionPane.ERROR_MESSAGE, grey);
 			}
 		}
@@ -309,7 +309,7 @@ public class EventPanel extends JPanel {
 				
 			}
 			else {
-				ImageIcon grey = new ImageIcon("grey_square.png");
+				ImageIcon grey = new ImageIcon("small_logo_button.png");
 				JOptionPane.showMessageDialog(null, "You are not connected to the Internet.\nKairos cannot add an event.", "Connection Error", JOptionPane.ERROR_MESSAGE, grey);
 			}
 		}

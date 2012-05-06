@@ -256,7 +256,7 @@ public class Communicator {
 			refresh();	
 		}
 		else {
-			ImageIcon grey = new ImageIcon("grey_square.png");
+			ImageIcon grey = new ImageIcon("small_logo_button.png");
 			JOptionPane.showMessageDialog(null, "You are not connected to the Internet.\nKairos cannot import current data.", "Connection Error", JOptionPane.ERROR_MESSAGE, grey);
 		}
 	}

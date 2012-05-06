@@ -6,7 +6,6 @@ import static gui.GuiConstants.DEFAULT_START_HOUR;
 import static gui.GuiConstants.LINE_COLOR;
 
 import java.awt.BorderLayout;
-import java.awt.Dimension;
 import java.awt.Graphics;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
@@ -14,10 +13,6 @@ import java.awt.GridLayout;
 import java.awt.Insets;
 
 import javax.swing.JLabel;
-import javax.swing.JPanel;
-import javax.swing.SwingConstants;
-import javax.swing.border.EmptyBorder;
-
 import javax.swing.JPanel;
 
 import org.joda.time.DateTime;
