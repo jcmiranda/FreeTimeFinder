@@ -4,7 +4,15 @@ import static gui.GuiConstants.DAY_SPACING;
 import static gui.GuiConstants.LINE_COLOR;
 
 import java.awt.Graphics;
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
 import java.awt.GridLayout;
+import java.awt.Insets;
+
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+import javax.swing.SwingConstants;
+import javax.swing.border.EmptyBorder;
 
 import org.joda.time.DateTime;
 
@@ -22,7 +30,7 @@ public class ReplyPanel extends CalPanel{
 	private CalendarGroup<CalendarResponses> _respCals;
 	private CalendarGroup<CalendarSlots> _clicks = null;
 	private Day[] _bigDays;
-
+	private JPanel _hourOfDayLabels;
 
 	public ReplyPanel() {
 		super();
@@ -75,11 +83,11 @@ public class ReplyPanel extends CalPanel{
 			_startHour = _slotCals.getStartTime().getHourOfDay();
 			_endHour = _slotCals.getEndTime().getHourOfDay();
 			_numHours = _slotCals.getNumHours();
-//			if (!_slotCals.getCalendars().isEmpty()){
-//				_numHours = _slotCals.getCalendars().get(0).getNumHours();
-//			}
-//			else{
-//			}
+			//			if (!_slotCals.getCalendars().isEmpty()){
+			//				_numHours = _slotCals.getCalendars().get(0).getNumHours();
+			//			}
+			//			else{
+			//			}
 		}
 		//		_thisMonday = _slotCals.getStartTime().minusDays(_slotCals.getStartTime().getDayOfWeek()-1);
 		else{
@@ -117,6 +125,112 @@ public class ReplyPanel extends CalPanel{
 		}
 		configDays();
 	}
+
+
+	public void updateHourLabels(){
+		_hourOfDayLabels.removeAll();
+		_hourOfDayLabels.revalidate();
+		_hourOfDayLabels.setLayout(new GridBagLayout());
+		_hourOfDayLabels.setBackground(GuiConstants.LINE_COLOR);
+
+		GridBagConstraints c = new GridBagConstraints();
+
+		c.fill = GridBagConstraints.BOTH;
+		c.insets = new Insets(0,0,0,0);
+		c.weighty = 0.0;
+		c.gridx = 0;
+		c.gridy = 0;
+		JPanel space = new JPanel();
+		space.add(new JLabel(" "));
+		_hourOfDayLabels.add(space, c);
+
+
+		for (int i=_startHour; i<_startHour + _numHours; i++){
+			JPanel hourLabel = new JPanel();
+			hourLabel.add(new JLabel(i+ ":00", SwingConstants.CENTER), SwingConstants.CENTER);
+			hourLabel.setBackground(GuiConstants.LABEL_COLOR);
+			_hourOfDayLabels.add(hourLabel);
+			c.weightx = 1.0;
+
+			c.insets = new Insets(1,0,0,0);
+			c.weighty = 1.0;
+
+			c.gridx = 0;
+			c.gridy = i - _startHour + 1;
+			System.out.println(c.gridy);
+			_hourOfDayLabels.add(hourLabel, c);
+		}
+		_hourOfDayLabels.revalidate();
+		_hourOfDayLabels.repaint();
+		this.repaint();
+	}
+
+	public void makeHourLabels(){
+		_hourOfDayLabels = new JPanel();
+		_hourOfDayLabels.setBackground(GuiConstants.LINE_COLOR);
+		//		//		_hourOfDayLabels.setLayout(new GridLayout(_numHours, 1, 0, 1));
+		//		//		_hourOfDayLabels.setBorder(new EmptyBorder(0,0,0,0));
+		//		//		
+		//		//		for (int i=_startHour; i<_startHour + _numHours; i++){
+		//		//			JPanel hourLabel = new JPanel();
+		//		//			hourLabel.add(new JLabel(i+ ":00", SwingConstants.CENTER), SwingConstants.CENTER);
+		//		//			hourLabel.setBorder(new EmptyBorder(0,0,0,0));
+		//		//			hourLabel.setBackground(GuiConstants.LABEL_COLOR);
+		//		//			_hourOfDayLabels.add(hourLabel);
+		//		//		}
+		//		_hourOfDayLabels = new JPanel();
+		//		_hourOfDayLabels.setBackground(GuiConstants.LINE_COLOR);
+		//		_hourOfDayLabels.setLayout(new GridBagLayout());
+		//		//		_hourOfDayLabels.setBorder(new EmptyBorder (0,0,0,0));
+		//		GridBagConstraints c = new GridBagConstraints();
+		//
+		//		c.fill = GridBagConstraints.BOTH;
+		//		c.insets = new Insets(1,0,0,0);
+		//		c.weighty = 1.0;
+		//		c.gridx = 0;
+		//		c.gridy = 0;
+		//		JPanel space = new JPanel();
+		//		space.add(new JLabel("a"));
+		//		_hourOfDayLabels.add(space, c);
+		//
+		//		for (int i=_startHour; i<_startHour + _numHours; i++){
+		//			JPanel hourLabel = new JPanel();
+		//			hourLabel.setBorder(null);
+		//			//			hourLabel.setBorder(new EmptyBorder (0,0,0,0));
+		//			hourLabel.add(new JLabel(i+ ":00", SwingConstants.CENTER));
+		//			hourLabel.setBackground(GuiConstants.LABEL_COLOR);
+		//			c.weightx = 1.0;
+		//
+		//
+		//			if (i==0){
+		//				c.fill = GridBagConstraints.BOTH;
+		//				c.insets = new Insets(1,0,0,0);
+		//				c.weighty = 1.0;
+		//			}
+		////			else if (i==_startHour + _numHours -1) {
+		////				c.fill = GridBagConstraints.BOTH;
+		////				c.insets = new Insets(0,0,0,0);
+		////				c.weighty = 1.0;
+		////			} else if (i==_startHour + _numHours -2) {
+		////				c.fill = GridBagConstraints.BOTH;
+		////				c.insets = new Insets(1,0,1,0);
+		////				c.weighty = 1.0;
+		////			}
+		//			else{
+		//				c.fill = GridBagConstraints.BOTH;
+		//				c.insets = new Insets(1,0,0,0);
+		//				c.weighty = 1.0;
+		//			}
+		//			c.gridx = 0;
+		//			c.gridy = i - _startHour + 1;
+		//			System.out.println(c.gridy);
+		//			_hourOfDayLabels.add(hourLabel, c);
+		//		}
+
+
+	}
+
+
 
 	//	public ArrayList<ArrayList<Response>> getDayResps(int dayOfWeek, CalendarGroup<CalendarResponses> respCals){
 	//
@@ -165,6 +279,9 @@ public class ReplyPanel extends CalPanel{
 	@Override
 	public void makeDays() {
 
+		makeHourLabels();
+		this.add(_hourOfDayLabels);
+
 		_bigDays=new Day[7];
 
 		for (int i=0; i<7; i++){
@@ -182,6 +299,8 @@ public class ReplyPanel extends CalPanel{
 	}
 
 	public void configDays(){
+
+		updateHourLabels();
 
 		int numDays = CalendarSlots.getDaysBetween(_startDay, _endDay) +1;
 		this.setLayout(new GridLayout(1,numDays,DAY_SPACING,0));
@@ -213,7 +332,7 @@ public class ReplyPanel extends CalPanel{
 				else
 					_clicks = null;
 
-				
+
 
 				_bigDays[i].getClickableDay().setSlots(_clicks);
 				ctr++;
