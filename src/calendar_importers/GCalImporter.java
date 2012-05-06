@@ -120,7 +120,7 @@ public class GCalImporter implements CalendarsImporter<CalendarResponses> {
 //		return resp.toString();
 //	}
 	
-	public UserCal importCalendarGroup(org.joda.time.DateTime st, org.joda.time.DateTime et, CalendarGroup calgroup) throws IOException, ServiceException, com.google.gdata.util.ServiceException {
+	public UserCal importCalendarGroup(org.joda.time.DateTime st, org.joda.time.DateTime et, UserCal calgroup) throws IOException, ServiceException, com.google.gdata.util.ServiceException {
 		//calendar group
 		GoogleCalendars allCalendars = new GoogleCalendars(st, et, _owner);
 		//set URL to get calendars
@@ -140,17 +140,20 @@ public class GCalImporter implements CalendarsImporter<CalendarResponses> {
 		ArrayList<String> allCals_titles = new ArrayList<String>();
 		ArrayList<CalendarEntry> allCals = new ArrayList<CalendarEntry>();
 		
+		//if stored calendar already
 		if (calgroup != null) {
 			//go through feed results and make calendars
 	        for (int i = 0; i < resultFeed.getEntries().size(); i++) {
 	            CalendarEntry calendar = resultFeed.getEntries().get(i);  
 	            allCals_titles.add(calendar.getTitle().getPlainText());
 	            allCals.add(calendar);
-	            if (((CalendarResponses)calgroup.getCalendars().get(i)).isSelected()) {
+	            CalendarResponses thisCal = calgroup.getCalByName(calendar.getTitle().getPlainText());
+            	if (thisCal != null && thisCal.isSelected()) {
 	            	selectedCals.add(calendar);
 	            }
 	        }
 		}
+		//if importing for the first time
 		else {
 			_buttonClicked = false;
 	        for (int i = 0; i < resultFeed.getEntries().size(); i++) {
@@ -268,7 +271,7 @@ public class GCalImporter implements CalendarsImporter<CalendarResponses> {
     	myImporter.refresh(startTime, endTime);
     }
 	
-	public UserCal refresh(org.joda.time.DateTime st, org.joda.time.DateTime et, CalendarGroup calgroup) {
+	public UserCal refresh(org.joda.time.DateTime st, org.joda.time.DateTime et, UserCal calgroup) {
 		TokenResponse toke = _auth.getRefreshToken();
 		_client.setAuthSubToken(toke.getAccessToken());
 		try {
