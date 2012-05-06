@@ -32,6 +32,7 @@ public class UpdatesPanel extends JPanel {
 		_titleLabel.setText("Updates");
 		_textArea.setText(" none");
 		_textArea.setBackground(_titleLabel.getBackground());
+		_textArea.setFont(new Font(GuiConstants.FONT_NAME, _textArea.getFont().getStyle(), _textArea.getFont().getSize()));
 		
 		GroupLayout layout = new GroupLayout(this);
 		this.setLayout(layout);

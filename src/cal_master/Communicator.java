@@ -422,7 +422,7 @@ public class Communicator {
 		//TODO: deal with URL exception
 		// Update and save all when2meet events
 		When2MeetEvent temp = null;
-		//showLoadingLabel("Retrieving Events...");
+		showLoadingLabel("Retrieving Events...");
 
 		for(Event event : _events.values()){
 			//repull info
@@ -434,7 +434,7 @@ public class Communicator {
 				System.out.println("Invalid event type - not when2meet");
 		}
 
-		//hideLoadingLabel();
+		hideLoadingLabel();
 
 		// Update and save user calendar
 		if(_userCal != null){

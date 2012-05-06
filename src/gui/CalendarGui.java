@@ -7,6 +7,7 @@ import static gui.GuiConstants.FRAME_WIDTH;
 
 import java.awt.BorderLayout;
 import java.awt.Dimension;
+import java.awt.Font;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.GridLayout;
@@ -79,12 +80,22 @@ public class CalendarGui {
 		_userCalPanel = new UserCalPanel(_communicator, this);
 
 		_submitButton.addActionListener(new SubmitListener());
+		_submitButton.setFont(new Font(GuiConstants.FONT_NAME, _submitButton.getFont().getStyle(), _submitButton.getFont().getSize()));
+		
 		_timeFindButton.addActionListener(new TimeFindListener());
+		_timeFindButton.setFont(new Font(GuiConstants.FONT_NAME, _timeFindButton.getFont().getStyle(), _timeFindButton.getFont().getSize()));
+		
 		_nextButton.addActionListener(new NextListener());
+		_nextButton.setFont(new Font(GuiConstants.FONT_NAME, _nextButton.getFont().getStyle(), _nextButton.getFont().getSize()));
+		
 		_prevButton.addActionListener(new PrevListener());
+		_prevButton.setFont(new Font(GuiConstants.FONT_NAME, _prevButton.getFont().getStyle(), _prevButton.getFont().getSize()));
+		
 		_eventDispButton.addActionListener(new EventDispButtonListener());
+		_eventDispButton.setFont(new Font(GuiConstants.FONT_NAME, _eventDispButton.getFont().getStyle(), _eventDispButton.getFont().getSize()));
 
 		_refreshButton.addActionListener(new RefreshListener());
+		_refreshButton.setFont(new Font(GuiConstants.FONT_NAME, _refreshButton.getFont().getStyle(), _refreshButton.getFont().getSize()));
 	
 		_numHours = 8;
 		
@@ -134,7 +145,9 @@ public class CalendarGui {
 
 		for (int i=_startHour; i<_startHour + _numHours; i++){
 			JPanel hourLabel = new JPanel();
-			hourLabel.add(new JLabel(i+ ":00", SwingConstants.CENTER), SwingConstants.CENTER);
+			JLabel hLab = new JLabel(i+ ":00", SwingConstants.CENTER);
+			hLab.setFont(new Font(GuiConstants.FONT_NAME, hLab.getFont().getStyle(), hLab.getFont().getSize()));
+			hourLabel.add(hLab, SwingConstants.CENTER);
 			hourLabel.setBackground(GuiConstants.LABEL_COLOR);
 			_hourOfDayLabels.add(hourLabel);
 		}
@@ -154,7 +167,9 @@ public class CalendarGui {
 		for (int i=_startHour; i<_startHour + _numHours; i++){
 			JPanel hourLabel = new JPanel();
 			hourLabel.setBorder(null);
-			hourLabel.add(new JLabel(i+ ":00", SwingConstants.CENTER));
+			JLabel hLab = new JLabel(i+ ":00", SwingConstants.CENTER);
+			hLab.setFont(new Font(GuiConstants.FONT_NAME, hLab.getFont().getStyle(), hLab.getFont().getSize()));
+			hourLabel.add(hLab, SwingConstants.CENTER);
 			hourLabel.setBackground(GuiConstants.LABEL_COLOR);
 			c.weightx = 1.0;
 
@@ -252,10 +267,10 @@ public class CalendarGui {
 
 		_frame.add(northPanel, BorderLayout.NORTH);
 		
-		//JPanel westPanel = new JPanel();
-		//wes
-		_friendBar.setPreferredSize(new Dimension((int) ((FRAME_WIDTH*.25 - _hourOfDayLabels.getPreferredSize().width)*.25), 700));
-		_frame.add(_friendBar, BorderLayout.WEST);
+		JPanel westPanel = new JPanel(new GridLayout(0, 1));
+		westPanel.add(_friendBar);
+		_friendBar.mySetSize(new Dimension((int) ((FRAME_WIDTH*.25 - _hourOfDayLabels.getPreferredSize().width)*.25), 400));
+		_frame.add(westPanel, BorderLayout.WEST);
 
 		JPanel eastPanel = new JPanel(new GridLayout(0,1));
 		eastPanel.add(_userCalPanel);

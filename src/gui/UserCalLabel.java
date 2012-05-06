@@ -35,6 +35,7 @@ public class UserCalLabel extends JLabel implements MouseListener{
 		_background = this.getBackground();
 		
 		this.setText(_calName);
+		this.setFont(new Font(GuiConstants.FONT_NAME, this.getFont().getStyle(), this.getFont().getSize()));
 		this.setHorizontalAlignment(LEFT);
 		this.addMouseListener(this);
 	}

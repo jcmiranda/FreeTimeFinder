@@ -38,7 +38,7 @@ public class UserCalPanel extends JPanel {
 		_gui = gui;
 		
 		_titleLabel = new JLabel("My Calendar");
-		Font newLabelFont = new Font(_titleLabel.getFont().getName(),Font.BOLD, _titleLabel.getFont().getSize());  
+		Font newLabelFont = new Font(GuiConstants.FONT_NAME,Font.BOLD, _titleLabel.getFont().getSize());  
 		_titleLabel.setFont(newLabelFont);
 		
 		_labelScrollPane = new JScrollPane(_scrollPaneInner);
