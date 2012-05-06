@@ -15,9 +15,11 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
+import java.net.URISyntaxException;
 import java.util.ArrayList;
 
 import javax.swing.GroupLayout;
+import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
@@ -27,7 +29,6 @@ import javax.swing.SwingConstants;
 
 import cal_master.Communicator;
 import cal_master.NameIDPair;
-import calendar.CalendarGroup;
 import calendar.CalendarResponses;
 import calendar.Event;
 import calendar.Event.PaintMethod;
@@ -55,10 +56,20 @@ public class CalendarGui {
 	private JButton _timeFindButton = new JButton("Find Best Times");
 	private JButton _nextButton = new JButton(">");
 	private JButton _prevButton = new JButton("<");
-	private JButton _refreshButton = new JButton("Refresh");
+	//private JButton _refreshButton = new JButton("Refresh");
+	ImageIcon check = new ImageIcon("KairosLogo.png");
+	private JButton _refreshButton;
 	public static enum DaysOfWeek {Monday, Tuesday, Wednesday, Thursday, Friday, Saturday, Sunday};
 
-	public CalendarGui(){
+	public CalendarGui() throws URISyntaxException{
+		_refreshButton = new JButton(check);
+		_refreshButton.setContentAreaFilled(false);
+		_refreshButton.setBorderPainted(false);  
+		_refreshButton.setContentAreaFilled(false);  
+		_refreshButton.setFocusPainted(false);  
+		_refreshButton.setOpaque(false); 
+		 
+		 
 		_communicator.startUp();
 
 		_startHour = 9;
@@ -90,6 +101,13 @@ public class CalendarGui {
 		
 		makeHourLabels();
 		buildFrame();
+	}
+	
+	public void displayButton(JButton button) {
+		button.setBorderPainted(false);  
+		button.setContentAreaFilled(false);  
+		button.setFocusPainted(false);  
+		button.setOpaque(false); 
 	}
 
 	public Event getEvent(){

@@ -6,6 +6,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.IOException;
 import java.net.MalformedURLException;
+import java.net.URISyntaxException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
@@ -57,7 +58,7 @@ public class GCalImporter implements CalendarsImporter<CalendarResponses> {
 		_auth = new GCalAuth();
 	}
 	
-	public UserCal importMyGCal(org.joda.time.DateTime startTime, org.joda.time.DateTime endTime) throws IOException, ServiceException, com.google.gdata.util.ServiceException {
+	public UserCal importMyGCal(org.joda.time.DateTime startTime, org.joda.time.DateTime endTime) throws IOException, ServiceException, com.google.gdata.util.ServiceException, URISyntaxException {
 		//authenticate user
 		GoogleTokenResponse toke = (GoogleTokenResponse) _auth.setAuth();
 		if (toke == null) {
@@ -263,7 +264,7 @@ public class GCalImporter implements CalendarsImporter<CalendarResponses> {
 	}
 	
 	//TEST
-    public static void main(String[] args) throws IOException, ServiceException, com.google.gdata.util.ServiceException {
+    public static void main(String[] args) throws IOException, ServiceException, com.google.gdata.util.ServiceException, URISyntaxException {
     	GCalImporter myImporter = new GCalImporter();
     	org.joda.time.DateTime startTime = new org.joda.time.DateTime(2012, 4, 20, 8, 0);
 		org.joda.time.DateTime endTime = new org.joda.time.DateTime(2012, 4, 29, 23, 0);
