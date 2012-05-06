@@ -96,7 +96,6 @@ public class UserCalPanel extends JPanel {
 				_labels.add(label);
 			}
 		}
-		
 		setUp();
 	}
 

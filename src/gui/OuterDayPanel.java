@@ -14,7 +14,7 @@ import org.joda.time.DateTime;
 
 import calendar.CalendarResponses;
 
-public class Day extends JPanel{
+public class OuterDayPanel extends JPanel{
 
 	private DayPanel _day;
 	private ClickableDayPanel _clickableDay;
@@ -22,7 +22,7 @@ public class Day extends JPanel{
 	private JLabel _dateOfWeekLabel;
 	private JPanel _labelPanel;
 	
-	public Day(ClickableDayPanel clickableDay, DayPanel day, DateTime today){
+	public OuterDayPanel(ClickableDayPanel clickableDay, DayPanel day, DateTime today){
 		super();
 		_day = day;
 		_clickableDay = clickableDay;

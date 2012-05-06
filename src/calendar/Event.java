@@ -302,7 +302,8 @@ public class Event extends CalendarGroup<CalendarSlots> {
 				visibleCals.add(cal);
 		}
 		
-		int opacity = MAX_SLOT_OPACITY / visibleCals.size();
+		int numPeeps = visibleCals.size();
+		int opacity = MAX_SLOT_OPACITY / (numPeeps*numPeeps/2);
 		java.awt.Color adjOpacityColor = new java.awt.Color(SLOT_COLOR.getRed(), 
 				SLOT_COLOR.getGreen(), SLOT_COLOR.getBlue(), opacity);
 		
@@ -319,7 +320,7 @@ public class Event extends CalendarGroup<CalendarSlots> {
 						rect = new Rectangle2D.Double();
 						double startY = iDbl * hDbl / sDbl; //(hrsDbl*4.0);
 						rect.setFrame(0, startY, d.getWidth(), (double) (hDbl/ sDbl)); //(hrsDbl*4.0));
-						brush.setColor(SLOT_COLOR);
+						brush.setColor(adjOpacityColor);
 						brush.fill(rect);
 						}
 				}

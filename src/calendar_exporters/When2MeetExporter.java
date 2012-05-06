@@ -18,12 +18,12 @@ import calendar.When2MeetEvent;
 
 public class When2MeetExporter {
 	private When2MeetEvent _event = null;
-	
+
 	/*
 	public When2MeetExporter() { //When2MeetEvent event) {
 		//_event = event;
 	}*/
-	
+
 	private String encode(String s) {
 		try {
 			return URLEncoder.encode(s, "UTF-8");
@@ -34,7 +34,7 @@ public class When2MeetExporter {
 			return "AHHHHH";
 		}
 	}
-	
+
 	private String binaryAvailability(CalendarSlots cal) {
 		String ret = "";
 		for(int i = 0; i < cal.getTotalSlots(); i++) {
@@ -46,7 +46,7 @@ public class When2MeetExporter {
 		}
 		return ret;
 	}
-	
+
 	private String slotIDs(ArrayList<Integer> slotIndices) {
 		String ret = "";
 		for(int i = 0; i < slotIndices.size(); i++) {
@@ -56,7 +56,7 @@ public class When2MeetExporter {
 		}
 		return ret;
 	}
-	
+
 	private class KeyValue {
 		private String _key, _value;
 		public KeyValue(String key, String value) {
@@ -67,7 +67,7 @@ public class When2MeetExporter {
 			return encode(_key) + "=" + encode(_value);
 		}
 	}
-	
+
 	private String buildKeyValueString(ArrayList<KeyValue> keyValues) {
 		String ret = "";
 		for(int i = 0; i < keyValues.size(); i++) {
@@ -77,7 +77,7 @@ public class When2MeetExporter {
 		}
 		return ret;
 	}
-	
+
 	private String post(ArrayList<KeyValue> keyValues, String urlString) {
 		URL url;
 		String resp = "";
@@ -87,36 +87,36 @@ public class When2MeetExporter {
 			conn.setDoOutput(true);
 			OutputStreamWriter wr = new OutputStreamWriter(conn.getOutputStream());
 			String data = buildKeyValueString(keyValues);
-			
+
 			wr.write(data);
-		    wr.flush();
-		    
-		    // Get the response
-		    BufferedReader rd = new BufferedReader(new InputStreamReader(conn.getInputStream()));
-		    
-		    String line;
-		    while ((line = rd.readLine()) != null) 
-		        resp += line;
-		    
-		    wr.close();		
+			wr.flush();
+
+			// Get the response
+			BufferedReader rd = new BufferedReader(new InputStreamReader(conn.getInputStream()));
+
+			String line;
+			while ((line = rd.readLine()) != null) 
+				resp += line;
+
+			wr.close();		
 		} catch (Exception e) {
 
 		}
 		// TODO implement properly
 		return resp;
 	}
-	
+
 	public void postAvailability(CalendarSlots cal, ArrayList<Integer> slotIndices, Availability avail) {
 		URL url;
 		String changeToAvailable = "false";
 		if(avail == Availability.free) {
 			changeToAvailable = "true";
 		}
-		
+
 		for(int i = 0; i < slotIndices.size(); i++) {
 			cal.setAvail(slotIndices.get(i), avail);
 		}
-		
+
 		String person = ""+cal.getOwner().getID();
 		String eventID = _event.getID()+"";
 		String slots = slotIDs(slotIndices);
@@ -128,15 +128,19 @@ public class When2MeetExporter {
 		keyValues.add(new KeyValue("slots", slots));
 		keyValues.add(new KeyValue("availability", binaryAvailability(cal)));
 		keyValues.add(new KeyValue("ChangeToAvailable", changeToAvailable));
-		
+
 		String resp = post(keyValues, "http://www.when2meet.com/SaveTimes.php");
 		System.out.println(resp);
 	}
-	
-	public class NameAlreadyExistsException extends Exception {
-		
+
+	public class EmptyEventException extends Exception {
+
 	}
-	
+
+	public class NameAlreadyExistsException extends Exception {
+
+	}
+
 	// When this method is called, this calendar owner has a name unique from
 	// all the other calendar owners
 	public void createNewUser(When2MeetEvent event, CalendarSlots cal, String password) throws NameAlreadyExistsException {
@@ -162,18 +166,18 @@ public class When2MeetExporter {
 	public void createNewUserNoPassword(When2MeetEvent event, CalendarSlots cal) throws NameAlreadyExistsException {
 		createNewUser(event, cal, "");
 	}
-	
+
 	private String startTime(DateTime time) {
 		return ""+time.getHourOfDay();
 	}
-	
+
 	private String endTime(DateTime time) {
 		if(time.getMinuteOfHour() == 59)
 			return ""+0;
 		else
 			return ""+time.getHourOfDay();
 	}
-	
+
 	// TODO fix to deal with non consecutive dates. Fix to deal with dates not in the same year
 	private String possibleDates(DateTime st, DateTime et) {
 		DateTime curDate = st;
@@ -185,9 +189,12 @@ public class When2MeetExporter {
 		ret = ret.substring(0, ret.length()-1);
 		return ret;
 	}
-	
-	public void postAllAvailability(When2MeetEvent event) throws NameAlreadyExistsException {
+
+	public void postAllAvailability(When2MeetEvent event) throws NameAlreadyExistsException, EmptyEventException {
 		_event = event;
+		if (event.getUserResponse() == null) {
+			throw new EmptyEventException();
+		}
 		System.out.println("Posting all availability for user " 
 				+ _event.getUserResponse().getOwner().getName());
 		CalendarSlots cal = event.getUserResponse();
@@ -202,7 +209,7 @@ public class When2MeetExporter {
 		this.postAvailability(cal, busySlots, Availability.busy);
 		this.postAvailability(cal, freeSlots, Availability.free);
 	}
-	
+
 	public String postNewEvent(String name, DateTime st, DateTime et) {
 		//_event = event;
 		ArrayList<KeyValue> keyValues = new ArrayList<KeyValue>();
@@ -212,7 +219,7 @@ public class When2MeetExporter {
 		keyValues.add(new KeyValue("NoEarlierThan", startTime(st)));
 		keyValues.add(new KeyValue("NoLaterThan", endTime(et)));
 		String toParse = this.post(keyValues, "http://www.when2meet.com/SaveNewEvent.php");
-		
+
 		Pattern eventIDPattern = Pattern.compile("<html><body onload=\\\"window.location='/\\?(\\d+)-([a-zA-Z0-9]*)'\\\"></body></html>");
 		Matcher matcher = eventIDPattern.matcher(toParse);
 		if(matcher.matches()) {
@@ -220,15 +227,15 @@ public class When2MeetExporter {
 			//_event.setID(id);
 			String second = matcher.group(2);
 			//_event.setURL("http://www.when2meet.com/?"+id+"-"+second);
-			
+
 			String URL = "http://www.when2meet.com/?"+id+"-"+second;
 			System.out.println("URL set to: " + URL);
 			return URL;
-			
+
 		}
-		
+
 		return null;
-		
+
 	}
-	
+
 }
