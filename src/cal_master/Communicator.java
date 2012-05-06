@@ -31,6 +31,7 @@ import calendar.UserCal;
 import calendar.When2MeetEvent;
 import calendar.When2MeetOwner;
 import calendar_exporters.When2MeetExporter;
+import calendar_exporters.When2MeetExporter.EmptyEventException;
 import calendar_exporters.When2MeetExporter.NameAlreadyExistsException;
 import calendar_importers.CalendarsImporter;
 import calendar_importers.EventImporter;
@@ -646,6 +647,8 @@ public class Communicator {
 					didNotPost = false;
 				} catch (NameAlreadyExistsException e) {
 					getNewUserName((When2MeetEvent) event, event.getUserResponse().getOwner().getName());
+				} catch  (EmptyEventException e){
+					//TODO MAJOR MAJOR TODO
 				}
 			}
 		} else {

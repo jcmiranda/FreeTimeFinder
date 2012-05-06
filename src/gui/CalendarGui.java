@@ -11,14 +11,20 @@ import java.awt.Font;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.GridLayout;
+import java.awt.Image;
 import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
+import java.awt.image.BufferedImage;
+import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 
+import javax.imageio.ImageIO;
 import javax.swing.GroupLayout;
+import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
@@ -55,7 +61,8 @@ public class CalendarGui {
 	private JButton _timeFindButton = new JButton("Find Best Times");
 	private JButton _nextButton = new JButton(">");
 	private JButton _prevButton = new JButton("<");
-	private JButton _refreshButton = new JButton("Refresh");
+	private JButton _refreshButton = new JButton("⟳");
+	JLabel picLabel;
 
 	public CalendarGui(){
 		_communicator.startUp();
@@ -82,22 +89,35 @@ public class CalendarGui {
 		
 		_timeFindButton.addActionListener(new TimeFindListener());
 		_timeFindButton.setFont(new Font(GuiConstants.FONT_NAME, _timeFindButton.getFont().getStyle(), _timeFindButton.getFont().getSize()));
+		_timeFindButton.setToolTipText("Find Best Times");
 		
 		_nextButton.addActionListener(new NextListener());
 		_nextButton.setFont(new Font(GuiConstants.FONT_NAME, _nextButton.getFont().getStyle(), _nextButton.getFont().getSize()));
+//		_nextButton.setToolTipText("Next");
 		
 		_prevButton.addActionListener(new PrevListener());
 		_prevButton.setFont(new Font(GuiConstants.FONT_NAME, _prevButton.getFont().getStyle(), _prevButton.getFont().getSize()));
 		_prevButton.setFocusable(false);
-
+//		_prevButton.setToolTipText("Previous");
+		
 		_eventDispButton.addActionListener(new EventDispButtonListener());
-		_eventDispButton.setFont(new Font(GuiConstants.FONT_NAME, _eventDispButton.getFont().getStyle(), _eventDispButton.getFont().getSize()));
+//		_eventDispButton.setFont(new Font(GuiConstants.FONT_NAME, _eventDispButton.getFont().getStyle(), _eventDispButton.getFont().getSize()));
 
 		_refreshButton.addActionListener(new RefreshListener());
 		_refreshButton.setFont(new Font(GuiConstants.FONT_NAME, _refreshButton.getFont().getStyle(), _refreshButton.getFont().getSize()));
 		_refreshButton.setFocusable(false);
-
+		_refreshButton.setToolTipText("Refresh");
 	
+		BufferedImage kairosLogo;
+		try {
+			kairosLogo = ImageIO.read(new File("KairosLogo.png"));
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+//			e.printStackTrace();
+			kairosLogo = null;
+		}
+		picLabel = new JLabel(new ImageIcon(kairosLogo));
+		
 		_numHours = 8;
 		
 		buildFrame();
@@ -198,7 +218,9 @@ public class CalendarGui {
 		buttonPanel.add(submitPanel);
 		buttonPanel.add(timeFindPanel);
 		buttonPanel.add(refreshPanel);
+//		buttonPanel.add( picLabel );
 
+		
 		JPanel northPanel = new JPanel(new GridLayout(2,1));
 		northPanel.add(buttonPanel);
 		//northPanel.add(_friendBar);

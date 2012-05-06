@@ -319,7 +319,7 @@ public class Event extends CalendarGroup<CalendarSlots> {
 						rect = new Rectangle2D.Double();
 						double startY = iDbl * hDbl / sDbl; //(hrsDbl*4.0);
 						rect.setFrame(0, startY, d.getWidth(), (double) (hDbl/ sDbl)); //(hrsDbl*4.0));
-						brush.setColor(SLOT_COLOR);
+						brush.setColor(adjOpacityColor);
 						brush.fill(rect);
 						}
 				}

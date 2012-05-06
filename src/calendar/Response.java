@@ -73,7 +73,6 @@ public class Response implements Comparable<Response>{
 
 	public void paint(Graphics2D brush, DayPanel d, int startX, int endX, Color color){
 
-//		RoundRectangle2D.Double rect = new RoundRectangle2D.Double();
 		Rectangle2D.Double rect = new Rectangle2D.Double();
 		
 		double endXDbl = (double) endX;
@@ -90,7 +89,6 @@ public class Response implements Comparable<Response>{
 		
 		double startY = (stMinDbl/60.0 + stHrDbl - dayStDbl)/numHrDbl*heightDbl;
 		double endY =  (endMinDbl/60.0 + endHrDbl - dayStDbl)/numHrDbl*heightDbl;
-//		rect.setRoundRect(startX+RESPONSE_SPACING, startY, (int) ((double) endX-startX-2*RESPONSE_SPACING), endY - startY, RECT_ARC_DIM, RECT_ARC_DIM);		
 		rect.setRect(startXDbl+spaceDbl, startY, endXDbl-startXDbl-2*spaceDbl, endY - startY);		
 
 		brush.setColor(color);
