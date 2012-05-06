@@ -248,15 +248,20 @@ public class CalendarGui {
 
 		JPanel northPanel = new JPanel(new GridLayout(2,1));
 		northPanel.add(buttonPanel);
-		northPanel.add(_friendBar);
+		//northPanel.add(_friendBar);
 
 		_frame.add(northPanel, BorderLayout.NORTH);
+		
+		//JPanel westPanel = new JPanel();
+		//wes
+		_friendBar.setPreferredSize(new Dimension((int) ((FRAME_WIDTH*.25 - _hourOfDayLabels.getPreferredSize().width)*.25), 700));
+		_frame.add(_friendBar, BorderLayout.WEST);
 
 		JPanel eastPanel = new JPanel(new GridLayout(0,1));
 		eastPanel.add(_userCalPanel);
 		eastPanel.add(_eventPanel);
 		eastPanel.add(_updatesPanel);
-		eastPanel.setPreferredSize(new Dimension((int) (FRAME_WIDTH*.25 - _hourOfDayLabels.getPreferredSize().width), 700));
+		eastPanel.setPreferredSize(new Dimension((int) ((FRAME_WIDTH*.25 - _hourOfDayLabels.getPreferredSize().width)*.75), 700));
 		_frame.add(eastPanel, BorderLayout.EAST);
 
 		_frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
