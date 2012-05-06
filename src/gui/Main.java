@@ -1,5 +1,6 @@
 package gui;
 
+import java.net.URISyntaxException;
 import java.util.ArrayList;
 
 import org.joda.time.DateTime;
@@ -17,7 +18,7 @@ import calendar.When2MeetOwner;
 public class Main {
 
 	
-	public static void main(String[] args) {
+	public static void main(String[] args) throws URISyntaxException {
 
 		CalendarGui gui = new CalendarGui(); //g, w);
 	}

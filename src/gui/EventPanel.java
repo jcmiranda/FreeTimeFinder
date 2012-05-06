@@ -12,6 +12,7 @@ import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.net.URL;
 import java.util.ArrayList;
 
 import javax.swing.GroupLayout;
@@ -242,7 +243,20 @@ public class EventPanel extends JPanel {
 
 		@Override
 		public void actionPerformed(ActionEvent e) {
-			new CreateEventDialog(EventPanel.this);
+			URL url = null;
+			try {
+				url = new URL("http://www.google.com");
+			} catch (MalformedURLException e1) {
+				// TODO Auto-generated catch block
+				e1.printStackTrace();
+			}
+			if (Communicator.webConnected(url)) {
+				new CreateEventDialog(EventPanel.this);
+			}
+			else {
+				ImageIcon grey = new ImageIcon("grey_square.png");
+				JOptionPane.showMessageDialog(null, "You are not connected to the Internet.\nKairos cannot create a new event.", "Connection Error", JOptionPane.ERROR_MESSAGE, grey);
+			}
 		}
 		
 	}
@@ -255,38 +269,51 @@ public class EventPanel extends JPanel {
 
 		@Override
 		public void actionPerformed(ActionEvent arg0) {
-			
-			String url = JOptionPane.showInputDialog("Please enter the URL of the When2Meet you would like to add");
-			Event newEvent = null;
-			boolean noEvent = true;
-			while(noEvent){
-				try {
-					if(url == null)
-						break;
-					newEvent = _communicator.addEvent(url);
-					noEvent = false;
-				} catch (MalformedURLException e) {
-					url = JOptionPane.showInputDialog("Invalid URL. Try Again.");
-				} catch (URLAlreadyExistsException e) {
-					url = JOptionPane.showInputDialog("That event is already stored. Try Again.");
-				} catch (IOException e) {
-					url = JOptionPane.showInputDialog("Invalid URL. Try Again.");
-				} catch (InvalidURLException e) {
-					// TODO Auto-generated catch block
-					url = JOptionPane.showInputDialog("Invalid URL. Try Again.");
-				}
+			URL testURL = null;
+			try {
+				testURL = new URL("http://www.google.com");
+			} catch (MalformedURLException e1) {
+				// TODO Auto-generated catch block
+				e1.printStackTrace();
 			}
-			
-			if(newEvent != null){
-				//TODO do something more useful than "BLOOP"
-				if(newEvent.getName() == null){
-					newEvent.setName("BLOOP");
+			if (Communicator.webConnected(testURL)) {
+				String url = JOptionPane.showInputDialog("Please enter the URL of the When2Meet you would like to add");
+				Event newEvent = null;
+				boolean noEvent = true;
+				while(noEvent){
+					try {
+						if(url == null)
+							break;
+						newEvent = _communicator.addEvent(url);
+						noEvent = false;
+					} catch (MalformedURLException e) {
+						url = JOptionPane.showInputDialog("Invalid URL. Try Again.");
+					} catch (URLAlreadyExistsException e) {
+						url = JOptionPane.showInputDialog("That event is already stored. Try Again.");
+					} catch (IOException e) {
+						url = JOptionPane.showInputDialog("Invalid URL. Try Again.");
+					} catch (InvalidURLException e) {
+						// TODO Auto-generated catch block
+						url = JOptionPane.showInputDialog("Invalid URL. Try Again.");
+					}
 				}
-				addEvent(newEvent);
+				
+				if(newEvent != null){
+					//TODO do something more useful than "BLOOP"
+					if(newEvent.getName() == null){
+						newEvent.setName("BLOOP");
+					}
+					addEvent(newEvent);
+				}
+				
+				
 			}
-			
-			
+			else {
+				ImageIcon grey = new ImageIcon("grey_square.png");
+				JOptionPane.showMessageDialog(null, "You are not connected to the Internet.\nKairos cannot add an event.", "Connection Error", JOptionPane.ERROR_MESSAGE, grey);
+			}
 		}
+		
 		
 	}
 	

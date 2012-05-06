@@ -1,15 +1,23 @@
 package cal_master;
 
+import java.awt.BorderLayout;
+import java.awt.Dimension;
 import java.awt.Font;
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.Writer;
+import java.net.MalformedURLException;
+import java.net.URISyntaxException;
+import java.net.URL;
+import java.net.URLConnection;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 
+import javax.swing.ImageIcon;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
@@ -65,7 +73,7 @@ public class Communicator {
 	private JFrame _loadingFrame;
 	private JLabel _loadingLabel;
 	private JPanel _loadingPanel;
-
+		
 	private XStream _xstream = new XStream();
 
 	private static final double ATTENDEE_PERCENTAGE = 0;
@@ -139,8 +147,9 @@ public class Communicator {
 	
 	/**
 	 * Initializes program by pulling in all saved data and creating objects from it
+	 * @throws URISyntaxException 
 	 */
-	public void startUp() {
+	public void startUp() throws URISyntaxException {
 
 		setUpXStream();
 		
@@ -190,45 +199,66 @@ public class Communicator {
 		
 		//if no calendar, pull in users calendar	
 		if(_userCal == null) {
-			// TODO add a never option
-			Object[] options = {"Yes", "Not now"};
-			int n = JOptionPane.showOptionDialog(null, "Would you like to import your calendar?",
-					"", JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE, null,
-					options, options[0]);
-			if(n == 0) {
-
-				// from where would you like to import?
-				Object[] calOptions = {"Google Calendar" };
-				Object selectedValue = JOptionPane.showInputDialog(null, "Choose a calendar type to import.", "", 
-						JOptionPane.INFORMATION_MESSAGE, null, calOptions, calOptions[0]);
-
-				// switch on user response
-				if(selectedValue == "Google Calendar"){
-					this.setCalImporter(new GCalImporter());
-					_userCalImporterType = StoredDataType.GCalImporter;
-					saveOneItem(_userCalImporter, _userCalImporterID, _userCalImporterType);
-					
-					try {
-						showLoadingLabel("Retrieving calendar...");
-
-						_userCal = ((GCalImporter)_userCalImporter).importMyGCal(DateTime.now(), DateTime.now().plusDays(30));
-
-						// Save their calendar importer to save their updated auth codes
+			URL googleTestURL = null;
+			try {
+				googleTestURL = new URL("http://www.google.com");
+			} catch (MalformedURLException e1) {
+				// TODO Auto-generated catch block
+				e1.printStackTrace();
+			}
+			if (webConnected(googleTestURL)) {
+				// TODO add a never option
+				Object[] options = {"Yes", "Not now"};
+				int n = JOptionPane.showOptionDialog(null, "Would you like to import your calendar?",
+						"", JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE, null,
+						options, options[0]);
+				if(n == 0) {
+	
+					// from where would you like to import?
+					Object[] calOptions = {"Google Calendar" };
+					Object selectedValue = JOptionPane.showInputDialog(null, "Choose a calendar type to import.", "", 
+							JOptionPane.INFORMATION_MESSAGE, null, calOptions, calOptions[0]);
+	
+					// switch on user response
+					if(selectedValue == "Google Calendar"){
+						this.setCalImporter(new GCalImporter());
+						_userCalImporterType = StoredDataType.GCalImporter;
 						saveOneItem(_userCalImporter, _userCalImporterID, _userCalImporterType);
-
-						hideLoadingLabel();
-
-					} catch (IOException e) {
-					} catch (ServiceException e) {
+						
+						try {
+							showLoadingLabel("Retrieving calendar...");
+	
+							_userCal = ((GCalImporter)_userCalImporter).importMyGCal(DateTime.now(), DateTime.now().plusDays(30));
+	
+							// Save their calendar importer to save their updated auth codes
+							saveOneItem(_userCalImporter, _userCalImporterID, _userCalImporterType);
+	
+							hideLoadingLabel();
+	
+						} catch (IOException e) {
+						} catch (ServiceException e) {
+						}
 					}
 				}
 			}
 		}
-				
+		
+		URL testInternetURL = null;
+		try {
+			testInternetURL = new URL("http://www.google.com");
+		} catch (MalformedURLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
 		// Refresh when2meet events and calendars
-
-		refresh();
-
+		if (webConnected(testInternetURL)) {
+			refresh();	
+		}
+		else {
+			ImageIcon grey = new ImageIcon("grey_square.png");
+			JOptionPane.showMessageDialog(null, "You are not connected to the Internet.\nKairos cannot import current data.", "Connection Error", JOptionPane.ERROR_MESSAGE, grey);
+		}
 	}
 	
 	/**
@@ -702,5 +732,20 @@ public class Communicator {
 		saveOneItem(_userCal, _userCalID, calGroupTypeToIndexType(_userCal.getCalGroupType()));
 		saveOneItem(_userCalImporter, _userCalImporterID, _userCalImporterType);
 
+	}
+	
+	public static boolean webConnected(URL url) {
+		try {
+			URLConnection conn = url.openConnection();
+			conn.setConnectTimeout(3000);  
+			conn.setReadTimeout(3000);  
+			InputStream in = conn.getInputStream();
+			in.close();
+		} 
+		catch (IOException e) {
+			// TODO Auto-generated catch block
+			return false;
+		}
+		return true;
 	}
 }

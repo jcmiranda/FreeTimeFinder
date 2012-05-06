@@ -2,9 +2,13 @@ package calendar_importers;
 
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
+import java.net.MalformedURLException;
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.net.URL;
 import java.net.URLEncoder;
+
+import cal_master.Communicator;
 
 import com.google.api.client.auth.oauth2.TokenResponse;
 import com.google.api.client.googleapis.auth.oauth2.GoogleAuthorizationCodeTokenRequest;
@@ -34,7 +38,7 @@ public class GCalAuth {
 		return null;
 	}
 	
-	public TokenResponse setAuth() {
+	public TokenResponse setAuth() throws MalformedURLException {
 		//server
 		LocalServer server = null;
 		try {
