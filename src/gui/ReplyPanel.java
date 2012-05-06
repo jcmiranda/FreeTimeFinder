@@ -36,7 +36,7 @@ public class ReplyPanel extends JPanel{
 	private Event _event;
 	private UserCal _userCal;
 	private CalendarGroup<CalendarSlots> _clicks = null;
-	private Day[] _bigDays;
+	private OuterDayPanel[] _bigDays;
 	private JPanel _hourOfDayLabels;
 	private HourOfDayPanel _innerLabelPanel;
 	private JPanel _bigDayPanel;
@@ -108,12 +108,13 @@ public class ReplyPanel extends JPanel{
 			_numHours = 8;
 		}
 
+		setBestTimes(null);
 		setViewDate();
 		configDays();
 	}
 
 	public void setBestTimes(CalendarResponses bestTimes){
-		for (Day d: _bigDays){
+		for (OuterDayPanel d: _bigDays){
 			d.setBestTimes(bestTimes);
 		}
 	}
@@ -200,10 +201,10 @@ public class ReplyPanel extends JPanel{
 		makeHourLabels();
 		this.add(_hourOfDayLabels, BorderLayout.WEST);
 
-		_bigDays=new Day[7];
+		_bigDays=new OuterDayPanel[7];
 
 		for (int i=0; i<7; i++){
-			_bigDays[i]=new Day(new ClickableDayPanel(), new DayPanel(), new DateTime());
+			_bigDays[i]=new OuterDayPanel(new ClickableDayPanel(), new DayPanel(), new DateTime());
 			_bigDayPanel.add(_bigDays[i]);
 		}	
 		
@@ -256,7 +257,7 @@ public class ReplyPanel extends JPanel{
 
 	public void paintComponent(Graphics g){
 		super.paintComponent(g);
-		for(Day day: _bigDays){
+		for(OuterDayPanel day: _bigDays){
 			day.repaint();
 		}
 	}

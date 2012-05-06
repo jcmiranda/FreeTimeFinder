@@ -211,8 +211,7 @@ public class CalendarSlots implements Calendar {
 						rect = new Rectangle2D.Double();
 						double startY = iDbl * hDbl / sDbl; //(hrsDbl*4.0);
 						rect.setFrame(0, startY, d.getWidth(), (double) (hDbl/ sDbl)); //(hrsDbl*4.0));
-						Color relativeSlotShade = new Color(SLOT_COLOR.getRed(), SLOT_COLOR.getGreen(), SLOT_COLOR.getBlue(), 100);
-						brush.setColor(relativeSlotShade);
+						brush.setColor(SLOT_COLOR);
 						brush.fill(rect);
 //						brush.draw(rect);
 					}

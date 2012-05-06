@@ -39,6 +39,7 @@ import calendar.UserCal;
 import calendar.When2MeetEvent;
 import calendar.When2MeetOwner;
 import calendar_exporters.When2MeetExporter;
+import calendar_exporters.When2MeetExporter.EmptyEventException;
 import calendar_exporters.When2MeetExporter.NameAlreadyExistsException;
 import calendar_importers.CalendarsImporter;
 import calendar_importers.EventImporter;
@@ -534,42 +535,49 @@ public class Communicator {
 		Event toReturn = _events.get(id);
 		
 		//if we don't have a stored response for the user
-		if(toReturn.getUserResponse() == null && !toReturn.getCalendars().isEmpty()){
-
-			//ask user if they've responded to the event
-			int resp = JOptionPane.showConfirmDialog(null, "Have you already responded to this When2Meet?", "", JOptionPane.YES_NO_OPTION);
-
-			//if they have, ask them to select their response from the list of all responses
-			if(resp == JOptionPane.YES_OPTION){
-
-				Object[] responseNames = new Object[toReturn.getCalendars().size()];
-
-				for(int i=0; i< toReturn.getCalendars().size(); i++){
-					responseNames[i] = toReturn.getCalendars().get(i).getOwner().getName();
-				}
-
-				Object selected = JOptionPane.showInputDialog(null, "Please select the name that represents your response from the list below",
-						"", JOptionPane.INFORMATION_MESSAGE, null,
-						responseNames, responseNames[0]);
-
-				//take the selected cal, remove it from the list, and set it to be the userResponse
-				if(selected != null){
-					CalendarSlots user = null;
-					try {
-						user = toReturn.getCalByName(selected.toString());
-					} catch (CalByThatNameNotFoundException e) {
-						// TODO Auto-generated catch block
-						e.printStackTrace();
+		if(toReturn.getUserResponse() == null){
+			
+			boolean makeNewUserResponse = true;
+			
+			if(!toReturn.getCalendars().isEmpty()){
+				//ask user if they've responded to the event
+				int resp = JOptionPane.showConfirmDialog(null, "Have you already responded to this When2Meet?", "", JOptionPane.YES_NO_OPTION);
+	
+				//if they have, ask them to select their response from the list of all responses
+				if(resp == JOptionPane.YES_OPTION){
+	
+					makeNewUserResponse = false;
+					
+					Object[] responseNames = new Object[toReturn.getCalendars().size()];
+	
+					for(int i=0; i< toReturn.getCalendars().size(); i++){
+						responseNames[i] = toReturn.getCalendars().get(i).getOwner().getName();
 					}
-					assert user.getOwner() != null;
-					toReturn.setUserResponse(user);
-					toReturn.setUserSubmitted(true);
-					saveOneItem(toReturn, toReturn.getID()+"", calGroupTypeToIndexType(toReturn.getCalGroupType()));
-					// ASDF
+	
+					Object selected = JOptionPane.showInputDialog(null, "Please select the name that represents your response from the list below",
+							"", JOptionPane.INFORMATION_MESSAGE, null,
+							responseNames, responseNames[0]);
+	
+					//take the selected cal, remove it from the list, and set it to be the userResponse
+					if(selected != null){
+						CalendarSlots user = null;
+						try {
+							user = toReturn.getCalByName(selected.toString());
+						} catch (CalByThatNameNotFoundException e) {
+							// TODO Auto-generated catch block
+							e.printStackTrace();
+						}
+						assert user.getOwner() != null;
+						toReturn.setUserResponse(user);
+						toReturn.setUserSubmitted(true);
+						saveOneItem(toReturn, toReturn.getID()+"", calGroupTypeToIndexType(toReturn.getCalGroupType()));
+						// ASDF
+					}
 				}
 			}
-			//if they haven't, set userResponse to be a new CalendarSlots with them as the owner
-			else{
+			
+			//if they haven't already responded (including the case where NO ONE has responded), set userResponse to be a new CalendarSlots with them as the owner
+			if(makeNewUserResponse){
 				toReturn.setUserResponse(new CalendarSlots(toReturn.getStartTime(), toReturn.getEndTime(), 15, Availability.free));
 				toReturn.getUserResponse().setOwner(new When2MeetOwner(_progOwner.getName(), -1));
 				saveOneItem(toReturn, toReturn.getID()+"", calGroupTypeToIndexType(toReturn.getCalGroupType()));
@@ -676,6 +684,8 @@ public class Communicator {
 					didNotPost = false;
 				} catch (NameAlreadyExistsException e) {
 					getNewUserName((When2MeetEvent) event, event.getUserResponse().getOwner().getName());
+				} catch  (EmptyEventException e){
+					//TODO MAJOR MAJOR TODO
 				}
 			}
 		} else {
