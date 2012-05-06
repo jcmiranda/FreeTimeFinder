@@ -17,6 +17,6 @@ public class xml_test {
 //		} catch (MalformedURLException e) {
 //			e.printStackTrace();
 //		}
-		com.saveAll();
+		//com.saveAll();
 	}
 }

@@ -2,6 +2,7 @@ package calendar_importers_test;
 import java.io.IOException;
 
 import calendar.CalendarSlots;
+import calendar.Event.CalByThatNameNotFoundException;
 import calendar.When2MeetEvent;
 import calendar_exporters.When2MeetExporter.NameAlreadyExistsException;
 import calendar_importers.When2MeetImporter;
@@ -20,7 +21,7 @@ public class When2MeetTest {
 	}
 	*/
 	
-	public static void main(String[] args) throws IOException, NameAlreadyExistsException {
+	public static void main(String[] args) throws IOException, NameAlreadyExistsException, CalByThatNameNotFoundException {
 		//String str = JOptionPane.showInputDialog(null, "Enter When2Meet URL: ", 
 		//		"http://www.when2meet.com/?353066-BlwWl", 1);
 		//String url = "http://www.when2meet.com/?353066-BlwWl";
