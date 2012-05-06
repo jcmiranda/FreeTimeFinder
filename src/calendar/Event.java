@@ -289,10 +289,16 @@ public class Event extends CalendarGroup<CalendarSlots> {
 
 		int numSlotsInDay = cals.get(0).getSlotsInDay();
 		
-		int numCals = cals.size();
-		if(this.userHasSubmitted()) {
-			numCals++;
+		ArrayList<CalendarSlots> visibleCals = new ArrayList<CalendarSlots>();
+		for(CalendarSlots cal : cals) {
+			if(cal.isVisible())
+				visibleCals.add(cal);
 		}
+		
+		int opacity = 100 / visibleCals.size();
+		java.awt.Color adjOpacityColor = new java.awt.Color(SLOT_COLOR.getRed(), 
+				SLOT_COLOR.getGreen(), SLOT_COLOR.getBlue(), opacity);
+		
 		
 		for(CalendarSlots cal : cals) {
 			if(cal.isVisible()){

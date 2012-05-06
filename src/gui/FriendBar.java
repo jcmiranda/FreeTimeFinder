@@ -30,7 +30,7 @@ public class FriendBar extends JPanel {
 	public FriendBar(CalendarGui gui){
 		_gui = gui;
 //		this.setLayout(_layout);
-		_scrollPaneInner.setPreferredSize(new Dimension((int) (GuiConstants.FRAME_WIDTH*0.75), 25));
+		//_scrollPaneInner.setPreferredSize(new Dimension((int) (GuiConstants.FRAME_WIDTH*0.75), 25));
 //		this.setMaximumSize(new Dimension((int) (GuiConstants.FRAME_WIDTH*0.75), this.getMaximumSize().height));
 		
 //		this.setLayout(new GridLayout(0,(int) (GuiConstants.FRAME_WIDTH*0.75)/5));
@@ -54,7 +54,7 @@ public class FriendBar extends JPanel {
 		_friendLabels.clear();
 		_scrollPaneInner.removeAll();
 		_scrollPaneInner.setLayout(_layout);
-		_scrollPaneInner.setPreferredSize(new Dimension((int) (GuiConstants.FRAME_WIDTH*0.75), 25));
+		//_scrollPaneInner.setPreferredSize(new Dimension((int) (GuiConstants.FRAME_WIDTH*0.75), 25));
 //		this.setMaximumSize(new Dimension((int) (GuiConstants.FRAME_WIDTH*0.75), this.getMaximumSize().height));
 //
 		SequentialGroup horizGrp = _layout.createSequentialGroup();
