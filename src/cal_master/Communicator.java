@@ -633,32 +633,40 @@ public class Communicator {
 	public void submitResponse(String eventID, CalendarSlots response) {
 		Event event = _events.get(eventID);	
 
+		boolean didNotCancel = true;
+		
 		// If this response did not come from an existing response on the web, and was
 		// created entirely in our program. Need to get a user name to associate with this response
 		if(response.getOwner() == null) {
 			if(getOwnerName() == null)
-				getNewOwnerName();
-			response.setOwner(new When2MeetOwner(getOwnerName(), -1));
+				didNotCancel = getNewOwnerName();
+			if(didNotCancel)
+				response.setOwner(new When2MeetOwner(getOwnerName(), -1));
 		} else if(response.getOwner().getName() == null) {
 			if(getOwnerName() == null)
-				getNewOwnerName();
-			response.getOwner().setName(getOwnerName());
+				didNotCancel = getNewOwnerName();
+			if(didNotCancel)
+				response.getOwner().setName(getOwnerName());
 		} 
-		
-		if(event.getCalGroupType() == CalGroupType.When2MeetEvent) {
-			boolean didNotPost = true;
-			while(didNotPost){
-				try {
-					_exporter.postAllAvailability((When2MeetEvent) event);
-					didNotPost = false;
-				} catch (NameAlreadyExistsException e) {
-					getNewUserName((When2MeetEvent) event, event.getUserResponse().getOwner().getName());
-				}
-			}
-		} else {
-			System.out.println("Tried to submit a response for event type not when2meet");
-		}
 
+		if(didNotCancel){
+		
+			if(event.getCalGroupType() == CalGroupType.When2MeetEvent) {
+				boolean didNotPost = true;
+				while(didNotPost){
+					try {
+						_exporter.postAllAvailability((When2MeetEvent) event);
+						didNotPost = false;
+					} catch (NameAlreadyExistsException e) {
+						getNewUserName((When2MeetEvent) event, event.getUserResponse().getOwner().getName());
+					}
+				}
+			} else {
+				System.out.println("Tried to submit a response for event type not when2meet");
+			}
+			
+		}
+			
 		//save to index
 		saveOneItem(event, String.valueOf(event.getID()), calGroupTypeToIndexType(event.getCalGroupType()));
 	}
