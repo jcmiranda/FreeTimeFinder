@@ -16,6 +16,7 @@ import javax.swing.JComboBox;
 import javax.swing.JDialog;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
 import javax.swing.JToggleButton;
@@ -38,7 +39,9 @@ public class CreateEventDialog{
 	private ArrayList<DateTime> _selectedDates = new ArrayList<DateTime>();
 	private JComboBox _startHour;
 	private JComboBox _endHour;
+	public static enum DaysOfWeek {Monday, Tuesday, Wednesday, Thursday, Friday, Saturday, Sunday};
 
+	//	public enum daysO()
 
 	public CreateEventDialog(EventPanel eventPanel){
 		_today = new DateTime();
@@ -81,11 +84,14 @@ public class CreateEventDialog{
 
 		String[] strings = new String[25];
 		for (int i=0; i<=24; i++){
-			if (i==0 || i ==24){
+			if (i==0) {
 				strings[i] = "midnight";
 			}
 			else if (i ==12){
 				strings[i]="noon";
+			}
+			else if (i ==24) {
+				strings[i] = "midnight ";
 			}
 			else {
 				strings[i] = new String (Integer.toString(i) + ":00");
@@ -185,6 +191,12 @@ public class CreateEventDialog{
 		_calendar.removeAll();
 		_monthAndYear.setText(_firstOfMonth.monthOfYear().getAsText() + " " + _firstOfMonth.getYear());
 
+		for (DaysOfWeek d : DaysOfWeek.values()){
+			JPanel p = new JPanel();
+			p.add(new JLabel(d.name()));
+			_calendar.add(p);
+		}
+
 		for (int i=1; i<_firstOfMonth.getDayOfWeek(); i++){
 			_calendar.add(new JPanel());
 		}
@@ -266,10 +278,16 @@ public class CreateEventDialog{
 		@Override
 		public void actionPerformed(ActionEvent e) {
 			if (e.getActionCommand().equals("OK")){
-				_dialog.dispose();
-				if (_selectedDates.size() != 0){
+				if (_eventName.getText().equals("New Event Name")){
+					JOptionPane.showMessageDialog(new JFrame(), "Please choose a name for your event.");
+				} else if (_selectedDates.size() == 0){
+					JOptionPane.showMessageDialog(new JFrame(), "Please choose dates for your event.");
+				} else if (_startHour.getSelectedIndex() >= _endHour.getSelectedIndex()){
+					JOptionPane.showMessageDialog(new JFrame(), "Please choose appropriate times for your event.");
+				} else {
+					_dialog.dispose();
 					Collections.sort(_selectedDates);
-					
+
 					_eventPanel.createEvent(_eventName.getText(), _selectedDates, _startHour.getSelectedIndex(), _endHour.getSelectedIndex());
 				}
 			}

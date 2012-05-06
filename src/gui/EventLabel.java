@@ -22,6 +22,7 @@ public class EventLabel extends JLabel implements MouseListener{
 		_communicator = communicator;
 		_gui = gui;
 		setName(name);
+		this.setFont(new Font(GuiConstants.FONT_NAME, this.getFont().getStyle(), this.getFont().getSize()));
 		this.addMouseListener(this);
 	}
 	

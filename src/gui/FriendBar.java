@@ -3,6 +3,7 @@ package gui;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Graphics;
+import java.awt.GridLayout;
 import java.util.ArrayList;
 
 import javax.swing.GroupLayout;
@@ -24,20 +25,49 @@ public class FriendBar extends JPanel {
 	private ArrayList<CalendarSlots> _tempInvisible = new ArrayList<CalendarSlots>();
 	private JPanel _scrollPaneInner = new JPanel();
 	private JScrollPane _scrollPane;
-	private GroupLayout _layout = new GroupLayout(_scrollPaneInner);
+	private GridLayout _spiLayout = new GridLayout(0, 1, 0, 10); // new GroupLayout(_scrollPaneInner);
+	private GroupLayout _layout = new GroupLayout(this);
 	private CalendarGui _gui;
 	
 	public FriendBar(CalendarGui gui){
 		_gui = gui;
 //		this.setLayout(_layout);
+		//_scrollPaneInner.setPreferredSize(new Dimension((int) (GuiConstants.FRAME_WIDTH*0.75), 25));
 	//	_scrollPaneInner.setPreferredSize(new Dimension((int) (_scrollPane, 25));
 //		this.setMaximumSize(new Dimension((int) (GuiConstants.FRAME_WIDTH*0.75), this.getMaximumSize().height));
 		
 //		this.setLayout(new GridLayout(0,(int) (GuiConstants.FRAME_WIDTH*0.75)/5));
-		_scrollPaneInner.setLayout(_layout);
+		_scrollPaneInner.setLayout(_spiLayout);
 		_scrollPane = new JScrollPane(_scrollPaneInner);
 		_scrollPane.setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_ALWAYS);
+		_scrollPane.setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS);
+		
+		this.setLayout(_layout);
+		_layout.setAutoCreateGaps(true);
+		_layout.setAutoCreateContainerGaps(true);
+	
+		
+		SequentialGroup vertSeqGrp = _layout.createSequentialGroup();
+		ParallelGroup horizParGrp = _layout.createParallelGroup(GroupLayout.Alignment.CENTER);
+		
+		// vertSeqGrp.addComponent(_titleLabel);
+		// horizParGrp.addComponent(_titleLabel);
+	
+		horizParGrp.addComponent(_scrollPane);
+		vertSeqGrp.addComponent(_scrollPane);
+
+		_layout.setHorizontalGroup(horizParGrp);
+		_layout.setVerticalGroup(vertSeqGrp);
+		
+		
 		this.add(_scrollPane);
+	}
+	
+	public void mySetSize(Dimension d) {
+		int width = d.width;
+		int height = d.height;
+		this.setSize(d);
+		_scrollPane.setSize(width, height);
 	}
 	
 	public void setLabelColor(String labelName, Color color){
@@ -84,7 +114,23 @@ public class FriendBar extends JPanel {
 //		_gui.repaint();
 		
 		_scrollPaneInner.removeAll();
-		_scrollPaneInner.setLayout(_layout);
+		_scrollPaneInner.setLayout(_spiLayout);
+		//_scrollPaneInner.setPreferredSize(new Dimension((int) (GuiConstants.FRAME_WIDTH*0.75), 25));
+
+		if(_event != null)
+			for(CalendarSlots cal : _event.getCalendars()){
+
+				FriendLabel toAdd = new FriendLabel(this, cal.getOwner().getName(), cal.getColor());
+				toAdd.setVisible(true);
+
+				_friendLabels.add(toAdd);
+
+				_scrollPaneInner.add(toAdd); 
+			}
+	
+		//		this.setMaximumSize(new Dimension((int) (GuiConstants.FRAME_WIDTH*0.75), this.getMaximumSize().height));
+
+		/*
 		_layout.setAutoCreateGaps(true);
 		_layout.setAutoCreateContainerGaps(true);
 		
@@ -105,7 +151,7 @@ public class FriendBar extends JPanel {
 		
 		_layout.setVerticalGroup(vertGrp);
 		_layout.setHorizontalGroup(horizGrp);
-		
+		*/
 		
 		this.revalidate();
 		_gui.repaint();

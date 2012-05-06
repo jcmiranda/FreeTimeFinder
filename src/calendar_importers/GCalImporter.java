@@ -145,12 +145,13 @@ public class GCalImporter implements CalendarsImporter<CalendarResponses> {
 			//go through feed results and make calendars
 	        for (int i = 0; i < resultFeed.getEntries().size(); i++) {
 	            CalendarEntry calendar = resultFeed.getEntries().get(i);  
-	            allCals_titles.add(calendar.getTitle().getPlainText());
 	            allCals.add(calendar);
-	            CalendarResponses thisCal = calgroup.getCalByName(calendar.getTitle().getPlainText());
-            	if (thisCal != null && thisCal.isSelected()) {
+	            //CalendarResponses thisCal = calgroup.getCalByName(calendar.getTitle().getPlainText());
+	            CalendarResponses thisCal = calgroup.getCalById(calendar.getId());
+            	if (thisCal != null && thisCal.isSelected()){ // && thisCal.getId().equals(calendar.getId())) { 
 	            	selectedCals.add(calendar);
 	            }
+            	allCals_titles.add(calendar.getTitle().getPlainText());
 	        }
 		}
 		//if importing for the first time
@@ -204,8 +205,7 @@ public class GCalImporter implements CalendarsImporter<CalendarResponses> {
         for (int i = 0; i < allCals.size(); i++) {
             CalendarEntry calendar = allCals.get(i);             
             //make new calendar (for ALL calendars)
-            CalendarResponses currCal = new CalendarResponses(st, et, calendar.getTitle().getPlainText());          
-           
+            CalendarResponses currCal = new CalendarResponses(st, et, calendar.getTitle().getPlainText(), calendar.getId());          
             for (CalendarEntry c : selectedCals) {
             	if (calendar == c) {
             		currCal.setSelected(true);
@@ -214,7 +214,6 @@ public class GCalImporter implements CalendarsImporter<CalendarResponses> {
                     currCal.setResponses(calResponses);  
             	}
             }
-                      
             //add calendar to group of calendars
             allCalendars.addCalendar(currCal);
             
@@ -263,6 +262,7 @@ public class GCalImporter implements CalendarsImporter<CalendarResponses> {
 		return responseList;
 	}
 	
+	//TEST
     public static void main(String[] args) throws IOException, ServiceException, com.google.gdata.util.ServiceException {
     	GCalImporter myImporter = new GCalImporter();
     	org.joda.time.DateTime startTime = new org.joda.time.DateTime(2012, 4, 20, 8, 0);

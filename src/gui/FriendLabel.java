@@ -20,6 +20,7 @@ public class FriendLabel extends JLabel implements MouseListener{
 		_textColor = textColor;
 		this.setText(_friendName);
 		this.setForeground(_textColor);
+		this.setFont(new Font(GuiConstants.FONT_NAME, Font.PLAIN, 14));
 		this.addMouseListener(this);
 	}
 

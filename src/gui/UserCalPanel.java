@@ -38,7 +38,7 @@ public class UserCalPanel extends JPanel {
 		_gui = gui;
 		
 		_titleLabel = new JLabel("My Calendar");
-		Font newLabelFont = new Font(_titleLabel.getFont().getName(),Font.BOLD, _titleLabel.getFont().getSize());  
+		Font newLabelFont = new Font(GuiConstants.FONT_NAME,Font.BOLD, _titleLabel.getFont().getSize());  
 		_titleLabel.setFont(newLabelFont);
 		
 		_labelScrollPane = new JScrollPane(_scrollPaneInner);
@@ -91,7 +91,7 @@ public class UserCalPanel extends JPanel {
 		
 		if(userCal != null && !userCal.getCalendars().isEmpty()){
 			for(CalendarResponses calResp : userCal.getCalendars()){
-				UserCalLabel label = new UserCalLabel(calResp.getName(), _communicator);
+				UserCalLabel label = new UserCalLabel(calResp.getName(), calResp.getId(), _communicator);
 				label.setSelected(calResp.isSelected());
 				_labels.add(label);
 			}

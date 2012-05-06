@@ -5,8 +5,10 @@ import static gui.GuiConstants.RESPONSE_NAME_COLOR;
 import static gui.GuiConstants.RESPONSE_NAME_SPACING;
 import static gui.GuiConstants.RESPONSE_SPACING;
 import gui.DayPanel;
+import gui.GuiConstants;
 
 import java.awt.Color;
+import java.awt.Font;
 import java.awt.Graphics2D;
 import java.awt.font.FontRenderContext;
 import java.awt.font.LineBreakMeasurer;
@@ -94,6 +96,7 @@ public class Response implements Comparable<Response>{
 		brush.setColor(color);
 		brush.fill(rect);
 		brush.setColor(RESPONSE_NAME_COLOR);
+		brush.setFont(new Font(GuiConstants.FONT_NAME, brush.getFont().getStyle(), brush.getFont().getSize()));
 		if (getName()!=null){
 			drawStringRect(brush,
 					(int) (startXDbl+spaceDbl + RESPONSE_NAME_SPACING),

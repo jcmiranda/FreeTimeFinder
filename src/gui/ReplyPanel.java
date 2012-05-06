@@ -5,8 +5,18 @@ import static gui.GuiConstants.DEFAULT_END_HOUR;
 import static gui.GuiConstants.DEFAULT_START_HOUR;
 import static gui.GuiConstants.LINE_COLOR;
 
+import java.awt.BorderLayout;
+import java.awt.Dimension;
 import java.awt.Graphics;
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
 import java.awt.GridLayout;
+import java.awt.Insets;
+
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+import javax.swing.SwingConstants;
+import javax.swing.border.EmptyBorder;
 
 import javax.swing.JPanel;
 
@@ -27,7 +37,9 @@ public class ReplyPanel extends JPanel{
 	private UserCal _userCal;
 	private CalendarGroup<CalendarSlots> _clicks = null;
 	private Day[] _bigDays;
-	
+	private JPanel _hourOfDayLabels;
+	private HourOfDayPanel _innerLabelPanel;
+	private JPanel _bigDayPanel;
 	protected int _startHour = DEFAULT_START_HOUR;
 	protected int _endHour = DEFAULT_END_HOUR;
 	protected int _numHours =  DEFAULT_END_HOUR - DEFAULT_START_HOUR;
@@ -35,24 +47,22 @@ public class ReplyPanel extends JPanel{
 	protected DateTime _endDay;
 	protected DayPanel[] _days;
 
-
 	public ReplyPanel() {
 		super();
-		this.setBackground(LINE_COLOR);
 		_startDay = new DateTime();
 		_endDay = _startDay.plusDays(6);
+		_bigDayPanel = new JPanel();
+		_bigDayPanel.setBackground(LINE_COLOR);
 		makeDays();
 		this.repaint();
-		this.setLayout(new GridLayout(1,7,DAY_SPACING,0));
-		this.setBackground(LINE_COLOR);
 	}
 
 	public ReplyPanel(UserCal userCal, Event event) {
 		super();
-
-		this.setBackground(LINE_COLOR);
 		_startDay = new DateTime();
 		_endDay = _startDay.plusDays(6);
+		_bigDayPanel = new JPanel();
+		_bigDayPanel.setBackground(LINE_COLOR);
 		makeDays();
 
 		_event = event;
@@ -86,7 +96,7 @@ public class ReplyPanel extends JPanel{
 	public void setEvent(Event slotCals){
 		_event = slotCals;
 		System.out.println("PASSED INTO SET SLOTS: " + slotCals);
-		System.out.println("SLOT CALS : " + _event);
+
 		if(_event != null){
 			_startHour = _event.getStartTime().getHourOfDay();
 			_endHour = _event.getEndTime().getHourOfDay();
@@ -128,6 +138,42 @@ public class ReplyPanel extends JPanel{
 		configDays();
 	}
 
+	public void updateHourLabels(){
+		_innerLabelPanel.updateHours(_startHour, _numHours);
+		_hourOfDayLabels.revalidate();
+		_hourOfDayLabels.repaint();
+		this.repaint();
+	}
+
+	public void makeHourLabels(){
+
+		_hourOfDayLabels = new JPanel();
+		
+		GridBagConstraints c1 = new GridBagConstraints();
+		_innerLabelPanel = new HourOfDayPanel(_startHour, _numHours);
+		_hourOfDayLabels.setLayout(new GridBagLayout());
+		_hourOfDayLabels.setBackground(GuiConstants.LINE_COLOR);
+		
+		JPanel space = new JPanel();
+		space.add(new JLabel("        "));
+		c1.fill = GridBagConstraints.HORIZONTAL;
+		c1.weightx = 1.0;
+		c1.weighty = 0.0;
+		c1.insets = new Insets(0,0,1,0);
+		c1.gridx = 0;
+		c1.gridy = 0;
+		_hourOfDayLabels.add(space, c1);
+		
+		c1.fill = GridBagConstraints.BOTH;
+		c1.weightx = 1.0;
+		c1.weighty = 1.0;
+		c1.gridx = 0;
+		c1.gridy = 1;
+		c1.insets = new Insets(0,0,0,0);
+		_hourOfDayLabels.add(_innerLabelPanel, c1);
+	}
+
+
 	public void setViewDate(){
 
 		if (_event!=null){
@@ -147,19 +193,28 @@ public class ReplyPanel extends JPanel{
 
 	public void makeDays() {
 
+		this.setLayout(new BorderLayout());
+		_bigDayPanel.setLayout(new GridLayout(1,7,DAY_SPACING,0));
+		
+		
+		makeHourLabels();
+		this.add(_hourOfDayLabels, BorderLayout.WEST);
+
 		_bigDays=new Day[7];
 
 		for (int i=0; i<7; i++){
 			_bigDays[i]=new Day(new ClickableDayPanel(), new DayPanel(), new DateTime());
-			this.add(_bigDays[i]);
+			_bigDayPanel.add(_bigDays[i]);
 		}	
 		
+		this.add(_bigDayPanel, BorderLayout.CENTER);
 	}
 
 	public void configDays(){
 
+		updateHourLabels();
+		
 		int numDays = CalendarSlots.getDaysBetween(_startDay, _endDay) +1;
-		this.setLayout(new GridLayout(1,numDays,DAY_SPACING,0));
 		int ctr = 0;
 
 		for (int i=0; i<7; i++){
@@ -179,16 +234,18 @@ public class ReplyPanel extends JPanel{
 						_clicks.addCalendar(((When2MeetEvent) _event).getUserResponse());
 					}
 					else{
+						System.out.println(_event.getMinInSlot());
+//						System.exit(0);
 						_clicks.addCalendar(new CalendarSlots(_event.getStartTime(),
 								_event.getEndTime(),
-								_event.getCalendars().get(0).getMinInSlot(),
+								_event.getMinInSlot(),
 								Availability.busy));
 					}
 				}
 				else
 					_clicks = null;
 
-				
+
 
 				_bigDays[i].getClickableDay().setSlots(_clicks);
 				ctr++;
