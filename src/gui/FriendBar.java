@@ -99,8 +99,8 @@ public class FriendBar extends JPanel {
 	
 				_friendLabels.add(toAdd);
 				
-				vertGrp.addComponent(toAdd);
-				horizGrp.addComponent(toAdd);
+				vertGrp.addGroup(_layout.createParallelGroup().addComponent(toAdd));
+				horizGrp.addGroup(_layout.createSequentialGroup().addComponent(toAdd));
 			}
 		
 		_layout.setVerticalGroup(vertGrp);
