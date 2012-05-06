@@ -58,18 +58,19 @@ public class CalendarGui {
 	private UpdatesPanel _updatesPanel = new UpdatesPanel();
 	private FriendBar _friendBar = new FriendBar(this);
 	private JButton _submitButton = new JButton("Submit Response");
-	private JButton _timeFindButton = new JButton("Find Best Times");
+	//private JButton _timeFindButton = new JButton("Find Best Times");
 	private JButton _nextButton = new JButton(">");
 	private JButton _prevButton = new JButton("<");
 	//private JButton _refreshButton = new JButton("Refresh");
 	//ImageIcon submitIcon = new ImageIcon("KairosLogo.png");
-	//ImageIcon findTimeIcon = new ImageIcon("KairosLogo.png");
+	ImageIcon _findTimeIcon = new ImageIcon("small_logo_button.png");
 	ImageIcon _toggleIcon = new ImageIcon("small_switch_button.png");
 	ImageIcon _toggleIconInverted = new ImageIcon("small_switch_button_invert.png");
 	ImageIcon _refreshIcon = new ImageIcon("small_refresh_button.png");
 	ImageIcon _refreshIconInverted = new ImageIcon("small_refresh_button_invert");
 	private JButton _refreshButton = new JButton(_refreshIcon);
 	private JButton _eventDispButton = new JButton(_toggleIcon);
+	private JButton _timeFindButton = new JButton(_findTimeIcon);
 	public static enum DaysOfWeek {Monday, Tuesday, Wednesday, Thursday, Friday, Saturday, Sunday};
 	JLabel picLabel;
 
@@ -77,7 +78,8 @@ public class CalendarGui {
 		
 		this.displayButton(_refreshButton);
 		this.displayButton(_eventDispButton);
-	
+		this.displayButton(_timeFindButton);
+		
 		_communicator.startUp();
 
 		_startHour = 9;
@@ -383,7 +385,7 @@ public class CalendarGui {
 				repaint();
 			}
 			else {
-				ImageIcon grey = new ImageIcon("grey_square.png");
+				ImageIcon grey = new ImageIcon("small_logo_button.png");
 				JOptionPane.showMessageDialog(null, "You are not connected to the Internet.\nKairos cannot import current data.", "Connection Error", JOptionPane.ERROR_MESSAGE, grey);
 			}
 		}
