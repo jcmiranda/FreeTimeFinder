@@ -160,6 +160,7 @@ public class DayPanel extends JPanel{
 			} 
 
 			if(_slots != null) {
+				int numPeeps = _slots.getCalendars().size();
 				for (CalendarSlots s: _slots.getCalendars()){
 					s.paint(brush, this);
 				}
