@@ -9,6 +9,11 @@ import com.sun.net.httpserver.HttpExchange;
 import com.sun.net.httpserver.HttpHandler;
 import com.sun.net.httpserver.HttpServer;
 
+/*
+ * Purpose: Google authentication.  After sending request for Google authentication, Google responds with a GET request
+ * of its own (sending access code) which must be listened for by a local server
+ */
+
 public class LocalServer {
 	
 	private static String _code;
@@ -21,14 +26,26 @@ public class LocalServer {
         _server.start();
     }
     
+    /*
+     * return access code
+     */
     public String getCode() {
     	return _code;
     }
     
+    /*
+     * Kill server
+     */
     public void exit() {
     	_server.stop(10);
     }
 
+    /*
+     * GET handler
+     * Purpose: when GET request sent to localhost, this class picks up URI and parses it for parameters
+     * The only parameter is the code if authentication successful or "error" if not
+     * After parsing, localhost responds with blank page displaying either success or error message
+     */
     static class MyHandler implements HttpHandler {
         public void handle(HttpExchange t) throws IOException {
         	URI requestedUri = t.getRequestURI();
@@ -46,7 +63,6 @@ public class LocalServer {
                 t.close();
                 _code = "error";
         	}
-        	System.out.println("code = "+_code);
             String response = "<html><head><title>Test</title></head><body><p>Thank you, this window can now be closed.</p></body></html>";
             t.sendResponseHeaders(200, response.length());
             OutputStream os = t.getResponseBody();

@@ -38,11 +38,11 @@ import calendar_importers.EventImporter.*;
 import com.google.gdata.util.ServiceException;
 import com.thoughtworks.xstream.XStream;
 
-import ftf.TimeFinderSlots;
+import ftf.TimeFinder;
 import gui.GuiConstants;
 
 /**
- * Represents the main Òserver classÓ that receives requests from the GUI (client) and delegates to the 
+ * Represents the main ï¿½server classï¿½ that receives requests from the GUI (client) and delegates to the 
  * appropriate class (e.g. importers, exporters, converters, XML storage)	
  *
  */
@@ -61,12 +61,14 @@ public class Communicator {
 	private When2MeetExporter _exporter = new When2MeetExporter();
 
 	private Converter _converter = new Converter();
-	private TimeFinderSlots _timeFinder = new TimeFinderSlots();
+	private TimeFinder _timeFinder = new TimeFinder();
 	private ProgramOwner _progOwner = new ProgramOwner();
 	private JDialog _loadingDialog;
 //	private JFrame _loadingFrame;
 	private JLabel _loadingLabel;
 //	private JPanel _loadingPanel;
+	
+	private ImageIcon _kairosIcon = new ImageIcon("KairosIcon.png");
 		
 	private XStream _xstream = new XStream();
 
@@ -108,7 +110,7 @@ public class Communicator {
 //		_loadingDialog.getContentPane().repaint();
 //		
 //		_loadingDialog.repaint();
-		_loadingDialog.pack();
+//		_loadingDialog.pack();
 //		_loadingDialog.invalidate();
 //		_loadingDialog.validate();
 //		_loadingDialog.repaint();
@@ -208,21 +210,21 @@ public class Communicator {
 			try {
 				googleTestURL = new URL("http://www.google.com");
 			} catch (MalformedURLException e1) {
-				// TODO Auto-generated catch block
 				e1.printStackTrace();
 			}
 			if (webConnected(googleTestURL)) {
 				// TODO add a never option
 				Object[] options = {"Yes", "Not now"};
 				int n = JOptionPane.showOptionDialog(null, "Would you like to import your calendar?",
-						"", JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE, null,
+						"", JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE, _kairosIcon,
 						options, options[0]);
+								
 				if(n == 0) {
 	
 					// from where would you like to import?
 					Object[] calOptions = {"Google Calendar" };
 					Object selectedValue = JOptionPane.showInputDialog(null, "Choose a calendar type to import.", "", 
-							JOptionPane.INFORMATION_MESSAGE, null, calOptions, calOptions[0]);
+							JOptionPane.INFORMATION_MESSAGE, _kairosIcon, calOptions, calOptions[0]);
 	
 					// switch on user response
 					if(selectedValue == "Google Calendar"){
@@ -261,8 +263,7 @@ public class Communicator {
 			refresh();	
 		}
 		else {
-			ImageIcon grey = new ImageIcon("small_logo_button.png");
-			JOptionPane.showMessageDialog(null, "You are not connected to the Internet.\nKairos cannot import current data.", "Connection Error", JOptionPane.ERROR_MESSAGE, grey);
+			JOptionPane.showMessageDialog(null, "You are not connected to the Internet.\nKairos cannot import current data.", "Connection Error", JOptionPane.ERROR_MESSAGE, _kairosIcon);
 		}
 	}
 	
@@ -541,8 +542,8 @@ public class Communicator {
 			
 			if(!toReturn.getCalendars().isEmpty()){
 				//ask user if they've responded to the event
-				int resp = JOptionPane.showConfirmDialog(null, "Have you already responded to this When2Meet?", "", JOptionPane.YES_NO_OPTION);
-	
+				int resp = JOptionPane.showConfirmDialog(null, "Have you already responded to this When2Meet?", "", JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE, _kairosIcon);
+					
 				//if they have, ask them to select their response from the list of all responses
 				if(resp == JOptionPane.YES_OPTION){
 	
@@ -555,7 +556,7 @@ public class Communicator {
 					}
 	
 					Object selected = JOptionPane.showInputDialog(null, "Please select the name that represents your response from the list below",
-							"", JOptionPane.INFORMATION_MESSAGE, null,
+							"", JOptionPane.INFORMATION_MESSAGE, _kairosIcon,
 							responseNames, responseNames[0]);
 	
 					//take the selected cal, remove it from the list, and set it to be the userResponse

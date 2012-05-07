@@ -24,6 +24,7 @@ import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
+import javax.swing.JTextField;
 
 import org.joda.time.DateTime;
 
@@ -52,6 +53,7 @@ public class EventPanel extends JPanel {
 	private JScrollPane _eventsScrollPane;
 	private JPanel _scrollPaneInner = new JPanel();
 	private GroupLayout _layout= new GroupLayout(this), _spiLayout = new GroupLayout(_scrollPaneInner);
+	private ImageIcon _kairosIcon = new ImageIcon("KairosIcon.png");
 	
 	public EventPanel(Communicator communicator, CalendarGui gui){
 		_communicator = communicator;
@@ -224,6 +226,16 @@ public class EventPanel extends JPanel {
 		}
 	}
 	
+	public void setSelectedEvent(String eventID){
+		for(EventLabel label : _eventLabels){
+			if(label.getID().equals(eventID))
+				label.setSelected(true);
+			else
+				label.setSelected(false);
+		}
+		this.repaint();
+	}
+	
 	public void paintComponent(Graphics g){
 		super.paintComponent(g);
 		int i=0;
@@ -254,8 +266,7 @@ public class EventPanel extends JPanel {
 				new CreateEventDialog(EventPanel.this);
 			}
 			else {
-				ImageIcon grey = new ImageIcon("small_logo_button.png");
-				JOptionPane.showMessageDialog(null, "You are not connected to the Internet.\nKairos cannot create a new event.", "Connection Error", JOptionPane.ERROR_MESSAGE, grey);
+				JOptionPane.showMessageDialog(null, "You are not connected to the Internet.\nKairos cannot create a new event.", "Connection Error", JOptionPane.ERROR_MESSAGE, _kairosIcon);
 			}
 		}
 		
@@ -278,6 +289,7 @@ public class EventPanel extends JPanel {
 			}
 			if (Communicator.webConnected(testURL)) {
 				String url = JOptionPane.showInputDialog("Please enter the URL of the When2Meet you would like to add");
+				
 				Event newEvent = null;
 				boolean noEvent = true;
 				while(noEvent){
@@ -309,8 +321,7 @@ public class EventPanel extends JPanel {
 				
 			}
 			else {
-				ImageIcon grey = new ImageIcon("small_logo_button.png");
-				JOptionPane.showMessageDialog(null, "You are not connected to the Internet.\nKairos cannot add an event.", "Connection Error", JOptionPane.ERROR_MESSAGE, grey);
+				JOptionPane.showMessageDialog(null, "You are not connected to the Internet.\nKairos cannot add an event.", "Connection Error", JOptionPane.ERROR_MESSAGE,_kairosIcon);
 			}
 		}
 		
@@ -334,12 +345,11 @@ public class EventPanel extends JPanel {
 		@Override
 		public void mouseClicked(MouseEvent arg0) {
 			int selection = JOptionPane.showConfirmDialog(null,"Are you sure you want to remove this event?", "", 
-					JOptionPane.YES_NO_OPTION);
+					JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE, _kairosIcon);
 			if(selection == JOptionPane.YES_OPTION){
 				_communicator.removeEvent(_eventID);
 				removeEvent(_eventID);
 			}
-			
 		}
 
 		/*
@@ -374,7 +384,6 @@ public class EventPanel extends JPanel {
 			_eventID = eventID;
 			this.addMouseListener(this);
 			ImageIcon icon = new ImageIcon("open-in-new-window.png");
-			System.out.println("Icon is null: " + (icon == null));
 			this.setIcon(icon);
 			
 		}

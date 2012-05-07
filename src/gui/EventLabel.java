@@ -13,6 +13,7 @@ import calendar.Event;
 public class EventLabel extends JLabel implements MouseListener{
 
 	private String _name, _id;
+	private Color _textColor = Color.BLACK;
 	private Communicator _communicator;
 	CalendarGui _gui;
 	
@@ -60,6 +61,14 @@ public class EventLabel extends JLabel implements MouseListener{
 		//TODO : deal with null (which should never happen)
 	}
 	
+	public void setSelected(boolean b){
+		if(b)
+			_textColor = new Color(0,127,255);
+		else
+			_textColor = Color.BLACK;
+		this.setForeground(_textColor);
+	}
+	
 	
 	@Override
 	public void mouseClicked(MouseEvent arg0) {
@@ -75,7 +84,7 @@ public class EventLabel extends JLabel implements MouseListener{
 	@Override
 	public void mouseExited(MouseEvent arg0) {
 		//undo whatever we do in mouseEntered
-		this.setForeground(Color.BLACK);
+		this.setForeground(_textColor);
 	}
 
 	@Override

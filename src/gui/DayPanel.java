@@ -27,7 +27,7 @@ public class DayPanel extends JPanel{
 	int _startHour = DEFAULT_START_HOUR;
 	int _numHours = DEFAULT_END_HOUR - DEFAULT_START_HOUR;
 	private Event _event;
-	private CalendarGroup<CalendarSlots> _slots;
+	private CalendarGroup<CalendarSlots> _clicks;
 	private CalendarGroup<CalendarResponses> _responses;
 	private Boolean _active = true;
 	private CalendarResponses _bestTimes;
@@ -83,12 +83,12 @@ public class DayPanel extends JPanel{
 	}
 
 	public CalendarGroup<CalendarSlots> getSlots() {
-		return _slots;
+		return _clicks;
 	}
 
 	public void setSlots(CalendarGroup<CalendarSlots> slots){
 
-		_slots = slots;
+		_clicks = slots;
 	}
 
 	public CalendarGroup<CalendarResponses> getResponses() {
@@ -100,7 +100,7 @@ public class DayPanel extends JPanel{
 	}
 
 	public void addSlotCal(CalendarSlots cal){
-		_slots.addCalendar(cal);
+		_clicks.addCalendar(cal);
 	}
 
 	public void setDay(DateTime today){
@@ -159,8 +159,8 @@ public class DayPanel extends JPanel{
 				_event.paint(brush, this, CalendarSlots.getDaysBetween(_event.getStartTime(), this.getDay()));
 			} 
 
-			if(_slots != null) {
-				for (CalendarSlots s: _slots.getCalendars()){
+			if(_clicks != null) {
+				for (CalendarSlots s: _clicks.getCalendars()){
 					s.paint(brush, this);
 				}
 			}

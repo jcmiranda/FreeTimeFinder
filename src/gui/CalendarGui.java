@@ -45,18 +45,15 @@ import calendar.When2MeetEvent;
 
 public class CalendarGui {
 
-	private Event _slotGroup = null;
+	private Event _event = null;
 	private CalendarResponses _bestTimes = null;
 	private int _bestTimesDuration = -1;
 	private int _startHour = DEFAULT_START_HOUR;
 	private int _numHours = DEFAULT_END_HOUR - DEFAULT_START_HOUR;
 	private JFrame _frame;
 	private ReplyPanel _replyPanel;
-//	private JPanel _hourOfDayLabels;
-//	private ArrayList<Integer> _hoursOfDay = new ArrayList<Integer>();
 	private Communicator _communicator = new Communicator();
 	private UserCalPanel _userCalPanel;
-	//private JButton _eventDispButton = new JButton("Toggle Event Display");
 	private PaintMethod _eventDispStyle = PaintMethod.Bars;
 	private EventPanel _eventPanel = new EventPanel(_communicator, this);
 	private UpdatesPanel _updatesPanel = new UpdatesPanel();
@@ -81,6 +78,7 @@ public class CalendarGui {
 	private ImageIcon _nextIconInverted = new ImageIcon("small_right_button_invert.png");
 
 	private ImageIcon _kairosLogo = new ImageIcon("KairosLogo.png");
+	private ImageIcon _kairosIcon = new ImageIcon("KairosIcon.png");
 	
 	private JToggleButton _refreshButton = new JToggleButton(_refreshIcon);
 	private JButton _eventDispButton = new JButton(_toggleIcon);
@@ -178,23 +176,28 @@ public class CalendarGui {
 	}
 
 	public Event getEvent(){
-		return _slotGroup;
+		return _event;
 	}
 
 	public void setEvent(Event event){
-		_slotGroup= event;
+		_event= event;
 		
-		if(_slotGroup != null){
-			_slotGroup.init();
-			event.setPaintMethod(_eventDispStyle);
+		if(_event != null){
+			_event.init();
+			_event.setPaintMethod(_eventDispStyle);
+			_eventPanel.setSelectedEvent(String.valueOf(_event.getID()));
 		}
-		System.out.println("SLOT GROUP IN SET EVENT: " + _slotGroup);
-		_replyPanel.setEvent(_slotGroup);
+		else{
+			_eventPanel.setSelectedEvent(null);
+		}
+			
+		System.out.println("SLOT GROUP IN SET EVENT: " + _event);
+		_replyPanel.setEvent(_event);
 		System.out.println("Setting event for reply panel");
 		UserCal userCal = _communicator.getUserCal();
 		_replyPanel.setUserCal(userCal);
 		_replyPanel.repaint();
-		if(_slotGroup != null){
+		if(_event != null){
 			_startHour = event.getStartTime().getHourOfDay();
 			_numHours = event.getNumHours();
 		}
@@ -208,8 +211,8 @@ public class CalendarGui {
 		_replyPanel.setBestTimes(_bestTimes);
 		_timeFindButton.setSelected(false);
 		
-		_updatesPanel.setEvent(_slotGroup);
-		_friendBar.setEvent(_slotGroup);
+		_updatesPanel.setEvent(_event);
+		_friendBar.setEvent(_event);
 //		updateHourLabels();
 		_eventPanel.refresh();
 
@@ -221,17 +224,8 @@ public class CalendarGui {
 	}
 
 
-	private class InnerWindowListener extends WindowAdapter {
-		@Override
-		public void windowClosing(WindowEvent e) {
-			//System.out.println("Window closing triggered");
-			//_communicator.saveAll();
-		}
-	}
-
 	public void buildFrame(){
 		_frame = new JFrame("Kairos");
-		_frame.addWindowListener(new InnerWindowListener());
 
 		JPanel calPanel = new JPanel();
 		GroupLayout calLayout = new GroupLayout(calPanel);
@@ -242,18 +236,13 @@ public class CalendarGui {
 
 		calLayout.setHorizontalGroup(
 				calLayout.createSequentialGroup()
-//				.addComponent(_hourOfDayLabels, GroupLayout.PREFERRED_SIZE, _hourOfDayLabels.getPreferredSize().width,
-//						GroupLayout.PREFERRED_SIZE)
 						.addComponent(_replyPanel, GroupLayout.PREFERRED_SIZE, (int) (FRAME_WIDTH*.70),
 								GroupLayout.PREFERRED_SIZE));
 
 		calLayout.setVerticalGroup(
 				calLayout.createParallelGroup(GroupLayout.Alignment.TRAILING)
 				.addComponent(_replyPanel, GroupLayout.PREFERRED_SIZE, FRAME_HEIGHT - _replyPanel.getPreferredSize().height - 25,
-						GroupLayout.PREFERRED_SIZE)
-//						.addComponent(_hourOfDayLabels, GroupLayout.PREFERRED_SIZE, FRAME_HEIGHT - _replyPanel.getPreferredSize().height - _replyPanel.getWeekDayPanelHeight(),
-//								GroupLayout.PREFERRED_SIZE)
-								);
+						GroupLayout.PREFERRED_SIZE));
 
 		_frame.add(calPanel, BorderLayout.CENTER);
 
@@ -270,9 +259,9 @@ public class CalendarGui {
 		buttonFunctionsPanel.add(_refreshButton);
 
 
-		JPanel buttonPanel = new JPanel(new GridLayout(1, 0));
-		buttonPanel.add(nextPrevPanel);
-		buttonPanel.add(buttonFunctionsPanel);
+//		JPanel buttonPanel = new JPanel(new GridLayout(1, 0));
+//		buttonPanel.add(nextPrevPanel);
+//		buttonPanel.add(buttonFunctionsPanel);
 
 		JPanel logoPanel = new JPanel();
 		logoPanel.add(_picLabel);
@@ -283,10 +272,9 @@ public class CalendarGui {
 		JPanel northPanel = new JPanel(new GridBagLayout());
 		
 		GridBagConstraints c = new GridBagConstraints();
-		c.fill = GridBagConstraints.HORIZONTAL;
+		c.fill = GridBagConstraints.NONE;
 		c.weightx = 0.0;
 		c.weighty = 1.0;
-		c.ipadx = 200;
 		c.gridx = 0;
 		c.gridy = 0;
 		c.ipady = 10;
@@ -296,13 +284,21 @@ public class CalendarGui {
 		c.fill = GridBagConstraints.HORIZONTAL;
 		c.weightx = 1.0;
 		c.weighty = 1.0;
-		c.ipadx = 0 ;
 		c.gridx = 1;
 		c.gridy = 0;
 		c.ipady = 0;
 		
-		northPanel.add(buttonPanel,c);
+		northPanel.add(nextPrevPanel, c);
 
+		c.fill = GridBagConstraints.EAST;
+		c.weightx = 0.0;
+		c.weighty = 1.0;
+		c.gridx = 2;
+		c.gridy = 0;
+		c.ipady = 0;
+		
+		northPanel.add(buttonFunctionsPanel, c);
+		
 		_frame.add(northPanel, BorderLayout.NORTH);
 		
 		JPanel westPanel = new JPanel(new GridLayout(0, 1));
@@ -316,7 +312,7 @@ public class CalendarGui {
 		eastPanel.add(_eventPanel);
 		eastPanel.add(_updatesPanel);
 
-		eastPanel.setPreferredSize(new Dimension((int) ((FRAME_WIDTH*.25)*.60), 700));
+		eastPanel.setPreferredSize(new Dimension((int) (FRAME_WIDTH*.25), 600));
 
 		_frame.add(eastPanel, BorderLayout.EAST);
 
@@ -327,8 +323,8 @@ public class CalendarGui {
 	}
 
 	public void replyToEvent(){
-		if(_slotGroup != null && _replyPanel.getClicks() != null)
-			_communicator.submitResponse(Integer.toString(((When2MeetEvent) _slotGroup).getID()), _replyPanel.getClicks());
+		if(_event != null && _replyPanel.getClicks() != null)
+			_communicator.submitResponse(Integer.toString(((When2MeetEvent) _event).getID()), _replyPanel.getClicks());
 	}
 
 
@@ -341,9 +337,9 @@ public class CalendarGui {
 	}
 
 	public void setBestTimes(int duration){
-		if(_slotGroup != null){
+		if(_event != null){
 			_bestTimesDuration = duration;
-			_bestTimes = _communicator.getBestTimes(String.valueOf(_slotGroup.getID()), duration);
+			_bestTimes = _communicator.getBestTimes(String.valueOf(_event.getID()), duration);
 			_replyPanel.setBestTimes(_bestTimes);
 			repaint();
 		}
@@ -358,38 +354,35 @@ public class CalendarGui {
 
 		@Override
 		public void actionPerformed(ActionEvent e) {
-			if(_slotGroup != null){
+			if(_event != null){
 				int selection = JOptionPane.showConfirmDialog(null,"Are you sure you want to submit?", "", 
-						JOptionPane.YES_NO_OPTION);
+						JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE, _kairosIcon);
 				if(selection == JOptionPane.YES_OPTION)
 					replyToEvent();
 			}
-		}
-
+		}		
 	}
 
 	private class NextListener implements ActionListener {
 
 		@Override
 		public void actionPerformed(ActionEvent e) {
-			if(_slotGroup != null)
+			if(_event != null)
 				_replyPanel.nextWeek();
 		}
 
 	}
 	private class PrevListener implements ActionListener {
-
 		@Override
 		public void actionPerformed(ActionEvent e) {
-			if(_slotGroup != null)
+			if(_event != null)
 				_replyPanel.prevWeek();
 		}
-
 	}
 	
 	private class EventDispButtonListener implements ActionListener {
 		public void actionPerformed(ActionEvent arg0) {
-			if(_slotGroup != null) {
+			if(_event != null) {
 				if(_eventDispStyle == PaintMethod.Bars){
 					_eventDispStyle = PaintMethod.HeatMap;
 				} else if(_eventDispStyle == PaintMethod.HeatMap) {
@@ -415,7 +408,7 @@ public class CalendarGui {
 		public void actionPerformed(ActionEvent arg0) {
 			System.out.println(_timeFindButton.isSelected());
 			if(_timeFindButton.isSelected()){
-				if(_slotGroup != null && !_slotGroup.getCalendars().isEmpty() && !(_slotGroup.getCalendars().size() ==1 && _slotGroup.userHasSubmitted())){
+				if(_event != null && !_event.getCalendars().isEmpty() && !(_event.getCalendars().size() ==1 && _event.userHasSubmitted())){
 					new SliderPane(_numHours, CalendarGui.this);
 				}
 			}
@@ -443,10 +436,10 @@ public class CalendarGui {
 
 				_communicator.refresh();
 				// Retrieve this when2meet in case it has changed
-				if(_slotGroup != null){
-					setEvent(_communicator.getEvent(""+_slotGroup.getID()));
+				if(_event != null){
+					setEvent(_communicator.getEvent(""+_event.getID()));
 					System.out.println("After setting event in GUI");
-					_slotGroup.printUpdates();
+					_event.printUpdates();
 					System.out.println("=====");
 				}
 				
