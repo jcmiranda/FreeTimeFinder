@@ -1,5 +1,6 @@
 package calendar;
 
+import gui.Day;
 import gui.DayPanel;
 
 import java.awt.Color;
@@ -152,7 +153,7 @@ public class CalendarResponses implements Calendar {
 	}
 
 
-	public void paint(Graphics2D brush, DayPanel d, int numCals, Color color){
+	public void paint(Graphics2D brush, Day d, int numCals, Color color){
 
 		ArrayList<Response> conflictCheck = new ArrayList<Response>();
 		for (Response r: getResponses()){

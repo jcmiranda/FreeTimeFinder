@@ -28,7 +28,7 @@ public class OuterDayPanel extends JPanel{
 		_clickableDay = clickableDay;
 		
 		_dateOfWeekLabel=new JLabel(today.dayOfWeek().getAsShortText());
-		_dateOfWeekLabel.setFont(new Font(GuiConstants.FONT_NAME, _dateOfWeekLabel.getFont().getStyle(), _dateOfWeekLabel.getFont().getSize() - 1));
+		_dateOfWeekLabel.setFont(new Font(GuiConstants.FONT_NAME, _dateOfWeekLabel.getFont().getStyle(), _dateOfWeekLabel.getFont().getSize()));
 		
 		GridBagConstraints c = new GridBagConstraints();
 
@@ -70,7 +70,7 @@ public class OuterDayPanel extends JPanel{
 		return _day;
 	}
 
-	public DayPanel getClickableDay(){
+	public ClickableDayPanel getClickableDay(){
 		return _clickableDay;
 	}
 

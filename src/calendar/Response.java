@@ -4,6 +4,7 @@ import static gui.GuiConstants.INTERLINE_SPACING;
 import static gui.GuiConstants.RESPONSE_NAME_COLOR;
 import static gui.GuiConstants.RESPONSE_NAME_SPACING;
 import static gui.GuiConstants.RESPONSE_SPACING;
+import gui.Day;
 import gui.DayPanel;
 import gui.GuiConstants;
 
@@ -71,7 +72,7 @@ public class Response implements Comparable<Response>{
 		return this.getStartTime().compareTo(r.getStartTime());
 	}
 
-	public void paint(Graphics2D brush, DayPanel d, int startX, int endX, Color color){
+	public void paint(Graphics2D brush, Day d, int startX, int endX, Color color){
 
 		Rectangle2D.Double rect = new Rectangle2D.Double();
 		
