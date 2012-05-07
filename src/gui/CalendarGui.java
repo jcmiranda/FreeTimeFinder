@@ -270,9 +270,9 @@ public class CalendarGui {
 		buttonFunctionsPanel.add(_refreshButton);
 
 
-		JPanel buttonPanel = new JPanel(new GridLayout(1, 0));
-		buttonPanel.add(nextPrevPanel);
-		buttonPanel.add(buttonFunctionsPanel);
+//		JPanel buttonPanel = new JPanel(new GridLayout(1, 0));
+//		buttonPanel.add(nextPrevPanel);
+//		buttonPanel.add(buttonFunctionsPanel);
 
 		JPanel logoPanel = new JPanel();
 		logoPanel.add(_picLabel);
@@ -283,10 +283,9 @@ public class CalendarGui {
 		JPanel northPanel = new JPanel(new GridBagLayout());
 		
 		GridBagConstraints c = new GridBagConstraints();
-		c.fill = GridBagConstraints.HORIZONTAL;
+		c.fill = GridBagConstraints.NONE;
 		c.weightx = 0.0;
 		c.weighty = 1.0;
-		c.ipadx = 200;
 		c.gridx = 0;
 		c.gridy = 0;
 		c.ipady = 10;
@@ -296,13 +295,21 @@ public class CalendarGui {
 		c.fill = GridBagConstraints.HORIZONTAL;
 		c.weightx = 1.0;
 		c.weighty = 1.0;
-		c.ipadx = 0 ;
 		c.gridx = 1;
 		c.gridy = 0;
 		c.ipady = 0;
 		
-		northPanel.add(buttonPanel,c);
+		northPanel.add(nextPrevPanel, c);
 
+		c.fill = GridBagConstraints.EAST;
+		c.weightx = 0.0;
+		c.weighty = 1.0;
+		c.gridx = 2;
+		c.gridy = 0;
+		c.ipady = 0;
+		
+		northPanel.add(buttonFunctionsPanel, c);
+		
 		_frame.add(northPanel, BorderLayout.NORTH);
 		
 		JPanel westPanel = new JPanel(new GridLayout(0, 1));
@@ -316,7 +323,7 @@ public class CalendarGui {
 		eastPanel.add(_eventPanel);
 		eastPanel.add(_updatesPanel);
 
-		eastPanel.setPreferredSize(new Dimension((int) ((FRAME_WIDTH*.25)*.60), 700));
+		eastPanel.setPreferredSize(new Dimension((int) (FRAME_WIDTH*.25), 600));
 
 		_frame.add(eastPanel, BorderLayout.EAST);
 

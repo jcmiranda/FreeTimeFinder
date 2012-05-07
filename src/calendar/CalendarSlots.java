@@ -126,7 +126,6 @@ public class CalendarSlots implements Calendar {
 	public void setAvail(int slot, Availability avail) {
 		int day = slot / _numSlotsInDay;
 		int slotInDay = slot % _numSlotsInDay;
-		// System.out.println("Day: " + day + " Slot in Day: " + slotInDay);
 		_avail[day][slotInDay] = avail;
 	}
 

@@ -237,7 +237,7 @@ public class ReplyPanel extends JPanel{
 		((FlowLayout)(_outerBigDayPanel.getLayout())).setHgap(0);
 		((FlowLayout)(_outerBigDayPanel.getLayout())).setVgap(0);
 		((FlowLayout)(_outerBigDayPanel.getLayout())).setAlignOnBaseline(true);
-//		_outerBigDayPanel.add(_prePadding);
+		
 		_outerBigDayPanel.add(_bigDayPanel);
 		_outerBigDayPanel.add(_postPadding);
 
@@ -253,7 +253,6 @@ public class ReplyPanel extends JPanel{
 		Dimension dayDim, padDim;
 
 		if (!_fullWeekMode){
-			System.out.println("NOT FULL WEEK MODE");
 			int numDays = CalendarSlots.getDaysBetween(_startDay, _endDay) + 1;
 			int maxCalWidth = Math.min(MAX_DAY_WIDTH*numDays, _outerBigDayPanel.getWidth());
 			
@@ -261,8 +260,6 @@ public class ReplyPanel extends JPanel{
 			padDim = new Dimension((_outerBigDayPanel.getWidth() - maxCalWidth), _outerBigDayPanel.getHeight());
 		}
 		else{
-			System.out.println("OBDP WIDTH: " + _outerBigDayPanel.getWidth() + "\t OBDP HEIGHT: " + _outerBigDayPanel.getHeight());
-			System.out.println("This width: " + this.getWidth() + "\t this height: " + this.getHeight());
 			dayDim = new Dimension(_outerBigDayPanel.getWidth(), _outerBigDayPanel.getHeight());
 			padDim = new Dimension(0, _outerBigDayPanel.getHeight());
 		}
@@ -318,7 +315,6 @@ public class ReplyPanel extends JPanel{
 		
 		_outerBigDayPanel.add(_bigDayPanel);
 		_outerBigDayPanel.add(_postPadding);
-		
 		this.revalidate();
 	}
 
