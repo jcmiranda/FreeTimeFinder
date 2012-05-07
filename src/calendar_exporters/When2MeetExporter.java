@@ -20,6 +20,7 @@ import calendar.When2MeetEvent;
  * 	- Can either create a new event
  * 	- Or update an existing event with changes in availability or new users
  */
+
 public class When2MeetExporter {
 	// The event that we are currently updating / exporting
 	private When2MeetEvent _event = null;

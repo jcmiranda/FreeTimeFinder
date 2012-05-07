@@ -1,6 +1,5 @@
 package cal_master;
 
-import java.io.IOException;
 import java.util.ArrayList;
 
 import org.joda.time.DateTime;
@@ -11,8 +10,6 @@ import calendar.CalendarSlots;
 import calendar.Event;
 import calendar.Response;
 import calendar.UserCal;
-
-import com.google.gdata.util.ServiceException;
 
 /**
  * The class that calculates conversions between CalendarResponses and CalendarSlots

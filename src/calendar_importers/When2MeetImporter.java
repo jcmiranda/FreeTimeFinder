@@ -20,7 +20,6 @@ import calendar.CalendarDifferenceCalculator.MismatchedUserIDException;
 import calendar.CalendarDifferenceCalculator.MismatchedUserNamesException;
 import calendar.CalendarGroup;
 import calendar.CalendarSlots;
-import calendar.Event;
 import calendar.Event.CalByThatNameNotFoundException;
 import calendar.EventUpdate;
 import calendar.UserCal;
@@ -81,9 +80,7 @@ public class When2MeetImporter implements CalendarsImporter<CalendarSlots> {
 		if(eventIDMatcher.find()) {
 			_eventID = Integer.parseInt(eventIDMatcher.group(1));
 		} else {
-			// TODO handle properly
 			System.err.println("Error parsing event id");
-			System.exit(1);
 		}
 	}
 	
@@ -116,13 +113,9 @@ public class When2MeetImporter implements CalendarsImporter<CalendarSlots> {
 			while(m.find()) {
 				Integer slot = new Integer(Integer.parseInt(m.group(1)));
 				Integer userId = new Integer(Integer.parseInt(m.group(2)));
-				// System.out.println("Slot: " + slot + " ID: " + id);
 				assert(slot != null);
 				assert(userId != null);
 				if(_IDsToCals.get(userId) == null) {
-					//System.out.println(m.group(0));
-					//System.out.println(userId);
-					//System.out.println(_IDsToCals.keySet());
 				}
 				else
 					_IDsToCals.get(userId).setAvail(slot, Availability.free);		
@@ -131,8 +124,7 @@ public class When2MeetImporter implements CalendarsImporter<CalendarSlots> {
 	}
 	
 	private void parseHTML() throws IOException, MalformedURLException {
-		// BufferedReader page = new BufferedReader(new InputStreamReader(new FileInputStream(_urlString)));
-		//TODO error handling
+		
 		URL url = new URL(_urlString);
 		BufferedReader page = new BufferedReader(new InputStreamReader(url.openStream()));
 		
@@ -168,7 +160,6 @@ public class When2MeetImporter implements CalendarsImporter<CalendarSlots> {
 				availLines.add(inputLine);
 			if(nameIDMatcher.find()) {
 				nameIDLines.add(inputLine);
-				// System.out.println(inputLine);
 			}
 			if(slotsMatcher.matches()) {
 				int slotID = Integer.parseInt(slotsMatcher.group(_slotIDGroupIndex));
@@ -282,26 +273,17 @@ public class When2MeetImporter implements CalendarsImporter<CalendarSlots> {
 		Collection<CalendarSlots> newCals = _IDsToCals.values();
 		// Get a list of all of the previous respondees to this when2meet
 		Collection<String> oldCalNames = w2me.getCalOwnerNames();
-		System.out.println(oldCalNames);
 		for(CalendarSlots newCal : newCals) {
 			String newCalName = newCal.getOwner().getName();
-			System.out.println("NewCalName: " + newCalName);
 			// This is an updated calendar
 			if(oldCalNames.contains(newCalName)) {
 				try {
-					System.out.println("Found old cal with name " + newCalName);
 					CalendarSlots oldCal = w2me.getCalByName(newCalName);
 					assert oldCal != null;
 					updates.addAll(calDiff.diffEventCals(oldCal, newCal));
 				} catch (MismatchedUserIDException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
 				} catch (MismatchedUserNamesException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
 				} catch (CalByThatNameNotFoundException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
 				}
 			} 
 			// This is a new user repsonse
@@ -323,11 +305,7 @@ public class When2MeetImporter implements CalendarsImporter<CalendarSlots> {
 			try {
 				updates.addAll(calDiff.diffEventCals(w2me.getUserResponse(), newUserResponse));
 			} catch (MismatchedUserIDException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
 			} catch (MismatchedUserNamesException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
 			}
 			
 			w2me.setUserResponse(newUserResponse);

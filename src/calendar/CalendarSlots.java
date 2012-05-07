@@ -218,7 +218,6 @@ public class CalendarSlots implements Calendar {
 				for (int i=0; i< _numSlotsInDay; i++){
 					double iDbl = (double) i;
 					double hDbl = (double) d.getHeight();
-					double hrsDbl = (double) this.getNumHours();
 					double sDbl = (double) _numSlotsInDay;
 					
 					if (_avail[numDays][i]==Availability.free){

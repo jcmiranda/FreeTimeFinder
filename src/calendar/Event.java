@@ -20,7 +20,6 @@ public class Event extends CalendarGroup<CalendarSlots> {
 	private CalendarSlots _userResponse = null;
 	private boolean _userHasSubmitted = false;
 	private boolean _hasUpdates = false;
-	//protected int _minInSlot = 15;
 	protected String _name, _url;
 	protected int _id;
 
