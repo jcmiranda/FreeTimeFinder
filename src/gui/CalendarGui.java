@@ -57,20 +57,31 @@ public class CalendarGui {
 	private EventPanel _eventPanel = new EventPanel(_communicator, this);
 	private UpdatesPanel _updatesPanel = new UpdatesPanel();
 	private FriendBar _friendBar = new FriendBar(this);
-	private JButton _submitButton = new JButton("Submit Response");
+//	private JButton _submitButton = new JButton("Submit Response");
 	//private JButton _timeFindButton = new JButton("Find Best Times");
-	private JButton _nextButton = new JButton(">");
-	private JButton _prevButton = new JButton("<");
+	
 	//private JButton _refreshButton = new JButton("Refresh");
 	//ImageIcon submitIcon = new ImageIcon("KairosLogo.png");
 	ImageIcon _findTimeIcon = new ImageIcon("small_logo_button.png");
+	ImageIcon _findTimeIconInverted = new ImageIcon("small_logo_button_invert.png");
 	ImageIcon _toggleIcon = new ImageIcon("small_switch_button.png");
 	ImageIcon _toggleIconInverted = new ImageIcon("small_switch_button_invert.png");
 	ImageIcon _refreshIcon = new ImageIcon("small_refresh_button.png");
 	ImageIcon _refreshIconInverted = new ImageIcon("small_refresh_button_invert");
+	ImageIcon _submitIcon = new ImageIcon("small_submit_button.png");
+	ImageIcon _submitIconInverted = new ImageIcon("small_submit_button_invert");
+	ImageIcon _prevIcon = new ImageIcon("small_left_button.png");
+	ImageIcon _prevIconInverted = new ImageIcon("small_left_button_invert");
+	ImageIcon _nextIcon = new ImageIcon("small_right_button.png");
+	ImageIcon _nextIconInverted = new ImageIcon("small_right_button_invert");
+
+	
 	private JButton _refreshButton = new JButton(_refreshIcon);
 	private JButton _eventDispButton = new JButton(_toggleIcon);
 	private JButton _timeFindButton = new JButton(_findTimeIcon);
+	private JButton _submitButton = new JButton(_submitIcon);
+	private JButton _nextButton = new JButton(_nextIcon);
+	private JButton _prevButton = new JButton(_prevIcon);
 	public static enum DaysOfWeek {Monday, Tuesday, Wednesday, Thursday, Friday, Saturday, Sunday};
 	JLabel picLabel;
 
@@ -79,6 +90,10 @@ public class CalendarGui {
 		this.displayButton(_refreshButton);
 		this.displayButton(_eventDispButton);
 		this.displayButton(_timeFindButton);
+		this.displayButton(_submitButton);
+		this.displayButton(_prevButton);
+		this.displayButton(_nextButton);
+		
 		
 		_communicator.startUp();
 
@@ -101,21 +116,29 @@ public class CalendarGui {
 
 		_submitButton.addActionListener(new SubmitListener());
 		_submitButton.setFont(new Font(GuiConstants.FONT_NAME, _submitButton.getFont().getStyle(), _submitButton.getFont().getSize()));
+		_submitButton.setToolTipText("Submit Response");
+		_submitButton.setPressedIcon(_submitIconInverted);
+		
 		
 		_timeFindButton.addActionListener(new TimeFindListener());
 		_timeFindButton.setFont(new Font(GuiConstants.FONT_NAME, _timeFindButton.getFont().getStyle(), _timeFindButton.getFont().getSize()));
 		_timeFindButton.setToolTipText("Find Best Times");
+		_timeFindButton.setPressedIcon(_findTimeIconInverted);
 		
 		_nextButton.addActionListener(new NextListener());
 		_nextButton.setFont(new Font(GuiConstants.FONT_NAME, _nextButton.getFont().getStyle(), _nextButton.getFont().getSize()));
-//		_nextButton.setToolTipText("Next");
+		_nextButton.setPressedIcon(_nextIconInverted);
+		_nextButton.setToolTipText("Next");
 		
 		_prevButton.addActionListener(new PrevListener());
 		_prevButton.setFont(new Font(GuiConstants.FONT_NAME, _prevButton.getFont().getStyle(), _prevButton.getFont().getSize()));
 		_prevButton.setFocusable(false);
-//		_prevButton.setToolTipText("Previous");
+		_prevButton.setPressedIcon(_prevIconInverted);
+		_prevButton.setToolTipText("Previous");
 		
 		_eventDispButton.addActionListener(new EventDispButtonListener());
+		_eventDispButton.setFocusable(false);
+		_eventDispButton.setToolTipText("Toggle Display");
 //		_eventDispButton.setFont(new Font(GuiConstants.FONT_NAME, _eventDispButton.getFont().getStyle(), _eventDispButton.getFont().getSize()));
 
 		_refreshButton.addActionListener(new RefreshListener());
