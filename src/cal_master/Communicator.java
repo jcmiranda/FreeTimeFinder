@@ -38,7 +38,7 @@ import calendar_importers.EventImporter.*;
 import com.google.gdata.util.ServiceException;
 import com.thoughtworks.xstream.XStream;
 
-import ftf.TimeFinderSlots;
+import ftf.TimeFinder;
 import gui.GuiConstants;
 
 /**
@@ -61,7 +61,7 @@ public class Communicator {
 	private When2MeetExporter _exporter = new When2MeetExporter();
 
 	private Converter _converter = new Converter();
-	private TimeFinderSlots _timeFinder = new TimeFinderSlots();
+	private TimeFinder _timeFinder = new TimeFinder();
 	private ProgramOwner _progOwner = new ProgramOwner();
 	private JDialog _loadingDialog;
 //	private JFrame _loadingFrame;

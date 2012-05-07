@@ -38,7 +38,7 @@ import calendar.When2MeetEvent;
 
 public class CalendarGui {
 
-	private Event _slotGroup = null;
+	private Event _event = null;
 	private CalendarResponses _bestTimes = null;
 	private int _bestTimesDuration = -1;
 	private int _startHour = DEFAULT_START_HOUR;
@@ -159,28 +159,30 @@ public class CalendarGui {
 	}
 
 	public Event getEvent(){
-		return _slotGroup;
+		return _event;
 	}
 
 
 	// Sets the current event viewed in the gui
 	public void setEvent(Event event){
-		_slotGroup= event;
 
-		if(_slotGroup != null){
-			_slotGroup.init();
-			_slotGroup.setPaintMethod(_eventDispStyle);
-			_eventPanel.setSelectedEvent(String.valueOf(_slotGroup.getID()));
+		_event= event;
+		
+		if(_event != null){
+			_event.init();
+			_event.setPaintMethod(_eventDispStyle);
+			_eventPanel.setSelectedEvent(String.valueOf(_event.getID()));
+
 		}
 		else{
 			_eventPanel.setSelectedEvent(null);
 		}
 
-		_replyPanel.setEvent(_slotGroup);
+		_replyPanel.setEvent(_event);
 		UserCal userCal = _communicator.getUserCal();
 		_replyPanel.setUserCal(userCal);
 		_replyPanel.repaint();
-		if(_slotGroup != null){
+		if(_event != null){
 			_startHour = event.getStartTime().getHourOfDay();
 			_numHours = event.getNumHours();
 		}
@@ -194,8 +196,8 @@ public class CalendarGui {
 		_replyPanel.setBestTimes(_bestTimes);
 		_timeFindButton.setSelected(false);
 
-		_updatesPanel.setEvent(_slotGroup);
-		_friendBar.setEvent(_slotGroup);
+		_updatesPanel.setEvent(_event);
+		_friendBar.setEvent(_event);
 		_eventPanel.refresh();
 
 	}
@@ -298,8 +300,8 @@ public class CalendarGui {
 
 	// Posts the user's availability input to the event
 	public void replyToEvent(){
-		if(_slotGroup != null && _replyPanel.getClicks() != null)
-			_communicator.submitResponse(Integer.toString(((When2MeetEvent) _slotGroup).getID()), _replyPanel.getClicks());
+		if(_event != null && _replyPanel.getClicks() != null)
+			_communicator.submitResponse(Integer.toString(((When2MeetEvent) _event).getID()), _replyPanel.getClicks());
 	}
 
 	public void repaint(){
@@ -311,9 +313,9 @@ public class CalendarGui {
 	}
 
 	public void setBestTimes(int duration){
-		if(_slotGroup != null){
+		if(_event != null){
 			_bestTimesDuration = duration;
-			_bestTimes = _communicator.getBestTimes(String.valueOf(_slotGroup.getID()), duration);
+			_bestTimes = _communicator.getBestTimes(String.valueOf(_event.getID()), duration);
 			_replyPanel.setBestTimes(_bestTimes);
 			repaint();
 		}
@@ -328,7 +330,7 @@ public class CalendarGui {
 
 		@Override
 		public void actionPerformed(ActionEvent e) {
-			if(_slotGroup != null){
+			if(_event != null){
 				int selection = JOptionPane.showConfirmDialog(null,"Are you sure you want to submit?", "", 
 						JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE, _kairosIcon);
 				if(selection == JOptionPane.YES_OPTION)
@@ -341,7 +343,7 @@ public class CalendarGui {
 
 		@Override
 		public void actionPerformed(ActionEvent e) {
-			if(_slotGroup != null)
+			if(_event != null)
 				_replyPanel.nextWeek();
 		}
 
@@ -349,14 +351,14 @@ public class CalendarGui {
 	private class PrevListener implements ActionListener {
 		@Override
 		public void actionPerformed(ActionEvent e) {
-			if(_slotGroup != null)
+			if(_event != null)
 				_replyPanel.prevWeek();
 		}
 	}
 
 	private class EventDispButtonListener implements ActionListener {
 		public void actionPerformed(ActionEvent arg0) {
-			if(_slotGroup != null) {
+			if(_event != null) {
 				if(_eventDispStyle == PaintMethod.Bars){
 					_eventDispStyle = PaintMethod.HeatMap;
 				} else if(_eventDispStyle == PaintMethod.HeatMap) {
@@ -382,7 +384,7 @@ public class CalendarGui {
 		public void actionPerformed(ActionEvent arg0) {
 			System.out.println(_timeFindButton.isSelected());
 			if(_timeFindButton.isSelected()){
-				if(_slotGroup != null && !_slotGroup.getCalendars().isEmpty() && !(_slotGroup.getCalendars().size() ==1 && _slotGroup.userHasSubmitted())){
+				if(_event != null && !_event.getCalendars().isEmpty() && !(_event.getCalendars().size() ==1 && _event.userHasSubmitted())){
 					new SliderPane(_numHours, CalendarGui.this);
 				}
 			}
@@ -410,10 +412,10 @@ public class CalendarGui {
 
 				_communicator.refresh();
 				// Retrieve this when2meet in case it has changed
-				if(_slotGroup != null){
-					setEvent(_communicator.getEvent(""+_slotGroup.getID()));
+				if(_event != null){
+					setEvent(_communicator.getEvent(""+_event.getID()));
 					System.out.println("After setting event in GUI");
-					_slotGroup.printUpdates();
+					_event.printUpdates();
 					System.out.println("=====");
 				}
 

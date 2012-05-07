@@ -41,6 +41,8 @@ import com.google.gdata.util.ServiceException;
 
 /*
  * This class imports a user's Google calendar.  Step one: authenticate user, step two: pull in calendar
+ * Class extends CalendarsImporter
+ * Class contains GCalAuth
  */
 
 public class GCalImporter implements CalendarsImporter<CalendarResponses> {
@@ -59,6 +61,12 @@ public class GCalImporter implements CalendarsImporter<CalendarResponses> {
 		_auth = new GCalAuth();
 	}
 	
+	/*
+	 * Purpose: set authentication (assuming NO response token is stored) and pull in calendars (i.e. transform calendar
+	 * data into internal calendar data structure)
+	 * Input: start time, end time of calendar you want to pull in
+	 * Output: a UserCal holding selected calendars and events in calendars
+	 */
 	public UserCal importMyGCal(org.joda.time.DateTime startTime, org.joda.time.DateTime endTime) throws IOException, ServiceException, com.google.gdata.util.ServiceException, URISyntaxException {
 		//authenticate user
 		GoogleTokenResponse toke = (GoogleTokenResponse) _auth.setAuth();
@@ -70,6 +78,14 @@ public class GCalImporter implements CalendarsImporter<CalendarResponses> {
 		return this.importCalendarGroup(startTime, endTime, null);
 	}
 	
+	/*
+	 *Purpose: Assuming authentication has already taken place, makes GET requests to google for "feeds" i.e.
+	 *output streams of calendars and events for calendars, transforms this into internal data structures
+	 *Only import "selected" calendars, if calgroup null, have user select calendars, else figure out which cals in user
+	 *cal are selected and import those
+	 *Input: start time and end time of when to import, UserCal if importing has already taken place at least once
+	 *Output: newly imported UserCal
+	 */
 	public UserCal importCalendarGroup(org.joda.time.DateTime st, org.joda.time.DateTime et, UserCal calgroup) throws IOException, ServiceException, com.google.gdata.util.ServiceException {
 		//calendar group
 		GoogleCalendars allCalendars = new GoogleCalendars(st, et, _owner);
@@ -169,6 +185,11 @@ public class GCalImporter implements CalendarsImporter<CalendarResponses> {
         return allCalendars;
 	}
 	
+	/*
+	 * Purpose: get event feed for a specific calendar and transform it into a response
+	 * Input: start time and end time of importing, the calendar ID so only import events from that calendar
+	 * Output: an array of responses i.e. events
+	 */
 	public ArrayList<Response> getEvents(org.joda.time.DateTime st, org.joda.time.DateTime et, String calID) throws IOException, ServiceException, com.google.gdata.util.ServiceException {
 		ArrayList<Response> responseList = new ArrayList<Response>();
 		//get URL
@@ -208,7 +229,12 @@ public class GCalImporter implements CalendarsImporter<CalendarResponses> {
 		return responseList;
 	}
 	
-
+	/*
+	 * Purpose: if user has already authenticated, get refresh token to authenticate (no sign-in necessary) and
+	 * re-import selected calendars (just calls importCalendarGroup)
+	 * Input: start time, end time, old calendar group (says what's selected)
+	 * Output: newly imported UserCal
+	 */
 	public UserCal refresh(org.joda.time.DateTime st, org.joda.time.DateTime et, UserCal calgroup) {
 		TokenResponse toke = _auth.getRefreshToken();
 		_client.setAuthSubToken(toke.getAccessToken());
@@ -223,21 +249,11 @@ public class GCalImporter implements CalendarsImporter<CalendarResponses> {
 		}
 		return null;
 	}
-
-	//@Override
-	public CalendarGroup<CalendarResponses> importCalendarGroup(String url)
-			throws MalformedURLException, IOException {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	public CalendarGroup<CalendarResponses> importNewEvent(String url)
-			throws MalformedURLException, IOException {
-		// TODO Auto-generated method stub
-		return null;
-	}
-	
+	/*
+	 * Purpose: listener for when user first importing calendar and must choose from a list of their calendars which
+	 * to import
+	 * Gets what indices were selected, returns an array of them, and importCalendarGroup matches indices to calendars
+	 */
 	private class SelectCalListener implements ActionListener {
 		@Override
 		public void actionPerformed(ActionEvent arg0) {
@@ -254,9 +270,9 @@ public class GCalImporter implements CalendarsImporter<CalendarResponses> {
 			_buttonClicked = true;
 		}
 	}
-
 	@Override
-	public CalendarGroup<CalendarResponses> refresh(DateTime st, DateTime et) {
+	public CalendarGroup<CalendarResponses> importNewEvent(String url)
+			throws MalformedURLException, IOException {
 		// TODO Auto-generated method stub
 		return null;
 	}
