@@ -381,7 +381,6 @@ public class When2MeetImporter implements CalendarsImporter<CalendarSlots> {
 
 	@Override
 	public CalendarGroup refresh(DateTime st, DateTime et, UserCal calgroup) {
-		// TODO Auto-generated method stub
 		return null;
 	}
 

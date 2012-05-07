@@ -24,7 +24,6 @@ import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
-import javax.swing.JTextField;
 
 import org.joda.time.DateTime;
 
@@ -36,7 +35,8 @@ import calendar_importers.EventImporter.InvalidURLException;
 /**
  * 
  * Represents the panel that holds all of the event names the user has stored in the program, as well as the
- * buttons they can use to add an existing event to the program, as well as 
+ * buttons they can use to add an existing event to the program, as well as the buttons to remove events from the program,
+ * and links to actual w2ms of each event
  *
  */
 
@@ -120,8 +120,6 @@ public class EventPanel extends JPanel {
 		horizParGrp.addComponent(_eventsScrollPane);
 		vertSeqGrp.addComponent(_eventsScrollPane);
 		
-//		vertSeqGrp.addGroup(_layout.createParallelGroup().addComponent(_addButton).addComponent(_createButton));
-//		horizParGrp.addGroup(_layout.createSequentialGroup().addComponent(_addButton).addComponent(_createButton));
 		horizParGrp.addComponent(_addButton);
 		vertSeqGrp.addComponent(_addButton);
 		
@@ -155,13 +153,10 @@ public class EventPanel extends JPanel {
 		try {
 			addEvent(_communicator.createEvent(name, selectedDates, startHour, endHour));
 		} catch (URLAlreadyExistsException e) {
-			// TODO Auto-generated catch block
 			System.out.println("You did something wrong");
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
 			System.out.println("You did something wrong");
 		} catch (InvalidURLException e) {
-			// TODO Auto-generated catch block
 			System.out.println("You did something wrong");
 		}
 	}
@@ -212,9 +207,7 @@ public class EventPanel extends JPanel {
 				uri = new URI(toOpen.getURL());
 				java.awt.Desktop.getDesktop().browse(uri);
 			} catch (URISyntaxException e) {
-				//TODO
 			} catch (IOException e) {
-				//TODO
 			}
 		}
 				
@@ -259,7 +252,6 @@ public class EventPanel extends JPanel {
 			try {
 				url = new URL("http://www.google.com");
 			} catch (MalformedURLException e1) {
-				// TODO Auto-generated catch block
 				e1.printStackTrace();
 			}
 			if (Communicator.webConnected(url)) {
@@ -284,7 +276,6 @@ public class EventPanel extends JPanel {
 			try {
 				testURL = new URL("http://www.google.com");
 			} catch (MalformedURLException e1) {
-				// TODO Auto-generated catch block
 				e1.printStackTrace();
 			}
 			if (Communicator.webConnected(testURL)) {
@@ -305,15 +296,13 @@ public class EventPanel extends JPanel {
 					} catch (IOException e) {
 						url = JOptionPane.showInputDialog("Invalid URL. Try Again.");
 					} catch (InvalidURLException e) {
-						// TODO Auto-generated catch block
 						url = JOptionPane.showInputDialog("Invalid URL. Try Again.");
 					}
 				}
 				
 				if(newEvent != null){
-					//TODO do something more useful than "BLOOP"
 					if(newEvent.getName() == null){
-						newEvent.setName("BLOOP");
+						System.err.println("Event has no name, something has gone wrong.");
 					}
 					addEvent(newEvent);
 				}

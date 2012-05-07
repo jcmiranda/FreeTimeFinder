@@ -1,9 +1,6 @@
 package cal_master;
 
-import java.awt.BorderLayout;
-import java.awt.Dimension;
 import java.awt.Font;
-import java.awt.Image;
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileWriter;
@@ -18,7 +15,6 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 
-import javax.imageio.ImageIO;
 import javax.swing.ImageIcon;
 import javax.swing.JDialog;
 import javax.swing.JFrame;
@@ -28,12 +24,26 @@ import javax.swing.JPanel;
 
 import org.joda.time.DateTime;
 
-import calendar.*;
-import calendar.Event.*;
-import calendar_exporters.*;
-import calendar_exporters.When2MeetExporter.*;
-import calendar_importers.*;
-import calendar_importers.EventImporter.*;
+import calendar.Availability;
+import calendar.CalGroupType;
+import calendar.Calendar;
+import calendar.CalendarGroup;
+import calendar.CalendarResponses;
+import calendar.CalendarSlots;
+import calendar.Event;
+import calendar.Event.CalByThatNameNotFoundException;
+import calendar.EventUpdate;
+import calendar.GoogleCalendars;
+import calendar.UserCal;
+import calendar.When2MeetEvent;
+import calendar.When2MeetOwner;
+import calendar_exporters.When2MeetExporter;
+import calendar_exporters.When2MeetExporter.EmptyEventException;
+import calendar_exporters.When2MeetExporter.NameAlreadyExistsException;
+import calendar_importers.CalendarsImporter;
+import calendar_importers.EventImporter;
+import calendar_importers.EventImporter.InvalidURLException;
+import calendar_importers.GCalImporter;
 
 import com.google.gdata.util.ServiceException;
 import com.thoughtworks.xstream.XStream;
@@ -64,9 +74,7 @@ public class Communicator {
 	private TimeFinder _timeFinder = new TimeFinder();
 	private ProgramOwner _progOwner = new ProgramOwner();
 	private JDialog _loadingDialog;
-//	private JFrame _loadingFrame;
 	private JLabel _loadingLabel;
-//	private JPanel _loadingPanel;
 	
 	private ImageIcon _kairosIcon = new ImageIcon("KairosIcon.png");
 		
@@ -103,18 +111,6 @@ public class Communicator {
 		_loadingDialog.setLocationRelativeTo(null);
 		_loadingDialog.setVisible(true);	
 		_loadingLabel.setText(msg);
-//		_loadingLabel.repaint();
-//		
-//		_loadingDialog.getContentPane().invalidate();
-//		_loadingDialog.getContentPane().validate();
-//		_loadingDialog.getContentPane().repaint();
-//		
-//		_loadingDialog.repaint();
-//		_loadingDialog.pack();
-//		_loadingDialog.invalidate();
-//		_loadingDialog.validate();
-//		_loadingDialog.repaint();
-//		_loadingDialog.pack();
 		
 	}
 
@@ -123,9 +119,7 @@ public class Communicator {
 		_loadingDialog.setVisible(false);
 	}
 
-	/**
-	 * TODO
-	 */
+
 	private void setUpXStream() {
 		
 		_xstream.alias("index", Index.class);
@@ -140,10 +134,6 @@ public class Communicator {
 		_xstream.alias("avail", Availability.class);
 	}
 	
-	/**
-	 * TODO
-	 * @return
-	 */
 	public Index recreateIndex() {
 		File indexFile = new File(_indexID+".xml");
 		if(indexFile.exists())
@@ -213,7 +203,6 @@ public class Communicator {
 				e1.printStackTrace();
 			}
 			if (webConnected(googleTestURL)) {
-				// TODO add a never option
 				Object[] options = {"Yes", "Not now"};
 				int n = JOptionPane.showOptionDialog(null, "Would you like to import your calendar?",
 						"", JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE, _kairosIcon,
@@ -254,8 +243,6 @@ public class Communicator {
 		try {
 			testInternetURL = new URL("http://www.google.com");
 		} catch (MalformedURLException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
 		}
 		
 		// Refresh when2meet events and calendars
@@ -302,9 +289,7 @@ public class Communicator {
 
 	/** SAVING **/
 
-	/**
-	 * TODO
-	 */
+	
 	private void writeToFile(String filename, Object o) {
 		Writer out = null;
 		try {
@@ -315,10 +300,7 @@ public class Communicator {
 		_xstream.toXML(o, out);	
 	}
 
-	/**
-	 * TODO
-	 * @param temp
-	 */
+	
 	private void saveIndex(Index temp) {
 		writeToFile(_indexID, temp);
 	}
@@ -416,15 +398,14 @@ public class Communicator {
 			_events.remove(id);
 			removeOneItem(id);
 		}
-
-		// If we didn't have it, huh? confused, how did this happen
+		
 	}
 
 	/**
 	 * Set the importer used for importing the user calendar, saving it to file
 	 */
 	public void setCalImporter(CalendarsImporter<CalendarResponses> importer){
-		//System.out.println("Cal importer set");
+		
 		_userCalImporter = importer;
 		StoredDataType type = null;
 		if(_userCalImporter.getClass() == GCalImporter.class)
@@ -565,7 +546,6 @@ public class Communicator {
 						try {
 							user = toReturn.getCalByName(selected.toString());
 						} catch (CalByThatNameNotFoundException e) {
-							// TODO
 						}
 						assert user.getOwner() != null;
 						toReturn.setUserResponse(user);
@@ -679,7 +659,6 @@ public class Communicator {
 		if(URL != null)
 			return addEvent(URL);
 		else{
-			//TODO : deal with return value SaveNewEvent.php not matching
 			System.out.println("Whoops...");
 			return null;
 		}
@@ -722,7 +701,6 @@ public class Communicator {
 						//allows the user to cancel submit when asked for a new name to use
 						didNotPost = getNewUserName((When2MeetEvent) event, event.getUserResponse().getOwner().getName());
 					} catch  (EmptyEventException e){
-						//TODO
 					}
 				}
 			} else {
@@ -741,7 +719,6 @@ public class Communicator {
 	 * @param duration -- length of the event being schedule
 	 */
 	public CalendarResponses getBestTimes(String eventID, int duration){
-		//TODO make more generic (hard-coding 15, limiting to w2m)
 
 		Event event = _events.get(eventID);
 		CalendarResponses toReturn = null;
@@ -789,9 +766,8 @@ public class Communicator {
 	}
 	
 	/**
-	 * TODO
 	 * @param url
-	 * @return
+	 * @return whether we are connected to the internet
 	 */
 	public static boolean webConnected(URL url) {
 		try {
@@ -809,6 +785,7 @@ public class Communicator {
 	}
 	
 	/** EXCEPTIONS */ 
+	
 	public class URLAlreadyExistsException extends Exception {
 
 	}

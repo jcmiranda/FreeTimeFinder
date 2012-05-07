@@ -1,6 +1,5 @@
 package gui;
 
-import java.awt.Color;
 import java.awt.Font;
 import java.util.ArrayList;
 
@@ -13,6 +12,11 @@ import javax.swing.JTextArea;
 import calendar.Event;
 import calendar.EventUpdate;
 
+/**
+ * Panel class that holds a representation of the updates for the current event
+ * @author roie
+ *
+ */
 public class UpdatesPanel extends JPanel {
 	
 	private JScrollPane _scrollPane = new JScrollPane();
