@@ -1,4 +1,8 @@
 package gui;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.util.Collections;
+
 import javax.swing.JDialog;
 
 import javax.swing.JFrame;
@@ -76,8 +80,7 @@ public class SliderPane{
 		}
 
 	}
-
-
+	
 
 	//	public static void main(final String[] args) {
 	//		SliderPane s = new SliderPane(5);
