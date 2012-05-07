@@ -336,7 +336,7 @@ public class EventPanel extends JPanel {
 			int selection = JOptionPane.showConfirmDialog(null,"Are you sure you want to remove this event?", "", 
 					JOptionPane.YES_NO_OPTION);
 			if(selection == JOptionPane.YES_OPTION){
-				_communicator.removeWhen2Meet(_eventID);
+				_communicator.removeEvent(_eventID);
 				removeEvent(_eventID);
 			}
 			

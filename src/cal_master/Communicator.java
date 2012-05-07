@@ -420,7 +420,7 @@ public class Communicator {
 		saveOneItem(_userCal, _userCalID, type);
 	}
 
-	public void removeWhen2Meet(String eventID) {
+	public void removeEvent(String eventID) {
 		// Check that we do have an event with this ID
 		Event toRemove = _events.get(eventID);
 
@@ -532,7 +532,7 @@ public class Communicator {
 	}
 	
 	
-	public Event getW2M(String id){
+	public Event getEvent(String id){
 		Event toReturn = _events.get(id);
 		
 		//if we don't have a stored response for the user
