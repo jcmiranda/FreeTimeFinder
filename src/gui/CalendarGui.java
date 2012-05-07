@@ -455,7 +455,6 @@ public class CalendarGui {
 		 */ 
 		@Override
 		public void actionPerformed(ActionEvent arg0) {
-			System.out.println(_timeFindButton.isSelected());
 			if(_timeFindButton.isSelected()){
 				if(_event != null && !_event.getCalendars().isEmpty() && !(_event.getCalendars().size() ==1 && _event.userHasSubmitted())){
 					new SliderPane(_numHours, CalendarGui.this);
@@ -495,9 +494,9 @@ public class CalendarGui {
 				// Retrieve this when2meet in case it has changed
 				if(_event != null){
 					setEvent(_communicator.getEvent(""+_event.getID()));
-					System.out.println("After setting event in GUI");
-					_event.printUpdates();
-					System.out.println("=====");
+//					System.out.println("After setting event in GUI");
+//					_event.printUpdates();
+//					System.out.println("=====");
 				}
 
 				setUserCal(_communicator.getUserCal());

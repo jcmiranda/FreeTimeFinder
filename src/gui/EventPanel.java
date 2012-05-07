@@ -186,14 +186,14 @@ public class EventPanel extends JPanel {
 				
 				//If gui is displaying this event, set the gui's event to NULL
 				if(_gui.getEvent() != null && String.valueOf(_gui.getEvent().getID()).equals(idToRemove)){
-					System.out.println("Event Panel Setting Event to Null");
+					//System.out.println("Event Panel Setting Event to Null");
 					_gui.setEvent(null);
 					_gui.repaint();
 				}
 				break;
 			}
 		}
-		System.out.println("NUM LABELS: " + _eventLabels.size());
+		//System.out.println("NUM LABELS: " + _eventLabels.size());
 		setUp();
 	}
 	

@@ -325,11 +325,12 @@ public class Event extends CalendarGroup<CalendarSlots> {
 	}
 
 	public void printUpdates() {
+		/*
 		System.out.println("=== " + this.getName() + " ===");
 		for(EventUpdate eventUpdate : this.getUpdates()){
 			System.out.println(eventUpdate.getMessage());
 		}
-		System.out.println("=================");
+		System.out.println("=================");*/
 	}
 
 

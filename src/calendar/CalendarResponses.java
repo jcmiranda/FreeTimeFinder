@@ -145,12 +145,14 @@ public class CalendarResponses implements Calendar {
 	}
 
 	public void print() {
+		/*
 		System.out.println("CALENDAR IMPL: ");
 		System.out.println("Name: " + _name);
 
 				for(Response r : _responses) {
 					r.print();
 				}
+*/	
 	}
 
 	public void setResponses(ArrayList<Response> responses) {
