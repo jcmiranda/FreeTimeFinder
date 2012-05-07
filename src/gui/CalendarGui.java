@@ -182,8 +182,13 @@ public class CalendarGui {
 		
 		if(_slotGroup != null){
 			_slotGroup.init();
-			event.setPaintMethod(_eventDispStyle);
+			_slotGroup.setPaintMethod(_eventDispStyle);
+			_eventPanel.setSelectedEvent(String.valueOf(_slotGroup.getID()));
 		}
+		else{
+			_eventPanel.setSelectedEvent(null);
+		}
+			
 		System.out.println("SLOT GROUP IN SET EVENT: " + _slotGroup);
 		_replyPanel.setEvent(_slotGroup);
 		System.out.println("Setting event for reply panel");
