@@ -28,26 +28,12 @@ import javax.swing.JPanel;
 
 import org.joda.time.DateTime;
 
-import calendar.Availability;
-import calendar.CalGroupType;
-import calendar.Calendar;
-import calendar.CalendarGroup;
-import calendar.CalendarResponses;
-import calendar.CalendarSlots;
-import calendar.Event;
-import calendar.Event.CalByThatNameNotFoundException;
-import calendar.EventUpdate;
-import calendar.GoogleCalendars;
-import calendar.UserCal;
-import calendar.When2MeetEvent;
-import calendar.When2MeetOwner;
-import calendar_exporters.When2MeetExporter;
-import calendar_exporters.When2MeetExporter.EmptyEventException;
-import calendar_exporters.When2MeetExporter.NameAlreadyExistsException;
-import calendar_importers.CalendarsImporter;
-import calendar_importers.EventImporter;
-import calendar_importers.EventImporter.InvalidURLException;
-import calendar_importers.GCalImporter;
+import calendar.*;
+import calendar.Event.*;
+import calendar_exporters.*;
+import calendar_exporters.When2MeetExporter.*;
+import calendar_importers.*;
+import calendar_importers.EventImporter.*;
 
 import com.google.gdata.util.ServiceException;
 import com.thoughtworks.xstream.XStream;
@@ -55,6 +41,11 @@ import com.thoughtworks.xstream.XStream;
 import ftf.TimeFinderSlots;
 import gui.GuiConstants;
 
+/**
+ * Represents the main Òserver classÓ that receives requests from the GUI (client) and delegates to the 
+ * appropriate class (e.g. importers, exporters, converters, XML storage)	
+ *
+ */
 
 public class Communicator {
 
@@ -90,6 +81,7 @@ public class Communicator {
 		_loadingDialog = new JDialog(new JFrame());
 		_loadingDialog.setDefaultCloseOperation(JDialog.DO_NOTHING_ON_CLOSE);
 		_loadingLabel = new JLabel();
+
 		_loadingLabel.setFont(new Font(GuiConstants.FONT_NAME, _loadingLabel.getFont().getStyle(), _loadingLabel.getFont().getSize()));
 		JPanel loadingPanel = new JPanel();
 		
@@ -106,10 +98,24 @@ public class Communicator {
 	 * @param msg -- message to display to the user
 	 */
 	private void showLoadingLabel(String msg){
+
 		
-		_loadingLabel.setText(msg);
 		_loadingDialog.setLocationRelativeTo(null);
 		_loadingDialog.setVisible(true);	
+		_loadingLabel.setText(msg);
+//		_loadingLabel.repaint();
+//		
+//		_loadingDialog.getContentPane().invalidate();
+//		_loadingDialog.getContentPane().validate();
+//		_loadingDialog.getContentPane().repaint();
+//		
+//		_loadingDialog.repaint();
+		_loadingDialog.pack();
+//		_loadingDialog.invalidate();
+//		_loadingDialog.validate();
+//		_loadingDialog.repaint();
+//		_loadingDialog.pack();
+		
 	}
 
 
@@ -117,8 +123,11 @@ public class Communicator {
 		_loadingDialog.setVisible(false);
 	}
 
+	/**
+	 * TODO
+	 */
 	private void setUpXStream() {
-		// TODO add Kelly's gcal and date time classes
+		
 		_xstream.alias("index", Index.class);
 		_xstream.alias("storeddatatype", StoredDataType.class);
 		_xstream.alias("calendarslots", CalendarSlots.class);
@@ -131,7 +140,10 @@ public class Communicator {
 		_xstream.alias("avail", Availability.class);
 	}
 	
-	
+	/**
+	 * TODO
+	 * @return
+	 */
 	public Index recreateIndex() {
 		File indexFile = new File(_indexID+".xml");
 		if(indexFile.exists())
@@ -263,37 +275,27 @@ public class Communicator {
 		return _events != null && _events.size() > 0;
 	}
 	
-	/**
-	 * 
-	 * @return whether the user has chosen to store their calendar in the program
-	 */
+	
 	public boolean hasUserCal() {
 		return _userCal != null;
-	}
-
-	public CalendarGroup<CalendarSlots> getFirstEvent() {
-		for(CalendarGroup<CalendarSlots> cal : _events.values())
-			return cal;
-				return null;
-	}
-
-	public String getFirstEventID() {
-		for(String id : _events.keySet())
-			return id;
-				return null;
 	}
 
 	public UserCal getUserCal() {
 		return _userCal;
 	}
 	
+	/**
+	 * Stores whether a calendar in the userCalendar should be repulled/displayed 
+	 * @param calRespId -- calendar to set
+	 * @param selected -- whether it should be displayed/repulled
+	 */
 	public void setSelectedInUserCal(String calRespId, boolean selected){
 		if(_userCal != null){
 			ArrayList<CalendarResponses> cals = _userCal.getCalendars();
 			for(CalendarResponses calResp : cals){
 				if(calResp.getId().equals(calRespId)){
-					// TODO 
 					calResp.setSelected(selected);
+					break;
 				}
 			}
 		}
@@ -301,17 +303,9 @@ public class Communicator {
 
 	/** SAVING **/
 
-	/*
-	public void updateIndex() {
-		// Rebuilds the index given the current list of events and calendar
-		for(String id : _events.keySet())
-			_index.addItem(id, IndexType.When2MeetEvent);
-		_index.addItem(_userCalID, IndexType.GCal);
-		_index.addItem(_importerID, _userCalImporterType);
-		writeToFile(_indexID, _index);
-	}
+	/**
+	 * TODO
 	 */
-
 	private void writeToFile(String filename, Object o) {
 		Writer out = null;
 		try {
@@ -322,45 +316,38 @@ public class Communicator {
 		_xstream.toXML(o, out);	
 	}
 
+	/**
+	 * TODO
+	 * @param temp
+	 */
 	private void saveIndex(Index temp) {
 		writeToFile(_indexID, temp);
 	}
 
-	// Saves one item
+	/**
+	 * Saves one item
+	 * @param o -- item to save
+	 * @param id -- name of the file to which to save it (identified by the object's ID)
+	 * @param type -- type of data the item represents
+	 */
 	public void saveOneItem(Object o, String id, StoredDataType type) {
 		// Check index to see if it exists
 		Index temp = recreateIndex();
 		temp.addItem(id, type);
 		saveIndex(temp);
-		//writeToFile(_indexID,temp);
-		// updateIndex();
 		writeToFile(id, o);
 	}
 
+	/**
+	 * Removes an item from the index
+	 * @param id -- id of the item to remove
+	 */
 	public void removeOneItem(String id) {
 		Index temp = recreateIndex();
 		temp.removeItem(id);
 		saveIndex(temp);
 	}
 
-	/*
-	public void saveAll() {
-		// Store some form of an update index
-		updateIndex();
-
-		// Store XML for when2meet events
-		for(String id : _events.keySet()) {
-			writeToFile(id, _events.get(id));
-		}
-
-		// Store XML for calendar
-		writeToFile(_userCalID, _userCal);
-
-	}*/
-
-	public class URLAlreadyExistsException extends Exception {
-
-	}
 	
 	/**
 	 * Adds an event to the program to be stored based on a URL
@@ -372,20 +359,18 @@ public class Communicator {
 	 * @throws InvalidURLException 
 	 */
 	public Event addEvent(String url) throws URLAlreadyExistsException, IOException, InvalidURLException {
+		
 		// Check if we have this url already
-		// If we do, throw an error
 		for(Event event : _events.values())
+			// If we do, throw an error
 			if(event.getURL().equals(url)) {
 				System.out.println("URL already found");
 				throw new URLAlreadyExistsException();
 			}
 
-		// If we don't, check that it's a valid url
-		// If it's a valid url, pull in that when2meet using an importer
-		// If it's not a valid url, error message to user
-
 		showLoadingLabel("Retrieving event...");
 		
+		// pull in that when2meet using an importer, bubbling up any exceptions the importer throws for display to the user
 		Event newEvent;
 		newEvent = _eventImporter.importNewEvent(url);
 
@@ -400,6 +385,9 @@ public class Communicator {
 		return newEvent;
 	}
 
+	/**
+	 * Converts from type of CalendarGroup to type of data to store 
+	 */
 	public StoredDataType calGroupTypeToIndexType(CalGroupType type) {
 		switch(type) {
 		case When2MeetEvent: { return StoredDataType.When2MeetEvent; }
@@ -414,6 +402,10 @@ public class Communicator {
 		saveOneItem(_userCal, _userCalID, type);
 	}
 
+	/**
+	 * Remove event, erasing it from storage
+	 * @param eventID -- ID of event to remove
+	 */
 	public void removeEvent(String eventID) {
 		// Check that we do have an event with this ID
 		Event toRemove = _events.get(eventID);
@@ -429,6 +421,9 @@ public class Communicator {
 		// If we didn't have it, huh? confused, how did this happen
 	}
 
+	/**
+	 * Set the importer used for importing the user calendar, saving it to file
+	 */
 	public void setCalImporter(CalendarsImporter<CalendarResponses> importer){
 		//System.out.println("Cal importer set");
 		_userCalImporter = importer;
@@ -451,8 +446,11 @@ public class Communicator {
 		_progOwner.setName(name);
 	}
 
+	/**
+	 * Refreshes display by repulling all events and the userCal and saving the new versions
+	 */
 	public void refresh() {
-		//TODO: deal with URL exception
+		
 		// Update and save all when2meet events
 		When2MeetEvent temp = null;
 		showLoadingLabel("Retrieving Events...");
@@ -479,12 +477,16 @@ public class Communicator {
 
 	}
 
-	public void calToW2M(String eventID){
-		Event w2m = _events.get(eventID);
+	/**
+	 * Converts userCal to a CalendarSlots representation determined in part by the event in which it will be used
+	 * @param eventID -- event for which the CalSlots rep will be used
+	 */
+	public void userCalToEvent(String eventID){
+		Event event = _events.get(eventID);
 
-		if(w2m != null && !w2m.userHasSubmitted()){
-			CalendarSlots cal = _converter.calToSlots(_userCal, w2m);
-			w2m.setUserResponse(cal);
+		if(event != null && !event.userHasSubmitted()){
+			CalendarSlots cal = _converter.calToSlots(_userCal, event);
+			event.setUserResponse(cal);
 		}
 	}
 
@@ -526,6 +528,11 @@ public class Communicator {
 	}
 	
 	
+	/**
+	 * Return the event that matches the given id
+	 * @param id -- id of the event to return
+	 * @return -- Event matching id, making sure that the appropriate user response is stored
+	 */
 	public Event getEvent(String id){
 		Event toReturn = _events.get(id);
 		
@@ -559,14 +566,12 @@ public class Communicator {
 						try {
 							user = toReturn.getCalByName(selected.toString());
 						} catch (CalByThatNameNotFoundException e) {
-							// TODO Auto-generated catch block
-							e.printStackTrace();
+							// TODO
 						}
 						assert user.getOwner() != null;
 						toReturn.setUserResponse(user);
 						toReturn.setUserSubmitted(true);
 						saveOneItem(toReturn, toReturn.getID()+"", calGroupTypeToIndexType(toReturn.getCalGroupType()));
-						// ASDF
 					}
 				}
 			}
@@ -582,8 +587,9 @@ public class Communicator {
 
 		checkUserCal(id);
 
+		// auto-fill user response based on user calendar, if applicable
 		if(!toReturn.userHasSubmitted() && _userCal != null){
-			calToW2M(id);
+			userCalToEvent(id);
 		}
 
 		//save user response
@@ -592,8 +598,17 @@ public class Communicator {
 		return toReturn;
 	}
 
-	private void getNewUserName(When2MeetEvent event, String currName){
+	/**
+	 * Called if the name the user has chosen to represent their response has been used by another respondee to the given event
+	 * User asked as long as they don't press "cancel" and the name they enter has already been used
+	 * @param event -- event to which the user is trying to respond
+	 * @param currName -- current name they're trying to use
+	 * @return -- true if the user completes the process, false if they pres "cancel" at any time
+	 */
+	private boolean getNewUserName(When2MeetEvent event, String currName){
 		String newName = JOptionPane.showInputDialog("The name '" + currName + "' has already been used. Please enter another name.");
+		if(newName == null)
+			return false;
 		boolean isValidName = true;
 		CalendarSlots userResp = event.getUserResponse();
 		for(CalendarSlots c : event.getCalendars()){
@@ -606,8 +621,13 @@ public class Communicator {
 		if(isValidName)
 			userResp.setOwner(new When2MeetOwner(newName, userResp.getOwner().getID()));
 		saveOneItem(event, event.getID()+"", StoredDataType.When2MeetEvent);
+		return true;
 	}
 
+	/**
+	 * Called if the user hasn't yet chosen a name to use to respond to events
+	 * @return -- true if the user entered a name, false otherwise
+	 */
 	private boolean getNewOwnerName(){
 
 		String newName = JOptionPane.showInputDialog("Please enter the name you would like to use in your When2Meet responses");
@@ -625,7 +645,19 @@ public class Communicator {
 		return _progOwner.getName();
 	}
 
+	/**
+	 * Create a new event from the program, posting it to the web and returning our representation
+	 * @param name -- name of the event to create
+	 * @param selectedDates -- dates the event should span
+	 * @param startHour -- earliest time for which the event should be scheduled
+	 * @param endHour -- latest time at which the event should end
+	 * @return -- Event representation of the event created by the web
+	 * @throws URLAlreadyExistsException
+	 * @throws IOException
+	 * @throws InvalidURLException
+	 */
 	public Event createEvent(String name, ArrayList<DateTime> selectedDates, int startHour, int endHour) throws URLAlreadyExistsException, IOException, InvalidURLException{
+		
 		DateTime startDay = selectedDates.get(0);
 		DateTime startTime = new DateTime (startDay.getYear(), startDay.getMonthOfYear(), startDay.getDayOfMonth(),
 				startHour, 0);
@@ -639,7 +671,6 @@ public class Communicator {
 			endTime = new DateTime (endDay.getYear(), endDay.getMonthOfYear(), endDay.getDayOfMonth(),
 				endHour, 0);
 		
-		//When2MeetEvent newEvent = new When2MeetEvent(startTime, endTime, name, -1, null, null, null);
 		showLoadingLabel("Creating event...");
 		
 		String URL = _exporter.postNewEvent(name, startTime, endTime);
@@ -656,6 +687,11 @@ public class Communicator {
 			
 	}
 
+	/**
+	 * Post a user's response to the appropriate event
+	 * @param eventID -- id of the event to which to post
+	 * @param response -- user's response
+	 */
 	public void submitResponse(String eventID, CalendarSlots response) {
 		Event event = _events.get(eventID);	
 
@@ -684,9 +720,10 @@ public class Communicator {
 						_exporter.postAllAvailability((When2MeetEvent) event);
 						didNotPost = false;
 					} catch (NameAlreadyExistsException e) {
-						getNewUserName((When2MeetEvent) event, event.getUserResponse().getOwner().getName());
+						//allows the user to cancel submit when asked for a new name to use
+						didNotPost = getNewUserName((When2MeetEvent) event, event.getUserResponse().getOwner().getName());
 					} catch  (EmptyEventException e){
-						//TODO MAJOR MAJOR TODO
+						//TODO
 					}
 				}
 			} else {
@@ -699,23 +736,31 @@ public class Communicator {
 		saveOneItem(event, String.valueOf(event.getID()), calGroupTypeToIndexType(event.getCalGroupType()));
 	}
 
+	/**
+	 * Return a CalendarResponses storing a response for each suggestion for the best time to meet
+	 * @param eventID -- ID of event for which to find times
+	 * @param duration -- length of the event being schedule
+	 */
 	public CalendarResponses getBestTimes(String eventID, int duration){
 		//TODO make more generic (hard-coding 15, limiting to w2m)
 
-		Event w2m = _events.get(eventID);
+		Event event = _events.get(eventID);
 		CalendarResponses toReturn = null;
 
-		if(w2m != null){
-			int minAttendees = (int) (w2m.getCalendars().size() * ATTENDEE_PERCENTAGE);
-			toReturn = _timeFinder.findBestTimes(w2m, 15, duration, NUM_SUGGESTIONS, minAttendees);
+		if(event != null){
+			int minAttendees = (int) (event.getCalendars().size() * ATTENDEE_PERCENTAGE);
+			toReturn = _timeFinder.findBestTimes(event, 15, duration, NUM_SUGGESTIONS, minAttendees);
 		}
 
 		return toReturn;
 	}
 
 
+	/**
+	 * @return a NameIDPair for every event stored
+	 */
 	public ArrayList<NameIDPair> getNameIDPairs() {
-		// Return the list of name ID pairs associated with all events
+		
 		ArrayList<NameIDPair> toReturn = new ArrayList<NameIDPair>();
 
 		for(Event e : _events.values())
@@ -724,19 +769,31 @@ public class Communicator {
 				return toReturn;
 	}
 
+	
+	/**
+	 * @return the ids of all events stored
+	 */
 	public Collection<String> getEventIDs() {
 		return _events.keySet();
 	}
 
+	/**
+	 * Repull the user calendar so that we store all events (from selected calendars) that occur between
+	 * start and end
+	 */
 	public void pullCal(DateTime start, DateTime end){
 
 		_userCal = (UserCal) _userCalImporter.refresh(start, end, _userCal);
-		//_userCal = _userCalImporter.refresh(start, end);
 		saveOneItem(_userCal, _userCalID, calGroupTypeToIndexType(_userCal.getCalGroupType()));
 		saveOneItem(_userCalImporter, _userCalImporterID, _userCalImporterType);
 
 	}
 	
+	/**
+	 * TODO
+	 * @param url
+	 * @return
+	 */
 	public static boolean webConnected(URL url) {
 		try {
 			URLConnection conn = url.openConnection();
@@ -746,9 +803,14 @@ public class Communicator {
 			in.close();
 		} 
 		catch (IOException e) {
-			// TODO Auto-generated catch block
 			return false;
 		}
+		
 		return true;
+	}
+	
+	/** EXCEPTIONS */ 
+	public class URLAlreadyExistsException extends Exception {
+
 	}
 }

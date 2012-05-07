@@ -226,6 +226,16 @@ public class EventPanel extends JPanel {
 		}
 	}
 	
+	public void setSelectedEvent(String eventID){
+		for(EventLabel label : _eventLabels){
+			if(label.getID().equals(eventID))
+				label.setSelected(true);
+			else
+				label.setSelected(false);
+		}
+		this.repaint();
+	}
+	
 	public void paintComponent(Graphics g){
 		super.paintComponent(g);
 		int i=0;
