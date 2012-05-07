@@ -43,7 +43,6 @@ public class ReplyPanel extends JPanel{
 	private int _numHours =  DEFAULT_END_HOUR - DEFAULT_START_HOUR;
 	private DateTime _startDay;
 	private DateTime _endDay;
-	private DayPanel[] _days;
 //	private JPanel _prePadding;
 	private JPanel _postPadding;
 	private JPanel _outerBigDayPanel;
