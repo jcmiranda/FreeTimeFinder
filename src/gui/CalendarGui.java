@@ -236,7 +236,7 @@ public class CalendarGui {
 
 		calLayout.setHorizontalGroup(
 				calLayout.createSequentialGroup()
-				.addComponent(_replyPanel, GroupLayout.PREFERRED_SIZE, (int) (FRAME_WIDTH*.70),
+				.addComponent(_replyPanel, GroupLayout.PREFERRED_SIZE, (int) (FRAME_WIDTH*.80),
 						GroupLayout.PREFERRED_SIZE));
 
 		calLayout.setVerticalGroup(
@@ -306,7 +306,7 @@ public class CalendarGui {
 		eastPanel.add(_eventPanel);
 		eastPanel.add(_updatesPanel);
 
-		eastPanel.setPreferredSize(new Dimension((int) (FRAME_WIDTH*.25), 600));
+		eastPanel.setPreferredSize(new Dimension((int) (FRAME_WIDTH*.25*.6), 600));
 
 		_frame.add(eastPanel, BorderLayout.EAST);
 
