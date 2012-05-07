@@ -11,6 +11,7 @@ import java.awt.event.FocusListener;
 import java.util.ArrayList;
 import java.util.Collections;
 
+import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JDialog;
@@ -39,6 +40,7 @@ public class CreateEventDialog{
 	private ArrayList<DateTime> _selectedDates = new ArrayList<DateTime>();
 	private JComboBox _startHour;
 	private JComboBox _endHour;
+	private ImageIcon _kairosIcon = new ImageIcon("KairosIcon.png");
 	public static enum DaysOfWeek {Monday, Tuesday, Wednesday, Thursday, Friday, Saturday, Sunday};
 
 	//	public enum daysO()
@@ -279,11 +281,11 @@ public class CreateEventDialog{
 		public void actionPerformed(ActionEvent e) {
 			if (e.getActionCommand().equals("OK")){
 				if (_eventName.getText().equals("New Event Name")){
-					JOptionPane.showMessageDialog(new JFrame(), "Please choose a name for your event.");
+					JOptionPane.showMessageDialog(new JFrame(), "Please choose a name for your event.", "", JOptionPane.ERROR_MESSAGE, _kairosIcon);
 				} else if (_selectedDates.size() == 0){
-					JOptionPane.showMessageDialog(new JFrame(), "Please choose dates for your event.");
+					JOptionPane.showMessageDialog(new JFrame(), "Please choose dates for your event.", "", JOptionPane.ERROR_MESSAGE, _kairosIcon);
 				} else if (_startHour.getSelectedIndex() >= _endHour.getSelectedIndex()){
-					JOptionPane.showMessageDialog(new JFrame(), "Please choose appropriate times for your event.");
+					JOptionPane.showMessageDialog(new JFrame(), "Please choose appropriate times for your event.", "", JOptionPane.ERROR_MESSAGE, _kairosIcon);
 				} else {
 					_dialog.dispose();
 					Collections.sort(_selectedDates);
@@ -295,7 +297,6 @@ public class CreateEventDialog{
 				_dialog.dispose();
 			}
 		}
-
 	}
 
 

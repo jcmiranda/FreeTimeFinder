@@ -17,19 +17,23 @@ import com.google.api.client.googleapis.auth.oauth2.GoogleTokenResponse;
 import com.google.api.client.http.javanet.NetHttpTransport;
 import com.google.api.client.json.jackson.JacksonFactory;
 
+/*
+ * Authenticates user using OAuth.  Keeps track of refresh token.
+ */
+
 public class GCalAuth {
 	private String CLIENT_ID;
 	private String CLIENT_SECRET;
 	private String _refreshToken;
 	
 	public GCalAuth() {
+		//from registration with Google API
 		CLIENT_ID = "1034117539945.apps.googleusercontent.com";
 		CLIENT_SECRET = "ygIy2-y40S1Fer0B3oU_coVn"; 
 	}
 	
 	public TokenResponse getRefreshToken() {
 		 try {
-			 //System.out.println("refresh toke = "+_refreshToken);
 			return new GoogleRefreshTokenRequest(new NetHttpTransport(), new JacksonFactory(), _refreshToken,CLIENT_ID, CLIENT_SECRET).execute();
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
@@ -75,13 +79,6 @@ public class GCalAuth {
 		    //display webpage
 		    java.awt.Desktop.getDesktop().browse(uri);
 		    
-		    //JEditorPane urlPane = new JEditorPane(url);
-		    //urlPane.setEditable(false);
-//		    JFrame frame = new JFrame();
-//		    frame.getContentPane().add(urlPane, BorderLayout.CENTER);
-//		    frame.setSize(200, 200);
-//		    frame.setVisible(true);
-		    
 		    //get code
 		    while (code == null) {
 		    	try {
@@ -95,14 +92,13 @@ public class GCalAuth {
 		    if (code.equals("error")) {
 		    	return null;
 		    }
-		    //System.out.println("here");
-			//STEP TWO: GET ACCESS TOKEN
+
+		    //STEP TWO: GET ACCESS TOKEN
 		    //getting the access token
 		    GoogleAuthorizationCodeTokenRequest toke = new GoogleAuthorizationCodeTokenRequest(new NetHttpTransport(), new JacksonFactory(), CLIENT_ID, CLIENT_SECRET, code, redirect_uri_local);
 		    GoogleTokenResponse request = toke.execute();
 		    request.setExpiresInSeconds((long) 9000);
 		    _refreshToken = request.getRefreshToken();
-		   // System.out.println("refresh toke = "+_refreshToken);
 		    //return token for client
 		    server.exit();
 		    return request;

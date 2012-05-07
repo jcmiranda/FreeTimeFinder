@@ -26,7 +26,7 @@ public class UpdatesPanel extends JPanel {
 		_scrollPane.setViewportView(_textArea);
 		_textArea.setEditable(false);
 		_textArea.setLineWrap(true);
-		_newLabelFont=new Font(_titleLabel.getFont().getName(),Font.BOLD,
+		_newLabelFont=new Font(GuiConstants.FONT_NAME,Font.BOLD,
 				_titleLabel.getFont().getSize());  
 
 		_titleLabel.setFont(_newLabelFont);

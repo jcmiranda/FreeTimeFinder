@@ -39,8 +39,9 @@ import com.google.gdata.data.calendar.CalendarFeed;
 import com.google.gdata.data.extensions.When;
 import com.google.gdata.util.ServiceException;
 
-//edit recurring events
-//return null if no access
+/*
+ * This class imports a user's Google calendar.  Step one: authenticate user, step two: pull in calendar
+ */
 
 public class GCalImporter implements CalendarsImporter<CalendarResponses> {
 	private CalendarService _client;
@@ -69,58 +70,6 @@ public class GCalImporter implements CalendarsImporter<CalendarResponses> {
 		return this.importCalendarGroup(startTime, endTime, null);
 	}
 	
-//	private synchronized void timeOut() {
-//		notifyAll();
-//	}
-//	
-//	public synchronized Socket serverReady(InetAddress ad, int port) throws IOException {  
-//        Socket listener = null;  
-//        while (true) {  
-//            try {  
-//                listener = new Socket(ad, port);  
-//            } 
-//            catch (ConnectException ignore) {}  
-//            if (listener == null) {  
-//                new Timer(true).schedule(new TimerTask() {  
-//                                    public void run() {  
-//                                        timeOut();  
-//                                    }  
-//                                },  
-//                                1000);  
-//                 try {  
-//                     wait();  
-//                 } 
-//                 catch (InterruptedException ignore) {}  
-//            } 
-//            else {  
-//                break;  
-//            }  
-//        }  
-//        return listener;  
-//    }  
-	
-//	private String get(String urlString) {
-//		URL url;
-//		StringBuffer resp = new StringBuffer();
-//		try {
-//			url = new URL(urlString);
-//			URLConnection conn = url.openConnection();
-//			conn.setDoOutput(true);
-//		    
-//		    // Get the response
-//		    BufferedReader rd = new BufferedReader(new InputStreamReader(conn.getInputStream()));
-//		    
-//		    String line;
-//		    while ((line = rd.readLine()) != null) 
-//		        resp = resp.append(line);
-//		    
-//		} catch (Exception e) {
-//
-//		}
-//		// TODO implement properly
-//		return resp.toString();
-//	}
-	
 	public UserCal importCalendarGroup(org.joda.time.DateTime st, org.joda.time.DateTime et, UserCal calgroup) throws IOException, ServiceException, com.google.gdata.util.ServiceException {
 		//calendar group
 		GoogleCalendars allCalendars = new GoogleCalendars(st, et, _owner);
@@ -132,10 +81,6 @@ public class GCalImporter implements CalendarsImporter<CalendarResponses> {
 		myQuery.setMaximumStartTime(new com.google.gdata.data.DateTime(et.getMillis()));
 		//send request and receive feed
 		CalendarFeed resultFeed = _client.query(myQuery, CalendarFeed.class);
-		
-		//NOTE:
-		//calendarentry = calendar in a list of calendars
-		//calendar event entry = event in single calendar
 		
 		ArrayList<CalendarEntry> selectedCals = new ArrayList<CalendarEntry>();
 		ArrayList<String> allCals_titles = new ArrayList<String>();
@@ -219,7 +164,7 @@ public class GCalImporter implements CalendarsImporter<CalendarResponses> {
             allCalendars.addCalendar(currCal);
             
             //TEST
-             //currCal.print();
+            //currCal.print();
           }
         return allCalendars;
 	}
@@ -263,15 +208,7 @@ public class GCalImporter implements CalendarsImporter<CalendarResponses> {
 		return responseList;
 	}
 	
-	//TEST
-    public static void main(String[] args) throws IOException, ServiceException, com.google.gdata.util.ServiceException, URISyntaxException {
-    	GCalImporter myImporter = new GCalImporter();
-    	org.joda.time.DateTime startTime = new org.joda.time.DateTime(2012, 4, 20, 8, 0);
-		org.joda.time.DateTime endTime = new org.joda.time.DateTime(2012, 4, 29, 23, 0);
-    	myImporter.importMyGCal(startTime, endTime);
-    	myImporter.refresh(startTime, endTime);
-    }
-	
+
 	public UserCal refresh(org.joda.time.DateTime st, org.joda.time.DateTime et, UserCal calgroup) {
 		TokenResponse toke = _auth.getRefreshToken();
 		_client.setAuthSubToken(toke.getAccessToken());
@@ -300,7 +237,6 @@ public class GCalImporter implements CalendarsImporter<CalendarResponses> {
 		// TODO Auto-generated method stub
 		return null;
 	}
-
 	
 	private class SelectCalListener implements ActionListener {
 		@Override
@@ -318,7 +254,6 @@ public class GCalImporter implements CalendarsImporter<CalendarResponses> {
 			_buttonClicked = true;
 		}
 	}
-
 
 	@Override
 	public CalendarGroup<CalendarResponses> refresh(DateTime st, DateTime et) {

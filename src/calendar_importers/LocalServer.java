@@ -9,6 +9,11 @@ import com.sun.net.httpserver.HttpExchange;
 import com.sun.net.httpserver.HttpHandler;
 import com.sun.net.httpserver.HttpServer;
 
+/*
+ * Purpose: Google authentication.  After sending request for Google authentication, Google responds with a GET request
+ * of its own which must be listened for by a local server
+ */
+
 public class LocalServer {
 	
 	private static String _code;
