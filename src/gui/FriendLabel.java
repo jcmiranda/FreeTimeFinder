@@ -7,6 +7,11 @@ import java.awt.event.MouseListener;
 
 import javax.swing.JLabel;
 
+/**
+ * Class representing a label for an invitee to a selected event
+ * @author roie
+ *
+ */
 public class FriendLabel extends JLabel implements MouseListener{
 
 	private FriendBar _friendBar;
@@ -52,7 +57,6 @@ public class FriendLabel extends JLabel implements MouseListener{
 		if(_isVisible){
 			_friendBar.hideAllVisible(_friendName);
 			this.setFont(new Font(this.getFont().getName(), Font.BOLD, this.getFont().getSize()));
-			//this.setForeground(Color.GREEN);
 		}
 	}
 

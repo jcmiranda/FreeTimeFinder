@@ -14,6 +14,11 @@ import org.joda.time.DateTime;
 
 import calendar.CalendarResponses;
 
+/**
+ * Organizing panel class that groups both representations (DayPanel and ClickableDayPanel) a day
+ * @author roie
+ *
+ */
 public class OuterDayPanel extends JPanel{
 
 	private DayPanel _day;
@@ -22,6 +27,12 @@ public class OuterDayPanel extends JPanel{
 	private JLabel _dateOfWeekLabel;
 	private JPanel _labelPanel;
 	
+	/**
+	 * Build panel and lay out graphical elements
+	 * @param clickableDay
+	 * @param day
+	 * @param today
+	 */
 	public OuterDayPanel(ClickableDayPanel clickableDay, DayPanel day, DateTime today){
 		super();
 		_day = day;
@@ -93,6 +104,10 @@ public class OuterDayPanel extends JPanel{
 		_day.setBestTimes(bestTimes);
 	}
 
+	/**
+	 * Set the day for the panel and the child panels
+	 * @param today
+	 */
 	public void setDay(DateTime today){
 		_day.setDay(today);
 		_clickableDay.setDay(today);

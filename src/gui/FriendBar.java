@@ -18,6 +18,11 @@ import calendar.CalendarSlots;
 import calendar.Event;
 import calendar.Event.CalByThatNameNotFoundException;
 
+/**
+ * Panel class that holds the names of all invitees to a selected event minus the user of the program
+ * @author roie
+ *
+ */
 public class FriendBar extends JPanel {
 	
 	private Event _event;
@@ -25,10 +30,14 @@ public class FriendBar extends JPanel {
 	private ArrayList<CalendarSlots> _tempInvisible = new ArrayList<CalendarSlots>();
 	private JPanel _scrollPaneInner = new JPanel();
 	private JScrollPane _scrollPane;
-	private GridLayout _spiLayout = new GridLayout(0, 1, 0, 10); // new GroupLayout(_scrollPaneInner);
+	private GridLayout _spiLayout = new GridLayout(0, 1, 0, 10);
 	private GroupLayout _layout = new GroupLayout(this);
 	private CalendarGui _gui;
 	
+	/**
+	 * Layout visual components
+	 * @param gui
+	 */
 	public FriendBar(CalendarGui gui){
 		_gui = gui;
 		_scrollPaneInner.setLayout(_spiLayout);
@@ -77,7 +86,6 @@ public class FriendBar extends JPanel {
 		
 		_scrollPaneInner.removeAll();
 		_scrollPaneInner.setLayout(_spiLayout);
-		//_scrollPaneInner.setPreferredSize(new Dimension((int) (GuiConstants.FRAME_WIDTH*0.75), 25));
 
 		if(_event != null)
 			for(CalendarSlots cal : _event.getCalendars()){
@@ -99,6 +107,11 @@ public class FriendBar extends JPanel {
 		initLabels();
 	}
 	
+	/**
+	 * Add an invitees calendar to the responses to the current event and display
+	 * @param name
+	 * @param visible
+	 */
 	public void setCalVisible(String name, boolean visible){
 		CalendarSlots cal;
 		try {
@@ -109,11 +122,15 @@ public class FriendBar extends JPanel {
 				_gui.repaint();
 			}
 		} catch (CalByThatNameNotFoundException e) {
-			//TODO handle this
+			System.err.println("Calendar by that name not found, something has gone wrong");
 		}
 		
 	}
 	
+	/**
+	 * Hide all the responses except for the selected invitee's
+	 * @param calToKeep
+	 */
 	public void hideAllVisible(String calToKeep){
 		if(_event != null)
 			for(CalendarSlots cal : _event.getCalendars()){
@@ -125,6 +142,9 @@ public class FriendBar extends JPanel {
 		_gui.repaint();
 	}
 	
+	/**
+	 * Show all hidden responses to the current event
+	 */
 	public void showAllHidden(){
 		for(CalendarSlots cal : _tempInvisible){
 			cal.setVisible(true);

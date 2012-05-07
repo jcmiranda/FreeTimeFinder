@@ -13,9 +13,16 @@ import calendar.CalendarResponses;
 import calendar.CalendarSlots;
 import calendar.UserCal;
 
+/**
+ * Class representing a day with user's calendars as well as overlayed W2M response input
+ * @author roie
+ *
+ */
 public class ClickableDayPanel extends Day{
 
+	// Field representing a user's availability input
 	private CalendarSlots _clicks;
+	// Field representing a user's personal calendars
 	private UserCal _userCal;
 
 	public ClickableDayPanel(){
@@ -51,18 +58,14 @@ public class ClickableDayPanel extends Day{
 		_userCal = responses;
 	}
 
-	private int getDaysBetween(DateTime start, DateTime end){
-		if(end.getYear() == start.getYear())
-			return end.getDayOfYear() - start.getDayOfYear();
-		else if(end.getYear() == start.getYear() + 1)
-			return end.getDayOfYear() + 366 - start.getDayOfYear();
-		return -1;
-	}
-
-
+	/**
+	 * For the current day, flip the user's availability at the slot represented by slotNum
+	 * I.e. If free, set him busy, if busy set him free
+	 * @param slotNum
+	 */
 	public void flipAvail(int slotNum){
 		if(getClicks() != null){
-			int day = getDaysBetween(getClicks().getStartTime(), getDay());
+			int day = CalendarSlots.getDaysBetween(getClicks().getStartTime(), getDay());
 
 			CalendarSlots cal = getClicks();
 			if(day >=0 && day < cal.numDays()){
@@ -76,12 +79,19 @@ public class ClickableDayPanel extends Day{
 		}
 	}
 
-
+	/**
+	 * Lisener to the clickable panel
+	 * @author roie
+	 *
+	 */
 	class CalListener implements MouseListener, MouseMotionListener{
 
 		Availability flipMode;
 		int originalSlot;
 
+		/**
+		 * On mouse pressed flip the availability of the pressed slot and record both the slot number and its state
+		 */
 		@Override
 		public void mousePressed(MouseEvent arg0) {
 			if (isActive() && getClicks() != null){
@@ -89,15 +99,15 @@ public class ClickableDayPanel extends Day{
 						arg0.getX()<0 || arg0.getX()>ClickableDayPanel.this.getWidth())){
 					originalSlot = (int) ((double) arg0.getY()/getHeight()*getNumHours()*4);
 					flipAvail(originalSlot);
-					System.out.println("today: " + getDay().getDayOfMonth());
-					System.out.println("start: " + getClicks().getStartTime().getDayOfMonth());
-					System.out.println("days between: " + getDaysBetween(getClicks().getStartTime(), getDay()));
-					flipMode = getClicks().getAvail(getDaysBetween(getClicks().getStartTime(), getDay()), originalSlot);
+					flipMode = getClicks().getAvail(CalendarSlots.getDaysBetween(getClicks().getStartTime(), getDay()), originalSlot);
 					repaint();
 				}
 			}
 		}		
 
+		/**
+		 * On mouse drag change all the slots between the current slot and the first slot clicked to the availability flipped to on the first click
+		 */
 		@Override
 		public void mouseDragged(MouseEvent arg0) {
 			if (isActive() && getClicks() != null){
@@ -105,7 +115,7 @@ public class ClickableDayPanel extends Day{
 				slotNum = Math.max(0, slotNum);
 
 				for (int i=Math.min(originalSlot,slotNum); i<=Math.min(Math.max(originalSlot,slotNum), getClicks().getSlotsInDay()-1); i++){
-					if (getClicks().getAvail(getDaysBetween(getClicks().getStartTime(), getDay()), i) != flipMode) {
+					if (getClicks().getAvail(CalendarSlots.getDaysBetween(getClicks().getStartTime(), getDay()), i) != flipMode) {
 						flipAvail(i);
 						repaint();
 					}	
@@ -137,7 +147,9 @@ public class ClickableDayPanel extends Day{
 	}
 
 
-
+	/**
+	 * In addition to painting lines and BG color, also paint user's calendars for the day, and user's clickable input
+	 */
 	public void paintComponent(Graphics g){
 		super.paintComponent(g);
 		Graphics2D brush = (Graphics2D) g;
