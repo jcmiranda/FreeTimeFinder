@@ -67,7 +67,7 @@ public class CalendarGui {
 	ImageIcon _toggleIcon = new ImageIcon("small_switch_button.png");
 	ImageIcon _toggleIconInverted = new ImageIcon("small_switch_button_invert.png");
 	ImageIcon _refreshIcon = new ImageIcon("small_refresh_button.png");
-	ImageIcon _refreshIconInverted = new ImageIcon("small_refresh_button_invert");
+	ImageIcon _refreshIconInverted = new ImageIcon("small_refresh_button_invert.png");
 	private JButton _refreshButton = new JButton(_refreshIcon);
 	private JButton _eventDispButton = new JButton(_toggleIcon);
 	private JButton _timeFindButton = new JButton(_findTimeIcon);
