@@ -240,7 +240,7 @@ public class CalendarGui {
 
 		calLayout.setVerticalGroup(
 				calLayout.createParallelGroup(GroupLayout.Alignment.TRAILING)
-				.addComponent(_replyPanel, GroupLayout.PREFERRED_SIZE, FRAME_HEIGHT - _replyPanel.getPreferredSize().height + 15,
+				.addComponent(_replyPanel, GroupLayout.PREFERRED_SIZE, FRAME_HEIGHT - _replyPanel.getPreferredSize().height - 25,
 						GroupLayout.PREFERRED_SIZE)
 //						.addComponent(_hourOfDayLabels, GroupLayout.PREFERRED_SIZE, FRAME_HEIGHT - _replyPanel.getPreferredSize().height - _replyPanel.getWeekDayPanelHeight(),
 //								GroupLayout.PREFERRED_SIZE)
@@ -267,18 +267,20 @@ public class CalendarGui {
 
 		JPanel logoPanel = new JPanel();
 		logoPanel.add(_picLabel);
+//		logoPanel.setAlignmentX(JPanel.LEFT_ALIGNMENT);
+//		_picLabel.setAlignmentX(JLabel.LEFT_ALIGNMENT);
 		
 		//new GridLayout(1,2)
 		JPanel northPanel = new JPanel(new GridBagLayout());
 		
 		GridBagConstraints c = new GridBagConstraints();
 		c.fill = GridBagConstraints.HORIZONTAL;
-		c.weightx = 0.5;
+		c.weightx = 0.0;
 		c.weighty = 1.0;
 		c.ipadx = 200;
 		c.gridx = 0;
 		c.gridy = 0;
-		c.ipady = 15;
+		c.ipady = 10;
 		
 		northPanel.add(logoPanel,c);
 		
