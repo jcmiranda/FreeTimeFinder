@@ -276,10 +276,5 @@ public class GCalImporter implements CalendarsImporter<CalendarResponses> {
 		// TODO Auto-generated method stub
 		return null;
 	}
-	@Override
-	public CalendarGroup<CalendarResponses> refresh(DateTime st, DateTime et) {
-		// TODO Auto-generated method stub
-		return null;
-	}
 }
 

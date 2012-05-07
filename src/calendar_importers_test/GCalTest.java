@@ -3,6 +3,7 @@ package calendar_importers_test;
 import java.io.IOException;
 import java.net.URISyntaxException;
 
+import calendar.UserCal;
 import calendar_importers.GCalImporter;
 
 import com.google.gdata.util.ServiceException;
@@ -28,7 +29,7 @@ public class GCalTest {
     	GCalImporter myImporter = new GCalImporter();
     	org.joda.time.DateTime startTime = new org.joda.time.DateTime(2012, 4, 20, 8, 0);
 		org.joda.time.DateTime endTime = new org.joda.time.DateTime(2012, 4, 29, 23, 0);
-    	myImporter.importMyGCal(startTime, endTime);
-    	myImporter.refresh(startTime, endTime);
+    	UserCal cal = myImporter.importMyGCal(startTime, endTime);
+    	myImporter.refresh(startTime, endTime, cal);
     }
 }
