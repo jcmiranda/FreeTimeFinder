@@ -1,15 +1,12 @@
 package calendar;
-import static gui.GuiConstants.LINE_COLOR;
 import static gui.GuiConstants.INTERLINE_SPACING;
+import static gui.GuiConstants.LINE_COLOR;
 import static gui.GuiConstants.RESPONSE_NAME_COLOR;
 import static gui.GuiConstants.RESPONSE_NAME_SPACING;
 import static gui.GuiConstants.RESPONSE_SPACING;
 import gui.Day;
-import gui.DayPanel;
-import gui.GuiConstants;
 
 import java.awt.Color;
-import java.awt.Font;
 import java.awt.Graphics2D;
 import java.awt.font.FontRenderContext;
 import java.awt.font.LineBreakMeasurer;

@@ -7,7 +7,6 @@ import static gui.GuiConstants.FRAME_WIDTH;
 
 import java.awt.BorderLayout;
 import java.awt.Dimension;
-import java.awt.Font;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.GridLayout;
@@ -84,6 +83,11 @@ public class CalendarGui {
 	public static enum DaysOfWeek {Monday, Tuesday, Wednesday, Thursday, Friday, Saturday, Sunday};
 	private JLabel _picLabel;
 
+	
+	/**
+	 * Constructor for calendarGui, builds and displays all visual elements as well as pulls in saved data, calendars and W2M information
+	 * @throws URISyntaxException
+	 */
 	public CalendarGui() throws URISyntaxException{
 
 		this.displayButton(_refreshButton);
@@ -93,10 +97,11 @@ public class CalendarGui {
 		this.displayButton(_prevButton);
 		this.displayButton(_nextButton);
 
-
+		//Pulls information from the internet
 		_communicator.startUp();
 
 		_startHour = 9;
+		_numHours = 8;
 		_friendBar.setEvent(null);
 
 		UserCal userCal = null;
@@ -142,7 +147,7 @@ public class CalendarGui {
 
 		_picLabel = new JLabel(_kairosLogo);
 
-		_numHours = 8;
+		
 
 		buildFrame();
 
@@ -150,7 +155,10 @@ public class CalendarGui {
 		_replyPanel.setEvent(null);
 	}
 
-	// Set default behavior for a button
+	/**
+	 *  Set default behavior for a button
+	 * @param button
+	 */
 	public void displayButton(AbstractButton button) {
 		button.setBorderPainted(false);  
 		button.setContentAreaFilled(false);  
@@ -163,7 +171,10 @@ public class CalendarGui {
 	}
 
 
-	// Sets the current event viewed in the gui
+	/**
+	 *  Sets the current event viewed in the gui
+	 * @param event
+	 */
 	public void setEvent(Event event){
 
 		_event= event;
@@ -202,11 +213,17 @@ public class CalendarGui {
 
 	}
 
+	/** Sets the users calendars
+	 * 
+	 * @param userCal
+	 */
 	public void setUserCal(UserCal userCal){
 		_replyPanel.setUserCal(userCal);
 	}
 
-	//Lays out components in the main frame
+	/**Lays out components in the main frame
+	 * 
+	 */
 	public void buildFrame(){
 
 		_frame = new JFrame("Kairos");
@@ -298,12 +315,17 @@ public class CalendarGui {
 		_frame.setVisible(true);
 	}
 
-	// Posts the user's availability input to the event
+	/**
+	 * Posts the user's availability input to the event
+	 */
 	public void replyToEvent(){
 		if(_event != null && _replyPanel.getClicks() != null)
 			_communicator.submitResponse(Integer.toString(((When2MeetEvent) _event).getID()), _replyPanel.getClicks());
 	}
 
+	/**
+	 *  Repaints all the elements in the frame
+	 */
 	public void repaint(){
 		if(_frame != null){
 			_frame.invalidate();
@@ -312,6 +334,10 @@ public class CalendarGui {
 		}
 	}
 
+	/**
+	 * Gets calculated best times from the communicator and displays them on the calendar view of the current selected event
+	 * @param duration
+	 */
 	public void setBestTimes(int duration){
 		if(_event != null){
 			_bestTimesDuration = duration;
@@ -321,13 +347,24 @@ public class CalendarGui {
 		}
 	}
 
+	/**
+	 * Recalculates best times if best times are currently being displayed
+	 */
 	public void updateBestTimes(){
 		if(_bestTimes != null && _bestTimesDuration >= 0)
 			setBestTimes(_bestTimesDuration);
 	}
 
+	/**
+	 * Listener for submit Button
+	 * @author roie
+	 *
+	 */
 	private class SubmitListener implements ActionListener {
 
+		/**
+		 * On click, show dialog to confirm submit, then post user's availability input to W2M event
+		 */
 		@Override
 		public void actionPerformed(ActionEvent e) {
 			if(_event != null){
@@ -339,8 +376,16 @@ public class CalendarGui {
 		}		
 	}
 
+	/**
+	 * Listener for next week Button
+	 * @author roie
+	 *
+	 */
 	private class NextListener implements ActionListener {
 
+		/**
+		 * On click, show next week if it overlaps with the range of the event
+		 */
 		@Override
 		public void actionPerformed(ActionEvent e) {
 			if(_event != null)
@@ -348,7 +393,17 @@ public class CalendarGui {
 		}
 
 	}
+	
+	/**
+	 * Listener for previous week button
+	 * @author roie
+	 *
+	 */
 	private class PrevListener implements ActionListener {
+		
+		/**
+		 * On click, show previous week if it overlaps with the range of the event
+		 */
 		@Override
 		public void actionPerformed(ActionEvent e) {
 			if(_event != null)
@@ -356,7 +411,15 @@ public class CalendarGui {
 		}
 	}
 
+	/**
+	 * Listener for View toggle button
+	 * @author roie
+	 *
+	 */
 	private class EventDispButtonListener implements ActionListener {
+		/**
+		 * If there is an event selected, toggle between Heatmap view and Individual availability bar view
+		 */
 		public void actionPerformed(ActionEvent arg0) {
 			if(_event != null) {
 				if(_eventDispStyle == PaintMethod.Bars){
@@ -378,8 +441,18 @@ public class CalendarGui {
 		}
 	}
 
+	/**
+	 * Listener for find best times button
+	 * @author roie
+	 *
+	 */
 	private class TimeFindListener implements ActionListener {
 
+		/**
+		 * On click:
+		 * If best times are not currently being displayed, open dialog box to select duration of planned event
+		 * Else Remove them from the display and deSelect button
+		 */ 
 		@Override
 		public void actionPerformed(ActionEvent arg0) {
 			System.out.println(_timeFindButton.isSelected());
@@ -398,8 +471,16 @@ public class CalendarGui {
 
 	}
 
+	/**
+	 * Listener for Refresh Button
+	 * @author roie
+	 *
+	 */
 	private class RefreshListener implements ActionListener {
 
+		/**
+		 * On click, pull online data and update display
+		 */
 		@Override
 		public void actionPerformed(ActionEvent arg0) {
 			URL url=null;

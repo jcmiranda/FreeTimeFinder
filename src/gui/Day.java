@@ -16,10 +16,17 @@ import org.joda.time.DateTime;
 import calendar.CalendarSlots;
 import calendar.Event;
 
+/**
+ * Abstract panel class representing a day and planned items for the day
+ * @author roie
+ *
+ */
 public abstract class Day extends JPanel{
 
+	//Flag representing whether the day is in the current selected event's range
 	private boolean _active = true;
 	private DateTime _today;
+	// number of days since the start of the event
 	private int _day = 0;
 	private int _startHour = DEFAULT_START_HOUR;
 	private int _numHours = DEFAULT_END_HOUR - DEFAULT_START_HOUR;
@@ -87,6 +94,10 @@ public abstract class Day extends JPanel{
 	}
 	
 
+	/**
+	 * Graphics method that draws lines dividing the day into hours
+	 * @param brush
+	 */
 	private void drawLines(Graphics2D brush){
 
 		brush.setColor(LINE_COLOR);
@@ -99,6 +110,10 @@ public abstract class Day extends JPanel{
 		}
 	}
 
+	
+	/**
+	 * Set background to a grayed out color if day is not active and paint lines
+	 */
 	public void paintComponent(Graphics g){
 		super.paintComponent(g);
 		Graphics2D brush = (Graphics2D) g;

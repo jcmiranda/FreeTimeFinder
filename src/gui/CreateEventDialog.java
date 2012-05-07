@@ -24,26 +24,37 @@ import javax.swing.JToggleButton;
 
 import org.joda.time.DateTime;
 
+/**
+ * Class that contains dialog box that requests fields necessary to create an event
+ * @author roie
+ *
+ */
 public class CreateEventDialog{
 
 	private JFrame _parent;
 	private JPanel _calendar;
 	private JPanel _calPane;
 	private JLabel _monthAndYear;
+	// text field holding the event name
 	private JTextField _eventName;
-	private JButton _okButton;
-	private JButton _cancelButton;
+
 	private JDialog _dialog;
 	private EventPanel _eventPanel;
+	//Information needed to build calendar
 	private DateTime _today;
 	private DateTime _firstOfMonth;
+	// Array representing selected dates
 	private ArrayList<DateTime> _selectedDates = new ArrayList<DateTime>();
+
+	//Exit buttons
+	private JButton _okButton;
+	private JButton _cancelButton;
+
+	// Fields for selected start and end hour
 	private JComboBox _startHour;
 	private JComboBox _endHour;
 	private ImageIcon _kairosIcon = new ImageIcon("KairosIcon.png");
 	public static enum DaysOfWeek {Monday, Tuesday, Wednesday, Thursday, Friday, Saturday, Sunday};
-
-	//	public enum daysO()
 
 	public CreateEventDialog(EventPanel eventPanel){
 		_today = new DateTime();
@@ -84,6 +95,7 @@ public class CreateEventDialog{
 		namePanel.add(new JPanel());
 		namePanel.add(_eventName);
 
+		// Build selection options for start and end times
 		String[] strings = new String[25];
 		for (int i=0; i<=24; i++){
 			if (i==0) {
@@ -127,6 +139,8 @@ public class CreateEventDialog{
 		JPanel submitPanel = new JPanel();
 		submitPanel.add(_okButton);
 		submitPanel.add(_cancelButton);
+
+		//Layout information
 
 		c.insets = new Insets(10, 0, 5, 0);
 
@@ -189,21 +203,27 @@ public class CreateEventDialog{
 		_dialog.setVisible(true);
 	}
 
+	/**
+	 * Method that builds the mini-calendar representation inside the create event dialog box
+	 */
 	private void buildCalendar(){
 		_calendar.removeAll();
 		_monthAndYear.setText(_firstOfMonth.monthOfYear().getAsText() + " " + _firstOfMonth.getYear());
 
+		// Adds day of week labels
 		for (DaysOfWeek d : DaysOfWeek.values()){
 			JPanel p = new JPanel();
 			p.add(new JLabel(d.name()));
 			_calendar.add(p);
 		}
 
+		// Adds spacing panels
 		for (int i=1; i<_firstOfMonth.getDayOfWeek(); i++){
 			_calendar.add(new JPanel());
 		}
 
 		int maxDay = _firstOfMonth.dayOfMonth().getMaximumValue();
+		// Adds days of the month
 		for (int i = 0; i<maxDay; i++){
 
 			DateButton button = new DateButton(Integer.toString(_firstOfMonth.plusDays(i).getDayOfMonth()),
@@ -225,8 +245,14 @@ public class CreateEventDialog{
 		_calendar.revalidate();
 	}
 
+	/**
+	 * Listens to clicks on days of the month
+	 * @author roie
+	 *
+	 */
 	private class DateListener implements ActionListener{
 
+		// On click toggle whether date is in the selected dates array
 		@Override
 		public void actionPerformed(ActionEvent e) {
 
@@ -239,6 +265,7 @@ public class CreateEventDialog{
 
 	}
 
+	// Listens to nextmonth/ previousmonth button
 	private class NextPrevListener implements ActionListener{
 
 		@Override
@@ -256,6 +283,13 @@ public class CreateEventDialog{
 		}
 	}	
 
+	/**
+	 * Focus listener for name box
+	 * If focus is lost and field has not been filled, fill with "New Event Name"
+	 * If focus is gained and field is "New Event Name", set to blank
+	 * @author roie
+	 *
+	 */
 
 	private class myFocusListener implements FocusListener{
 
@@ -274,9 +308,16 @@ public class CreateEventDialog{
 		}
 	}	
 
-
+	/**
+	 * Listener for exit buttons
+	 * @author roie
+	 *
+	 */
 	private class ExitListener implements ActionListener{
 
+		/**
+		 * On click check that all fields have been filled out correctly, and create event using filled out fields.
+		 */
 		@Override
 		public void actionPerformed(ActionEvent e) {
 			if (e.getActionCommand().equals("OK")){

@@ -2,6 +2,11 @@ package gui;
 
 import java.awt.Color;
 
+/**
+ * Class containing graphical constants used throughout project
+ * @author roie
+ *
+ */
 public class GuiConstants {
 
 	public static final int DEFAULT_START_HOUR = 9;
