@@ -36,7 +36,7 @@ import calendar.UserCal;
 import calendar.When2MeetEvent;
 
 public class CalendarGui {
-
+	
 	private Event _event = null;
 	private CalendarResponses _bestTimes = null;
 	private int _bestTimesDuration = -1;

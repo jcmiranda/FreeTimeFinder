@@ -17,7 +17,7 @@ import javax.swing.JPanel;
  *
  */
 public class HourOfDayPanel extends JPanel{
-
+	
 	private int _startHour;
 	private int _numHours;
 
