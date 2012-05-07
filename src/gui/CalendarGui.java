@@ -157,6 +157,7 @@ public class CalendarGui {
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 //			e.printStackTrace();
+			System.out.println("Logo Not Found");
 			kairosLogo = null;
 		}
 		_picLabel = new JLabel(new ImageIcon(kairosLogo));
@@ -291,7 +292,7 @@ public class CalendarGui {
 		
 		northPanel.add(buttonPanel,c);
 
-		_frame.add(buttonPanel, BorderLayout.NORTH);
+		_frame.add(northPanel, BorderLayout.NORTH);
 		
 		JPanel westPanel = new JPanel(new GridLayout(0, 1));
 		westPanel.add(_friendBar);
