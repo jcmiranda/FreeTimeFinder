@@ -1,7 +1,6 @@
 package calendar;
 
 import gui.Day;
-import gui.DayPanel;
 
 import java.awt.Color;
 import java.awt.Graphics2D;
@@ -10,7 +9,9 @@ import java.util.Collections;
 
 import org.joda.time.DateTime;
 
-import calendar.Event.CalByThatNameNotFoundException;
+/**
+ * Represents a collection of responses, gathered together by some commonality (typically part of same sub-calendar of user calendar)
+ */
 
 public class CalendarResponses implements Calendar {
 
@@ -34,6 +35,10 @@ public class CalendarResponses implements Calendar {
 		return _id;
 	}
 	
+	/**
+	 * 
+	 * @param selected -- whether this calendar should be pulled on refresh
+	 */
 	public void setSelected(boolean selected) {
 		_selected = selected;
 	}

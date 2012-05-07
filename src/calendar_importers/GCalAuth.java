@@ -41,8 +41,6 @@ public class GCalAuth {
 		 try {
 			return new GoogleRefreshTokenRequest(new NetHttpTransport(), new JacksonFactory(), _refreshToken,CLIENT_ID, CLIENT_SECRET).execute();
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
 		}
 		return null;
 	}
@@ -68,8 +66,6 @@ public class GCalAuth {
 		try {
 			server = new LocalServer();
 		} catch (Exception e2) {
-			// TODO Auto-generated catch block
-			e2.printStackTrace();
 		}
 		//the info
 		String redirect_uri = "urn:ietf:wg:oauth:2.0:oob";
@@ -87,8 +83,6 @@ public class GCalAuth {
 			scope_en = URLEncoder.encode(scope, "UTF-8");
 		}
 		catch (UnsupportedEncodingException e1) {
-			// TODO Auto-generated catch block
-			e1.printStackTrace();
 		}
 		
 		//STEP ONE: getting the code
@@ -104,8 +98,6 @@ public class GCalAuth {
 		    	try {
 					Thread.sleep(100);
 				} catch (InterruptedException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
 				}
 		    	code = server.getCode();
 		    }		
@@ -124,12 +116,8 @@ public class GCalAuth {
 		    return request;
 		} 
 		catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
 		}
 		catch (URISyntaxException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
 		}
 		return null;
 	}

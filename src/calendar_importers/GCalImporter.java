@@ -154,8 +154,6 @@ public class GCalImporter implements CalendarsImporter<CalendarResponses> {
 	        	try {
 					Thread.sleep(100);
 				} catch (InterruptedException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
 				}
 	        }
 	        //add cals at selected indices to list of selected calendars
@@ -179,8 +177,6 @@ public class GCalImporter implements CalendarsImporter<CalendarResponses> {
             //add calendar to group of calendars
             allCalendars.addCalendar(currCal);
             
-            //TEST
-            //currCal.print();
           }
         return allCalendars;
 	}
@@ -241,11 +237,7 @@ public class GCalImporter implements CalendarsImporter<CalendarResponses> {
 		try {
 			return this.importCalendarGroup(st, et, calgroup);
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
 		} catch (ServiceException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
 		}
 		return null;
 	}
@@ -259,21 +251,15 @@ public class GCalImporter implements CalendarsImporter<CalendarResponses> {
 		public void actionPerformed(ActionEvent arg0) {
 			Object[] titles = _calList.getSelectedValues();
 			int[] ints = _calList.getSelectedIndices();
-			for (Object i : titles) {
-				System.out.println(i.toString());
-			}
-			for (int i : ints) {
-				System.out.println(i);
-			}
 			_selectedInd = ints;
 			_listFrame.setVisible(false);
 			_buttonClicked = true;
 		}
 	}
+	
 	@Override
 	public CalendarGroup<CalendarResponses> importNewEvent(String url)
 			throws MalformedURLException, IOException {
-		// TODO Auto-generated method stub
 		return null;
 	}
 }

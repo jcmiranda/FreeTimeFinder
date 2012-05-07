@@ -176,23 +176,6 @@ public class Converter {
 		
 	}
 	
-	public static void main(String[] args) throws IOException, ServiceException{
-
-    	/*
-		GCalImporter myImporter = new GCalImporter();
-    	DateTime startTime = new DateTime(2011, 6, 28, 8, 0);
-		DateTime endTime = new DateTime(2011, 7, 15, 23, 0);
-    	GoogleCalendars myCal = myImporter.importMyGCal(startTime, endTime);
-    	endTime = endTime.plusDays(5).minusHours(10);
-    	When2MeetEvent w2me = new When2MeetEvent(startTime, endTime);
-    	Converter myConverter = new Converter();
-    	CalendarSlots slots = myConverter.gCalToSlots(myCal, w2me);
-    	System.out.println("slots in day: " + slots.getSlotsInDay());
-    	System.out.println("*********");
-    	slots.print();
-    	System.out.println("=========");*/
-
-	}
 }
 	
 	

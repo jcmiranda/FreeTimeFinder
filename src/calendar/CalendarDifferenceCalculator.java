@@ -2,6 +2,12 @@ package calendar;
 
 import java.util.ArrayList;
 
+/**
+ * Calculates differences between past versions of newly repulled events and those fresh event in order 
+ * to alert user of updates to events (e.g. Mary has added/edited her response)
+ *
+ */
+
 public class CalendarDifferenceCalculator {
 	
 	public class MismatchedUserIDException extends Exception {
@@ -25,7 +31,6 @@ public class CalendarDifferenceCalculator {
 		else if(!oldOwner.getName().equals(newOwner.getName()))
 			throw new MismatchedUserNamesException();
 		
-		// TODO delete this if created correctly
 		int slotsInDay = oldCal.getSlotsInDay();
 		int numDays = oldCal.getTotalSlots() / slotsInDay;
 		
