@@ -42,7 +42,7 @@ import ftf.TimeFinder;
 import gui.GuiConstants;
 
 /**
- * Represents the main Òserver classÓ that receives requests from the GUI (client) and delegates to the 
+ * Represents the main ï¿½server classï¿½ that receives requests from the GUI (client) and delegates to the 
  * appropriate class (e.g. importers, exporters, converters, XML storage)	
  *
  */
@@ -110,7 +110,7 @@ public class Communicator {
 //		_loadingDialog.getContentPane().repaint();
 //		
 //		_loadingDialog.repaint();
-		_loadingDialog.pack();
+//		_loadingDialog.pack();
 //		_loadingDialog.invalidate();
 //		_loadingDialog.validate();
 //		_loadingDialog.repaint();
@@ -210,7 +210,6 @@ public class Communicator {
 			try {
 				googleTestURL = new URL("http://www.google.com");
 			} catch (MalformedURLException e1) {
-				// TODO Auto-generated catch block
 				e1.printStackTrace();
 			}
 			if (webConnected(googleTestURL)) {

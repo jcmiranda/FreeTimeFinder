@@ -18,20 +18,25 @@ import com.google.api.client.http.javanet.NetHttpTransport;
 import com.google.api.client.json.jackson.JacksonFactory;
 
 /*
- * Authenticates user using OAuth.  Keeps track of refresh token.
+ * Authenticates user using OAuth.  Keeps track of refresh token. 
+ * This program NEVER knows user's Google username and password
  */
 
 public class GCalAuth {
-	private String CLIENT_ID;
-	private String CLIENT_SECRET;
-	private String _refreshToken;
+	private String CLIENT_ID; //from registering Kairos with Google APIs
+	private String CLIENT_SECRET; //from registering Kairos with Google APIs
+	private String _refreshToken; //recieved after authentication request granted
 	
 	public GCalAuth() {
-		//from registration with Google API
 		CLIENT_ID = "1034117539945.apps.googleusercontent.com";
 		CLIENT_SECRET = "ygIy2-y40S1Fer0B3oU_coVn"; 
 	}
 	
+	/*
+	 * Purpose: procure refresh token so user doesn't need to re-sign-in
+	 * Input: null
+	 * Output: refresh token
+	 */
 	public TokenResponse getRefreshToken() {
 		 try {
 			return new GoogleRefreshTokenRequest(new NetHttpTransport(), new JacksonFactory(), _refreshToken,CLIENT_ID, CLIENT_SECRET).execute();
@@ -42,6 +47,21 @@ public class GCalAuth {
 		return null;
 	}
 	
+	/*
+	 * Set up authentication for first time
+	 * Steps:
+	 * 		1) Form URL GET request for Google
+	 * 		2) Open browser displaying request for permission to access calendars page
+	 * 		3) Start LocalServer to listen for response
+	 * 		4) If user clicks "Allow Access"
+	 * 				5a) server will pick up access code
+	 * 					program will exchange the access code for refresh token and access token
+	 * 					return access token, will be used for authentication
+	 * 					refresh token will be stored for later
+	 *		6) If user clicks "No thanks"
+	 *				5b) return null calendar
+	 *		7) Kill server
+	 */
 	public TokenResponse setAuth() throws MalformedURLException {
 		//server
 		LocalServer server = null;
@@ -107,7 +127,6 @@ public class GCalAuth {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		
 		catch (URISyntaxException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
