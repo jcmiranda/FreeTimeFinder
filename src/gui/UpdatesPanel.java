@@ -55,8 +55,6 @@ public class UpdatesPanel extends JPanel {
 		this.add(_titleLabel);
 		this.add(_scrollPane);
 		
-		//TODO : set size (invisible if no event selected?)
-		
 	}
 	
 	private void setText(){

@@ -37,8 +37,8 @@ public class CreateEventDialog{
 	private DateTime _today;
 	private DateTime _firstOfMonth;
 	private ArrayList<DateTime> _selectedDates = new ArrayList<DateTime>();
-	private JComboBox<String> _startHour;
-	private JComboBox<String> _endHour;
+	private JComboBox _startHour;
+	private JComboBox _endHour;
 	public static enum DaysOfWeek {Monday, Tuesday, Wednesday, Thursday, Friday, Saturday, Sunday};
 
 	//	public enum daysO()
@@ -98,10 +98,10 @@ public class CreateEventDialog{
 			}
 		}
 
-		_startHour = new JComboBox<String>(strings);
+		_startHour = new JComboBox(strings);
 		_startHour.setSelectedIndex(10);
 
-		_endHour = new JComboBox<String>(strings);
+		_endHour = new JComboBox(strings);
 		_endHour.setSelectedIndex(20);
 
 		JPanel times = new JPanel();

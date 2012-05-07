@@ -169,6 +169,7 @@ public class FriendBar extends JPanel {
 			if(_event != null){
 				cal = _event.getCalByName(name);
 				cal.setVisible(visible);
+				_gui.updateBestTimes();
 				_gui.repaint();
 			}
 		} catch (CalByThatNameNotFoundException e) {
