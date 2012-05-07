@@ -52,11 +52,8 @@ public class CalendarGui {
 	private int _numHours = DEFAULT_END_HOUR - DEFAULT_START_HOUR;
 	private JFrame _frame;
 	private ReplyPanel _replyPanel;
-//	private JPanel _hourOfDayLabels;
-//	private ArrayList<Integer> _hoursOfDay = new ArrayList<Integer>();
 	private Communicator _communicator = new Communicator();
 	private UserCalPanel _userCalPanel;
-	//private JButton _eventDispButton = new JButton("Toggle Event Display");
 	private PaintMethod _eventDispStyle = PaintMethod.Bars;
 	private EventPanel _eventPanel = new EventPanel(_communicator, this);
 	private UpdatesPanel _updatesPanel = new UpdatesPanel();
@@ -227,17 +224,8 @@ public class CalendarGui {
 	}
 
 
-	private class InnerWindowListener extends WindowAdapter {
-		@Override
-		public void windowClosing(WindowEvent e) {
-			//System.out.println("Window closing triggered");
-			//_communicator.saveAll();
-		}
-	}
-
 	public void buildFrame(){
 		_frame = new JFrame("Kairos");
-		_frame.addWindowListener(new InnerWindowListener());
 
 		JPanel calPanel = new JPanel();
 		GroupLayout calLayout = new GroupLayout(calPanel);
@@ -248,18 +236,13 @@ public class CalendarGui {
 
 		calLayout.setHorizontalGroup(
 				calLayout.createSequentialGroup()
-//				.addComponent(_hourOfDayLabels, GroupLayout.PREFERRED_SIZE, _hourOfDayLabels.getPreferredSize().width,
-//						GroupLayout.PREFERRED_SIZE)
 						.addComponent(_replyPanel, GroupLayout.PREFERRED_SIZE, (int) (FRAME_WIDTH*.70),
 								GroupLayout.PREFERRED_SIZE));
 
 		calLayout.setVerticalGroup(
 				calLayout.createParallelGroup(GroupLayout.Alignment.TRAILING)
 				.addComponent(_replyPanel, GroupLayout.PREFERRED_SIZE, FRAME_HEIGHT - _replyPanel.getPreferredSize().height - 25,
-						GroupLayout.PREFERRED_SIZE)
-//						.addComponent(_hourOfDayLabels, GroupLayout.PREFERRED_SIZE, FRAME_HEIGHT - _replyPanel.getPreferredSize().height - _replyPanel.getWeekDayPanelHeight(),
-//								GroupLayout.PREFERRED_SIZE)
-								);
+						GroupLayout.PREFERRED_SIZE));
 
 		_frame.add(calPanel, BorderLayout.CENTER);
 
@@ -390,13 +373,11 @@ public class CalendarGui {
 
 	}
 	private class PrevListener implements ActionListener {
-
 		@Override
 		public void actionPerformed(ActionEvent e) {
 			if(_slotGroup != null)
 				_replyPanel.prevWeek();
 		}
-
 	}
 	
 	private class EventDispButtonListener implements ActionListener {

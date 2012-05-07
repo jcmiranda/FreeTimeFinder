@@ -31,12 +31,6 @@ public class FriendBar extends JPanel {
 	
 	public FriendBar(CalendarGui gui){
 		_gui = gui;
-//		this.setLayout(_layout);
-		//_scrollPaneInner.setPreferredSize(new Dimension((int) (GuiConstants.FRAME_WIDTH*0.75), 25));
-	//	_scrollPaneInner.setPreferredSize(new Dimension((int) (_scrollPane, 25));
-//		this.setMaximumSize(new Dimension((int) (GuiConstants.FRAME_WIDTH*0.75), this.getMaximumSize().height));
-		
-//		this.setLayout(new GridLayout(0,(int) (GuiConstants.FRAME_WIDTH*0.75)/5));
 		_scrollPaneInner.setLayout(_spiLayout);
 		_scrollPane = new JScrollPane(_scrollPaneInner);
 		_scrollPane.setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_AS_NEEDED);
@@ -50,9 +44,6 @@ public class FriendBar extends JPanel {
 		
 		SequentialGroup vertSeqGrp = _layout.createSequentialGroup();
 		ParallelGroup horizParGrp = _layout.createParallelGroup(GroupLayout.Alignment.CENTER);
-		
-		// vertSeqGrp.addComponent(_titleLabel);
-		// horizParGrp.addComponent(_titleLabel);
 	
 		horizParGrp.addComponent(_scrollPane);
 		vertSeqGrp.addComponent(_scrollPane);
@@ -83,36 +74,6 @@ public class FriendBar extends JPanel {
 	
 	private void initLabels(){
 		_friendLabels.clear();
-//		_scrollPaneInner.removeAll();
-//		_scrollPaneInner.setLayout(_layout);
-//		_scrollPaneInner.setPreferredSize(new Dimension((int) (GuiConstants.FRAME_WIDTH*0.75), 25));
-////		this.setMaximumSize(new Dimension((int) (GuiConstants.FRAME_WIDTH*0.75), this.getMaximumSize().height));
-////
-//		SequentialGroup horizGrp = _layout.createSequentialGroup();
-//		ParallelGroup vertGrp = _layout.createParallelGroup(GroupLayout.Alignment.BASELINE);
-//		
-//		if(_event != null)
-//			for(CalendarSlots cal : _event.getCalendars()){
-//				
-//				FriendLabel toAdd = new FriendLabel(this, cal.getOwner().getName(), cal.getColor());
-//				toAdd.setVisible(true);
-//				
-//				_friendLabels.add(toAdd);
-//				//this.add(toAdd);
-//				
-//				vertGrp.addComponent(toAdd);
-//				horizGrp.addComponent(toAdd);
-//				horizGrp.addPreferredGap(LayoutStyle.ComponentPlacement.UNRELATED,
-//		                GroupLayout.DEFAULT_SIZE, 15);
-//				
-//			}
-//		
-//		//add to bar
-//		_layout.setHorizontalGroup(horizGrp);
-//		_layout.setVerticalGroup(vertGrp);
-//		
-//		this.revalidate();
-//		_gui.repaint();
 		
 		_scrollPaneInner.removeAll();
 		_scrollPaneInner.setLayout(_spiLayout);
@@ -129,31 +90,6 @@ public class FriendBar extends JPanel {
 				_scrollPaneInner.add(toAdd); 
 			}
 	
-		//		this.setMaximumSize(new Dimension((int) (GuiConstants.FRAME_WIDTH*0.75), this.getMaximumSize().height));
-
-		/*
-		_layout.setAutoCreateGaps(true);
-		_layout.setAutoCreateContainerGaps(true);
-		
-		SequentialGroup vertGrp = _layout.createSequentialGroup();
-		ParallelGroup horizGrp =  _layout.createParallelGroup(GroupLayout.Alignment.LEADING);
-		
-		if(_event != null)
-			for(CalendarSlots cal : _event.getCalendars()){
-				
-				FriendLabel toAdd = new FriendLabel(this, cal.getOwner().getName(), cal.getColor());
-				toAdd.setVisible(true);
-	
-				_friendLabels.add(toAdd);
-				
-				vertGrp.addGroup(_layout.createParallelGroup().addComponent(toAdd));
-				horizGrp.addGroup(_layout.createSequentialGroup().addComponent(toAdd));
-			}
-		
-		_layout.setVerticalGroup(vertGrp);
-		_layout.setHorizontalGroup(horizGrp);
-		*/
-		
 		this.revalidate();
 		_gui.repaint();
 	}

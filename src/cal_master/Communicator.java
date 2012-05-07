@@ -210,7 +210,6 @@ public class Communicator {
 			try {
 				googleTestURL = new URL("http://www.google.com");
 			} catch (MalformedURLException e1) {
-				// TODO Auto-generated catch block
 				e1.printStackTrace();
 			}
 			if (webConnected(googleTestURL)) {
