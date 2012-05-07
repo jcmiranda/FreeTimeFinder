@@ -84,7 +84,7 @@ public class Communicator {
 
 		_loadingLabel = new JLabel();
 		_loadingFrame = new JFrame();
-		_loadingFrame.setSize(150, 50);
+		//_loadingFrame.setSize(150, 50);
 		//_loadingPanel = new JPanel();
 		//_loadingPanel.add(_loadingLabel);
 		_loadingFrame.add(_loadingLabel);
@@ -109,6 +109,7 @@ public class Communicator {
 		//_loadingFrame.remove(_loadingLabel);
 		_loadingFrame.add(_loadingLabel);
 		_loadingFrame.validate();
+		_loadingFrame.pack();
 		
 		
 		_loadingFrame.setLocationRelativeTo(null);

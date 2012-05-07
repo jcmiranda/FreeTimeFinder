@@ -6,6 +6,7 @@ import static gui.GuiConstants.SLOT_COLOR;
 import gui.DayPanel;
 import gui.GuiConstants;
 
+import java.awt.Color;
 import java.awt.Graphics2D;
 import java.awt.Polygon;
 import java.awt.geom.Rectangle2D;
@@ -303,38 +304,47 @@ public class Event extends CalendarGroup<CalendarSlots> {
 		}
 
 		int numPeeps = visibleCals.size();
-		//		ArrayList<Integer> gradations = new ArrayList<Integer>();
-		//		if (visibleCals.size()>MAX_PEEPS_FOR_INTUITIVE_HEATMAP){
-		//			for ()
-		//		}
-		int opacity;
-		if (numPeeps == 0){
-			opacity = 0;
-		} else {
-			opacity = MAX_SLOT_OPACITY / (numPeeps);
-		}
-		java.awt.Color adjOpacityColor = new java.awt.Color(SLOT_COLOR.getRed(), 
-				SLOT_COLOR.getGreen(), SLOT_COLOR.getBlue(), opacity);
 
+		//		int opacity = MAX_SLOT_OPACITY / (numPeeps*numPeeps/2);
+		//		java.awt.Color adjOpacityColor = new java.awt.Color(SLOT_COLOR.getRed(), 
+		//				SLOT_COLOR.getGreen(), SLOT_COLOR.getBlue(), opacity);
+
+		int[] numAvail = new int[numSlotsInDay];
+
+		for(int i=0; i<numSlotsInDay; i++)
+			numAvail[i] = 0;
 
 		for(CalendarSlots cal : cals) {
 			if(cal.isVisible()){
 				Availability[][] avail = cal.getAvail();
 				for (int i=0; i< numSlotsInDay; i++){
-					double iDbl = (double) i;
-					double hDbl = (double) d.getHeight();
-					double sDbl = (double) numSlotsInDay;
-
-					if (avail[day][i]==Availability.free){
-						rect = new Rectangle2D.Double();
-						double startY = iDbl * hDbl / sDbl; //(hrsDbl*4.0);
-						rect.setFrame(0, startY, d.getWidth(), (double) (hDbl/ sDbl)); //(hrsDbl*4.0));
-						brush.setColor(adjOpacityColor);
-						brush.fill(rect);
-					}
+					if(avail[day][i]==Availability.free)
+						numAvail[i] += 1;
 				}
+
 			}
 		}
+
+
+
+		for (int i=0; i< numSlotsInDay; i++){
+			double iDbl = (double) i;
+			double hDbl = (double) d.getHeight();
+			double sDbl = (double) numSlotsInDay;
+
+			if(numAvail[i] > 0){
+				rect = new Rectangle2D.Double();
+				double startY = iDbl * hDbl / sDbl; //(hrsDbl*4.0);
+				rect.setFrame(0, startY, d.getWidth(), (double) (hDbl/ sDbl)); //(hrsDbl*4.0));
+
+				int multiplier = 150/numPeeps;
+
+				Color slotColor = new Color(39 - 39*numPeeps/(numPeeps+2)*numAvail[i]/numPeeps, 255 - 255*numPeeps/(numPeeps+2)*numAvail[i]/numPeeps,39 - 39*numPeeps/(numPeeps+2)*numAvail[i]/numPeeps, 255*numPeeps/(numPeeps + 2));
+				brush.setColor(slotColor);
+				brush.fill(rect);
+			}
+		}
+
 
 	}
 
