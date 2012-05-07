@@ -44,6 +44,6 @@ public class GuiConstants {
 	public static final Color BRIGHT_ORANGE = new Color(238, 105, 64);
 	public static final Color DARK_BROWN = new Color(49, 21, 0);
 	
-	public static final String FONT_NAME = "Monaco";
+	public static final String FONT_NAME = "Monospaced";
 
 }

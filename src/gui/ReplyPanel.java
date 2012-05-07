@@ -33,7 +33,7 @@ public class ReplyPanel extends JPanel{
 
 	private Event _event;
 	private UserCal _userCal;
-	private CalendarGroup<CalendarSlots> _clicks = null;
+	private CalendarSlots _clicks = null;
 	private OuterDayPanel[] _bigDays;
 	private JPanel _hourOfDayLabels;
 	private HourOfDayPanel _innerLabelPanel;
@@ -94,7 +94,7 @@ public class ReplyPanel extends JPanel{
 	}
 
 	public CalendarSlots getClicks(){
-		return _clicks.getCalendars().get(0);
+		return _clicks;
 	}
 
 	public void setUserCal(UserCal respCals){
@@ -288,25 +288,25 @@ public class ReplyPanel extends JPanel{
 
 			} else {
 				_bigDays[i].setActive(true);
-				_bigDays[i].getClickableDay().setResponses(_userCal);
+				_bigDays[i].getClickableDay().setUserCal(_userCal);
 				_bigDays[i].getDay().setEvent((Event) _event, ctr);
 
 				if(_event != null){
-					_clicks = new CalendarGroup<CalendarSlots>(_event.getStartTime(), _event.getEndTime(), CalGroupType.When2MeetEvent);
 					if(((When2MeetEvent) _event).getUserResponse() != null) {
-						_clicks.addCalendar(((When2MeetEvent) _event).getUserResponse());
+						_clicks = ((When2MeetEvent) _event).getUserResponse();
 					}
 					else{
-						_clicks.addCalendar(new CalendarSlots(_event.getStartTime(),
+
+						_clicks = new CalendarSlots(_event.getStartTime(),
 								_event.getEndTime(),
 								_event.getMinInSlot(),
-								Availability.busy));
+								Availability.busy);
 					}
 				}
 				else
 					_clicks = null;
 
-				_bigDays[i].getClickableDay().setSlots(_clicks);
+				_bigDays[i].getClickableDay().setClicks(_clicks);
 				_bigDayPanel.add(_bigDays[i]);
 				ctr++;
 			}

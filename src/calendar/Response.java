@@ -4,6 +4,7 @@ import static gui.GuiConstants.INTERLINE_SPACING;
 import static gui.GuiConstants.RESPONSE_NAME_COLOR;
 import static gui.GuiConstants.RESPONSE_NAME_SPACING;
 import static gui.GuiConstants.RESPONSE_SPACING;
+import gui.Day;
 import gui.DayPanel;
 import gui.GuiConstants;
 
@@ -71,7 +72,7 @@ public class Response implements Comparable<Response>{
 		return this.getStartTime().compareTo(r.getStartTime());
 	}
 
-	public void paint(Graphics2D brush, DayPanel d, int startX, int endX, Color color){
+	public void paint(Graphics2D brush, Day d, int startX, int endX, Color color){
 
 		Rectangle2D.Double rect = new Rectangle2D.Double();
 		
@@ -94,7 +95,7 @@ public class Response implements Comparable<Response>{
 		brush.setColor(color);
 		brush.fill(rect);
 		brush.setColor(RESPONSE_NAME_COLOR);
-		brush.setFont(new Font(GuiConstants.FONT_NAME, brush.getFont().getStyle(), brush.getFont().getSize()));
+//		brush.setFont(new Font(GuiConstants.FONT_NAME, brush.getFont().getStyle(), brush.getFont().getSize()));
 		if (getName()!=null){
 			drawStringRect(brush,
 					(int) (startXDbl+spaceDbl + RESPONSE_NAME_SPACING),
@@ -116,7 +117,7 @@ public class Response implements Comparable<Response>{
 		        AttributedCharacterIterator aci = as.getIterator();
 		        FontRenderContext frc = new FontRenderContext(null, true, false);
 		        LineBreakMeasurer lbm = new LineBreakMeasurer(aci, frc);
-		        float width = x2 - x1;
+		        float width = Math.abs(x2 - x1);
 
 		        while (lbm.getPosition() < txt.length()) {
 		            TextLayout tl = lbm.nextLayout(width);

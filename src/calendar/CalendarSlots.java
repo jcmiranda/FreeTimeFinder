@@ -1,6 +1,7 @@
 package calendar;
 
 import static gui.GuiConstants.SLOT_COLOR;
+import gui.Day;
 import gui.DayPanel;
 
 import java.awt.Color;
@@ -193,7 +194,7 @@ public class CalendarSlots implements Calendar {
 		return -1;
 	}
 	
-	public void paint(Graphics2D brush, DayPanel d){
+	public void paint(Graphics2D brush, Day d){
 		Rectangle2D.Double rect;
 		assert _numSlotsInDay % 4 == 0;
 
@@ -212,7 +213,6 @@ public class CalendarSlots implements Calendar {
 						rect.setFrame(0, startY, d.getWidth(), (double) (hDbl/ sDbl)); //(hrsDbl*4.0));
 						brush.setColor(SLOT_COLOR);
 						brush.fill(rect);
-//						brush.draw(rect);
 					}
 				}
 			}

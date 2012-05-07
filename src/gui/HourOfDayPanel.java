@@ -33,7 +33,7 @@ public class HourOfDayPanel extends JPanel{
 		super.paintComponent(g);
 		Graphics2D brush = (Graphics2D) g;
 
-		brush.setFont(new Font(GuiConstants.FONT_NAME, brush.getFont().getStyle(), brush.getFont().getSize() - 1));
+		brush.setFont(new Font(GuiConstants.FONT_NAME, brush.getFont().getStyle(), brush.getFont().getSize()));
 		
 		double hrsDbl = (double) _numHours;
 		double heightDbl = (double) this.getHeight();
