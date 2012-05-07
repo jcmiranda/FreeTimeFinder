@@ -2,6 +2,11 @@ package gui;
 
 import java.awt.Color;
 
+/**
+ * Class containing graphical constants used throughout project
+ * @author roie
+ *
+ */
 public class GuiConstants {
 
 	public static final int DEFAULT_START_HOUR = 9;
@@ -44,6 +49,6 @@ public class GuiConstants {
 	public static final Color BRIGHT_ORANGE = new Color(238, 105, 64);
 	public static final Color DARK_BROWN = new Color(49, 21, 0);
 	
-	public static final String FONT_NAME = "Monaco";
+	public static final String FONT_NAME = "Monospaced";
 
 }

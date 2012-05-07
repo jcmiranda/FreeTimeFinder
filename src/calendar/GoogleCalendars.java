@@ -4,6 +4,10 @@ import java.util.ArrayList;
 
 import org.joda.time.DateTime;
 
+/**
+ * Representation of a Google calendar (a CalendarGroup of CalendarResponses with unique IDs)
+ */
+
 public class GoogleCalendars extends UserCal{
 	
 	private Owner _owner;

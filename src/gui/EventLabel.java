@@ -10,6 +10,11 @@ import javax.swing.JLabel;
 import cal_master.Communicator;
 import calendar.Event;
 
+/**
+ * Label representing an event among the user's saved events
+ * @author roie
+ *
+ */
 public class EventLabel extends JLabel implements MouseListener{
 
 	private String _name, _id;
@@ -40,6 +45,9 @@ public class EventLabel extends JLabel implements MouseListener{
 		return _name;
 	}
 	
+	/**
+	 * Re-Pull information for this event
+	 */
 	public void refresh(){
 		Event event = _communicator.getEventByID(_id);
 		if(event != null && event.hasUpdates()){
@@ -50,6 +58,9 @@ public class EventLabel extends JLabel implements MouseListener{
 		}
 	}
 	
+	/**
+	 * Set the current viewed event to this one
+	 */
 	public void setEvent(){
 		Event toReturn = _communicator.getEvent(_id);
 		if(toReturn != null){

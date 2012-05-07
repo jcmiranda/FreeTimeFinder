@@ -1,8 +1,5 @@
 package calendar;
 
-import static gui.GuiConstants.MAX_PEEPS_FOR_INTUITIVE_HEATMAP;
-import static gui.GuiConstants.MAX_SLOT_OPACITY;
-import static gui.GuiConstants.SLOT_COLOR;
 import gui.DayPanel;
 import gui.GuiConstants;
 
@@ -73,7 +70,6 @@ public class Event extends CalendarGroup<CalendarSlots> {
 	}
 
 	public CalendarSlots getCalByName(String name) throws CalByThatNameNotFoundException {
-		CalendarSlots cal = null;
 
 		for(CalendarSlots thisCal : this.getCalendars()) {
 			if (thisCal.getOwner().getName().equalsIgnoreCase(name))
@@ -93,8 +89,6 @@ public class Event extends CalendarGroup<CalendarSlots> {
 		_colors.add(GuiConstants.PALE_GREEN);
 		_colors.add(GuiConstants.BRIGHT_ORANGE);
 		_colors.add(GuiConstants.BABY_BLUE);
-		//_colors.add(GuiConstants.BLUEBERRY);
-		//_colors.add(GuiConstants.DARK_BROWN);
 		_colors.add(GuiConstants.PEACH);
 
 
@@ -108,7 +102,6 @@ public class Event extends CalendarGroup<CalendarSlots> {
 
 	public void init(){
 		initColors();
-		//TODO: is this what we really want?
 	}
 
 	public String getURL(){ return _url; }
@@ -136,28 +129,20 @@ public class Event extends CalendarGroup<CalendarSlots> {
 		return _userHasSubmitted;
 	}
 
-	// 10 pts
-	// 0 - 9
-	// 0 -> 0
-	// 9 -> height
-	// index / (numPts - 1) * height
-
 	private int endPtToHeight(int index, int numPts, int height) {
 		double indDbl = (double) index;
 		double numPtsDbl = (double) numPts;
 		double heightDbl = (double) height;
 		return (int) (indDbl * heightDbl / (numPtsDbl - 1.0));
-		//return (int) ((1.0 * index) / (1.0 * numPts - 1.0) * height);
-	}
-
-	private int slotHeight(int numPts, int height) {
-		return height / numPts;
 	}
 
 	private int availWidth(int totalAvail, int width) {
 		return width / totalAvail;
 	}
 
+	/**
+	 * Paints bars display
+	 */
 	private void paintBars(ArrayList<CalendarSlots> cals, Graphics2D brush, DayPanel d, int day) {
 		int numSlotsInDay = cals.get(0).getSlotsInDay();
 
@@ -171,19 +156,13 @@ public class Event extends CalendarGroup<CalendarSlots> {
 			endpts[i][3] = 0;
 		}
 
+		//only want to paint the calendars that the user has chosen to display
 		ArrayList<CalendarSlots> visibleCals = new ArrayList<CalendarSlots>();
 		for(CalendarSlots cal: cals) {
 			if(cal.isVisible())
 				visibleCals.add(cal);
 		}
 
-		// TODO if not displaying user on right hand side can get rid of
-		/*
-		 if(this.userHasSubmitted() && this.getUserResponse().isVisible()) {
-
-			visibleCals.add(this.getUserResponse());
-		}
-		 */	
 		for(int i = 0; i < visibleCals.size(); i++) {
 			// Left is 0, right is 1
 			int outside = 0;
@@ -195,12 +174,9 @@ public class Event extends CalendarGroup<CalendarSlots> {
 
 			CalendarSlots cal = visibleCals.get(i);
 
-			// set color of cal for use in friend bar
-			// Color color = _colors.get(i % _colors.size());
-			// cal.setColor(color);
-
 			if(cal.isVisible()){
 				brush.setColor(cal.getColor());
+				
 				// Fill in availabilities
 				for(int slot = 0; slot < numSlotsInDay; slot++) {
 					int s = slot*2+1;
@@ -283,6 +259,9 @@ public class Event extends CalendarGroup<CalendarSlots> {
 		_paintMethod = method;
 	}
 
+	/**
+	 * Paints when2meet-style display
+	 */
 	private void paintHeatMap(ArrayList<CalendarSlots> cals, Graphics2D brush, DayPanel d, int day) {
 		Rectangle2D.Double rect;
 
@@ -295,10 +274,6 @@ public class Event extends CalendarGroup<CalendarSlots> {
 		}
 
 		int numPeeps = visibleCals.size();
-
-		//		int opacity = MAX_SLOT_OPACITY / (numPeeps*numPeeps/2);
-		//		java.awt.Color adjOpacityColor = new java.awt.Color(SLOT_COLOR.getRed(), 
-		//				SLOT_COLOR.getGreen(), SLOT_COLOR.getBlue(), opacity);
 
 		int[] numAvail = new int[numSlotsInDay];
 
@@ -325,11 +300,10 @@ public class Event extends CalendarGroup<CalendarSlots> {
 
 			if(numAvail[i] > 0){
 				rect = new Rectangle2D.Double();
-				double startY = iDbl * hDbl / sDbl; //(hrsDbl*4.0);
-				rect.setFrame(0, startY, d.getWidth(), (double) (hDbl/ sDbl)); //(hrsDbl*4.0));
+				double startY = iDbl * hDbl / sDbl; 
+				rect.setFrame(0, startY, d.getWidth(), (double) (hDbl/ sDbl)); 
 
-				int multiplier = 150/numPeeps;
-
+				//gradation calculator
 				Color slotColor = new Color(39 - 39*numPeeps/(numPeeps+2)*numAvail[i]/numPeeps, 255 - 255*numPeeps/(numPeeps+2)*numAvail[i]/numPeeps,39 - 39*numPeeps/(numPeeps+2)*numAvail[i]/numPeeps, 255*numPeeps/(numPeeps + 2));
 				brush.setColor(slotColor);
 				brush.fill(rect);
@@ -340,8 +314,6 @@ public class Event extends CalendarGroup<CalendarSlots> {
 	}
 
 	public void paint(Graphics2D brush, DayPanel d, int day){
-		//_colors.clear();
-		//initColors();
 
 		ArrayList<CalendarSlots> cals = this.getCalendars();
 		if(!cals.isEmpty()){

@@ -11,8 +11,13 @@ import java.awt.Graphics2D;
 
 import javax.swing.JPanel;
 
+/**
+ * Panel class that holds labels for the hours of the day
+ * @author roie
+ *
+ */
 public class HourOfDayPanel extends JPanel{
-
+	
 	private int _startHour;
 	private int _numHours;
 
@@ -23,17 +28,25 @@ public class HourOfDayPanel extends JPanel{
 		this.setBackground(LABEL_COLOR);
 	}
 
+	/**
+	 * Set the starthour and numhours and update the display
+	 * @param startHour
+	 * @param numHours
+	 */
 	public void updateHours(int startHour, int numHours){
 		_startHour = startHour;
 		_numHours = numHours;
 		repaint();
 	}
 	
+	/**
+	 *  Draw lines and then paint over the hour label for each hour block
+	 */
 	public void paintComponent(Graphics g){
 		super.paintComponent(g);
 		Graphics2D brush = (Graphics2D) g;
 
-		brush.setFont(new Font(GuiConstants.FONT_NAME, brush.getFont().getStyle(), brush.getFont().getSize() - 1));
+		brush.setFont(new Font(GuiConstants.FONT_NAME, brush.getFont().getStyle(), brush.getFont().getSize()));
 		
 		double hrsDbl = (double) _numHours;
 		double heightDbl = (double) this.getHeight();

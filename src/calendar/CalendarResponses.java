@@ -1,6 +1,6 @@
 package calendar;
 
-import gui.DayPanel;
+import gui.Day;
 
 import java.awt.Color;
 import java.awt.Graphics2D;
@@ -9,7 +9,9 @@ import java.util.Collections;
 
 import org.joda.time.DateTime;
 
-import calendar.Event.CalByThatNameNotFoundException;
+/**
+ * Represents a collection of responses, gathered together by some commonality (typically part of same sub-calendar of user calendar)
+ */
 
 public class CalendarResponses implements Calendar {
 
@@ -33,6 +35,10 @@ public class CalendarResponses implements Calendar {
 		return _id;
 	}
 	
+	/**
+	 * 
+	 * @param selected -- whether this calendar should be pulled on refresh
+	 */
 	public void setSelected(boolean selected) {
 		_selected = selected;
 	}
@@ -152,7 +158,7 @@ public class CalendarResponses implements Calendar {
 	}
 
 
-	public void paint(Graphics2D brush, DayPanel d, int numCals, Color color){
+	public void paint(Graphics2D brush, Day d, int numCals, Color color){
 
 		ArrayList<Response> conflictCheck = new ArrayList<Response>();
 		for (Response r: getResponses()){
