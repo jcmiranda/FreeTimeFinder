@@ -1,5 +1,6 @@
 package calendar_importers_test;
 import java.io.IOException;
+import java.util.HashMap;
 
 import calendar.CalendarSlots;
 import calendar.Event.CalByThatNameNotFoundException;
@@ -9,95 +10,48 @@ import calendar_importers.When2MeetImporter;
 
 public class When2MeetTest {
 	
-	/*
-	public void postToWeb() throws IOException {
-		When2MeetImporter wtmi = new When2MeetImporter("http://www.when2meet.com/?353066-BlwWl");
+	private static void testImport(When2MeetImporter wtmi, String url, String name, HashMap<String, Integer> expectedRespondees, int eventID) throws IOException {
+			
+		When2MeetEvent event = wtmi.importNewEvent(url);
+		System.out.println("TESTING " + event.getName());
+		// Check the name of the event
+		assert(event.getName().equals(name));
+		// Check the ID of the event
+		assert(event.getID() == eventID);
 
-		When2MeetEvent w2me = wtmi.importCalendarGroup();
-		w2me.setName("Test Event");
-		w2me.setURL("no url");
-		When2MeetExporter exporter = new When2MeetExporter(w2me);
-		exporter.postNewEvent();
+		// Build a list of all of the imported names
+		HashMap<String, Integer> importedNames = new HashMap<String, Integer>();
+		for(CalendarSlots cal : event.getCalendars()) {
+			importedNames.put(cal.getOwner().getName(), cal.getOwner().getID());
+		}
+
+		// Check that the imported names all correspond to the expected names
+		for(String respondent : expectedRespondees.keySet()) {
+			// Make sure that we have a response for this person
+			assert(importedNames.keySet().contains(respondent));
+			
+			// Make sure that the ID matches
+			assert(importedNames.get(respondent).equals(expectedRespondees.get(respondent)));
+		}
+		System.out.println("PASSED");
 	}
-	*/
 	
 	public static void main(String[] args) throws IOException, NameAlreadyExistsException, CalByThatNameNotFoundException {
-		//String str = JOptionPane.showInputDialog(null, "Enter When2Meet URL: ", 
-		//		"http://www.when2meet.com/?353066-BlwWl", 1);
-		//String url = "http://www.when2meet.com/?353066-BlwWl";
-		//"http://www.when2meet.com/?353066-BlwWl");
-		
-		
 		When2MeetImporter wtmi = new When2MeetImporter(); 
-		When2MeetEvent bDemo = wtmi.importNewEvent("http://www.when2meet.com/?426631-GoPHt");
-		CalendarSlots jeanetteCal = bDemo.getCalByName("Jeanette");
 		
-		/*
-		for(int i = 0; i < jeanetteCal.getTotalSlots(); i++) 
-			jeanetteCal.setAvail(i, Availability.free);
-		
-		for(int i = 8; i < 14; i++)
-			jeanetteCal.setAvail(i, Availability.busy);
-		
-		When2MeetExporter exporter = new When2MeetExporter();
-		exporter.postAllAvailability(bDemo);
-		*/
-
-		
-		/*
-		XStream xstream = new XStream();
-		xstream.alias("calendarslots", CalendarSlots.class);
-		xstream.alias("when2meetevent", When2MeetEvent.class);
-		xstream.alias("when2meetowner", When2MeetOwner.class);
-		xstream.alias("avail", Availability.class);
-		
-		String xml = xstream.toXML(specs);
-		System.out.println(xml);
-		
-		When2MeetEvent specsRecreated = (When2MeetEvent) xstream.fromXML(xml);
-		*/
-		/*
-		ArrayList<CalendarSlots> calsAfter = specsRecreated.getCalendars();
-		for(int i = 0; i < calsAfter.size(); i++) {
-			assert calsBefore.get(i).equals(calsAfter.get(i));
-		}*/
-		// assert calsBefore.equals(specsRecreated.getCalendars());
+		// Test 1 - 2 users, 3 days long
+		HashMap<String, Integer> expRespondees = new HashMap<String, Integer>();
+		expRespondees.put("User1", 1872671);
+		expRespondees.put("User2", 1872676);
+		testImport(wtmi, "http://www.when2meet.com/?438771-KGv1R", "Test1", expRespondees, 438771);
 		
 		
-		//wtmi = new When2MeetImporter("http://www.when2meet.com/?408906-BySEr");
-		//w2me = wtmi.importCalendarGroup();
+		// Test 2 - multi-word name, users with spaces in their names, to midnight
+		expRespondees.clear();
+		expRespondees.put("User 1", 1872681);
+		expRespondees.put("User 2", 1872686);
+		testImport(wtmi, "http://www.when2meet.com/?438776-5kHqQ", "NewTest Event Name", expRespondees, 438776);
 		
-		
-		/*
-		CalendarSlots cal1 = w2me.getCalByName("Password");
-		cal1.getOwner().setName("Test");
-		System.out.println("Name: " + cal1.getOwner().getName());
-		*/
-		
-	
-		/*
-		for(int i = 0; i < cal1.getTotalSlots(); i++) {
-			if(i%3 == 0)
-				cal1.setAvail(i, Availability.free);
-			else
-				cal1.setAvail(i, Availability.busy);
-		}
-		
-		*/
-		//exporter.createNewUser("world");
-		//exporter.postAllAvailability();
-		
-		// CalendarSlots cal2 = new CalendarSlots(w2me.getStartTime(), w2me.getEndTime(), 15, Availability.busy);
-		
-		//exporter.postAvailability(slotIDs,  Availability.free);
-		//exporter.createNewUser();
-		System.out.println("After updating availability");
-/*
-		TimeFinderSlots timeFind = new TimeFinderSlots();
-		CalendarSlots times = timeFind.findBestTimes(w2me, 15, 60, 20, 4);
-		
-		times.print();
-		*/
 		
 	}
 }

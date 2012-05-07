@@ -190,6 +190,7 @@ public class When2MeetImporter implements CalendarsImporter<CalendarSlots> {
 	private void parseStartEndTime(ArrayList<String> dateLines, ArrayList<String> timeLines) {
 		LocalDate startDate = null;
 		LocalDate endDate = null;
+		
 		for(String s : dateLines) {
 			Matcher m =_datesPattern.matcher(s);
 			while(m.find()) {
@@ -253,8 +254,6 @@ public class When2MeetImporter implements CalendarsImporter<CalendarSlots> {
 		_slotIndexToSlotID.clear();
 		parseHTML();
 		
-		System.out.println("Event ID: " + _eventID);
-		System.out.println("Event Name: " + _eventName);
 		When2MeetEvent w2me = new When2MeetEvent(_startTime, _endTime, _eventName, 
 				_eventID, _urlString, _IDsToCals.values(), _slotIndexToSlotID);
 
@@ -264,8 +263,6 @@ public class When2MeetImporter implements CalendarsImporter<CalendarSlots> {
 	private CalendarSlots getUserResponse(int id) {
 		return _IDsToCals.get(id);
 	}
-	
-	
 	
 	public When2MeetEvent refreshEvent(When2MeetEvent w2me) {
 		_urlString = w2me.getURL();
@@ -316,14 +313,12 @@ public class When2MeetImporter implements CalendarsImporter<CalendarSlots> {
 		w2me.resetCalendars(newCals);
 		
 		if(w2me.userHasSubmitted()) {
-			System.out.println("In user has submitted");
 			
 			// Want to get new response pulled off web, so need to get based on ID
 			CalendarSlots newUserResponse = getUserResponse(w2me.getUserResponse().getOwner().getID());
 			assert newUserResponse != null;
 			assert newUserResponse.getOwner() != null;
 			assert w2me.getUserResponse() != null;
-			System.out.println(newUserResponse.getOwner().getName());
 			
 			try {
 				updates.addAll(calDiff.diffEventCals(w2me.getUserResponse(), newUserResponse));
@@ -338,16 +333,7 @@ public class When2MeetImporter implements CalendarsImporter<CalendarSlots> {
 			w2me.setUserResponse(newUserResponse);
 		}
 		
-		
-		
-		
-		
 		w2me.addUpdates(updates);
-		System.out.println("=== " + w2me.getName() + " ===");
-		for(EventUpdate eventUpdate : updates){
-			System.out.println(eventUpdate.getMessage());
-		}
-		System.out.println("=================");
 		
 		return w2me;
 	}
