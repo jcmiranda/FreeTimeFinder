@@ -210,7 +210,6 @@ public class ReplyPanel extends JPanel{
 
 		updateHourLabels();
 		
-		int numDays = CalendarSlots.getDaysBetween(_startDay, _endDay) +1;
 		int ctr = 0;
 
 		for (int i=0; i<7; i++){

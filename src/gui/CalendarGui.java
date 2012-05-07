@@ -8,6 +8,8 @@ import static gui.GuiConstants.FRAME_WIDTH;
 import java.awt.BorderLayout;
 import java.awt.Dimension;
 import java.awt.Font;
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
 import java.awt.GridLayout;
 
 import java.awt.Image;
@@ -25,6 +27,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 
 import javax.imageio.ImageIO;
+import javax.swing.AbstractButton;
 import javax.swing.GroupLayout;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
@@ -32,6 +35,7 @@ import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
+import javax.swing.JToggleButton;
 
 import cal_master.Communicator;
 import cal_master.NameIDPair;
@@ -58,32 +62,33 @@ public class CalendarGui {
 	private UpdatesPanel _updatesPanel = new UpdatesPanel();
 	private FriendBar _friendBar = new FriendBar(this);
 
-	ImageIcon _findTimeIcon = new ImageIcon("small_logo_button.png");
-	ImageIcon _findTimeIconInverted = new ImageIcon("small_logo_button_invert.png");
+	private ImageIcon _findTimeIcon = new ImageIcon("small_logo_button.png");
+	private ImageIcon _findTimeIconInverted = new ImageIcon("small_logo_button_invert.png");
 	
-	ImageIcon _toggleIcon = new ImageIcon("small_switch_button.png");
-	ImageIcon _toggleIconInverted = new ImageIcon("small_switch_button_invert.png");
+	private ImageIcon _toggleIcon = new ImageIcon("small_switch_button.png");
+	private ImageIcon _toggleIconInverted = new ImageIcon("small_switch_button_invert.png");
 	
-	ImageIcon _refreshIcon = new ImageIcon("small_refresh_button.png");
-	ImageIcon _refreshIconInverted = new ImageIcon("small_refresh_button_invert.png");
+	private ImageIcon _refreshIcon = new ImageIcon("small_refresh_button.png");
+	private ImageIcon _refreshIconInverted = new ImageIcon("small_refresh_button_invert.png");
 	
-	ImageIcon _submitIcon = new ImageIcon("small_submit_button.png");
-	ImageIcon _submitIconInverted = new ImageIcon("small_submit_button_invert");
+	private ImageIcon _submitIcon = new ImageIcon("small_submit_button.png");
+	private ImageIcon _submitIconInverted = new ImageIcon("small_submit_button_invert.png");
 	
-	ImageIcon _prevIcon = new ImageIcon("small_left_button.png");
-	ImageIcon _prevIconInverted = new ImageIcon("small_left_button_invert");
+	private ImageIcon _prevIcon = new ImageIcon("small_left_button.png");
+	private ImageIcon _prevIconInverted = new ImageIcon("small_left_button_invert.png");
 	
-	ImageIcon _nextIcon = new ImageIcon("small_right_button.png");
-	ImageIcon _nextIconInverted = new ImageIcon("small_right_button_invert");	
+	private ImageIcon _nextIcon = new ImageIcon("small_right_button.png");
+	private ImageIcon _nextIconInverted = new ImageIcon("small_right_button_invert.png");
+
 	
-	private JButton _refreshButton = new JButton(_refreshIcon);
+	private JToggleButton _refreshButton = new JToggleButton(_refreshIcon);
 	private JButton _eventDispButton = new JButton(_toggleIcon);
 	private JButton _timeFindButton = new JButton(_findTimeIcon);
 	private JButton _submitButton = new JButton(_submitIcon);
 	private JButton _nextButton = new JButton(_nextIcon);
 	private JButton _prevButton = new JButton(_prevIcon);
 	public static enum DaysOfWeek {Monday, Tuesday, Wednesday, Thursday, Friday, Saturday, Sunday};
-	JLabel picLabel;
+	private JLabel _picLabel;
 
 	public CalendarGui() throws URISyntaxException{
 		
@@ -144,7 +149,8 @@ public class CalendarGui {
 		_refreshButton.addActionListener(new RefreshListener());
 		_refreshButton.setFocusable(false);
 		_refreshButton.setToolTipText("Refresh");
-	
+		_refreshButton.setPressedIcon(_refreshIconInverted);
+		
 		BufferedImage kairosLogo;
 		try {
 			kairosLogo = ImageIO.read(new File("KairosLogo.png"));
@@ -153,14 +159,14 @@ public class CalendarGui {
 //			e.printStackTrace();
 			kairosLogo = null;
 		}
-		picLabel = new JLabel(new ImageIcon(kairosLogo));
+		_picLabel = new JLabel(new ImageIcon(kairosLogo));
 		
 		_numHours = 8;
 		
 		buildFrame();
 	}
 	
-	public void displayButton(JButton button) {
+	public void displayButton(AbstractButton button) {
 		button.setBorderPainted(false);  
 		button.setContentAreaFilled(false);  
 		button.setFocusPainted(false);  
@@ -241,35 +247,49 @@ public class CalendarGui {
 
 		_frame.add(calPanel, BorderLayout.CENTER);
 
-		JPanel submitPanel = new JPanel();
-		submitPanel.add(_submitButton);
-		JPanel timeFindPanel = new JPanel();
-		timeFindPanel.add(_timeFindButton);
 
-		JPanel prevPanel = new JPanel();
-		prevPanel.add(_prevButton);
-		prevPanel.add(_nextButton);
-
-		JPanel dispStylePanel = new JPanel();
-		dispStylePanel.add(_eventDispButton);
+		JPanel nextPrevPanel = new JPanel();
+		nextPrevPanel.add(_prevButton);
+		nextPrevPanel.add(_nextButton);
 		
-		JPanel refreshPanel = new JPanel();
-		refreshPanel.add(_refreshButton);
+		JPanel buttonFunctionsPanel = new JPanel();
+
+		buttonFunctionsPanel.add(_eventDispButton);
+		buttonFunctionsPanel.add(_submitButton);
+		buttonFunctionsPanel.add(_timeFindButton);
+		buttonFunctionsPanel.add(_refreshButton);
 
 
 		JPanel buttonPanel = new JPanel(new GridLayout(1, 0));
-		buttonPanel.add(prevPanel);
-//		buttonPanel.add(nextPanel);
-		buttonPanel.add(dispStylePanel);
-		buttonPanel.add(submitPanel);
-		buttonPanel.add(timeFindPanel);
-		buttonPanel.add(refreshPanel);
-//		buttonPanel.add( picLabel );
+		buttonPanel.add(nextPrevPanel);
+		buttonPanel.add(buttonFunctionsPanel);
 
+		JPanel logoPanel = new JPanel();
+		logoPanel.add(_picLabel);
 		
-		//JPanel northPanel = new JPanel(new GridLayout(2,1));
-		//northPanel.add(buttonPanel);
-		//northPanel.add(_friendBar);
+		//new GridLayout(1,2)
+		JPanel northPanel = new JPanel(new GridBagLayout());
+		
+		GridBagConstraints c = new GridBagConstraints();
+		c.fill = GridBagConstraints.HORIZONTAL;
+		c.weightx = 0.5;
+		c.weighty = 1.0;
+		c.ipadx = 200;
+		c.gridx = 0;
+		c.gridy = 0;
+		c.ipady = 15;
+		
+		northPanel.add(logoPanel,c);
+		
+		c.fill = GridBagConstraints.HORIZONTAL;
+		c.weightx = 1.0;
+		c.weighty = 1.0;
+		c.ipadx = 0 ;
+		c.gridx = 1;
+		c.gridy = 0;
+		c.ipady = 0;
+		
+		northPanel.add(buttonPanel,c);
 
 		_frame.add(buttonPanel, BorderLayout.NORTH);
 		
@@ -389,11 +409,10 @@ public class CalendarGui {
 			try {
 				url = new URL("http://www.google.com");
 			} catch (MalformedURLException e) {
-				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
 			if (Communicator.webConnected(url)) {
-				_refreshButton.setIcon(_refreshIconInverted);
+
 				_communicator.refresh();
 				// Retrieve this when2meet in case it has changed
 				if(_slotGroup != null){
@@ -405,7 +424,7 @@ public class CalendarGui {
 				
 				setUserCal(_communicator.getUserCal());
 				_userCalPanel.initLabels();
-				_refreshButton.setIcon(_refreshIcon);
+				_refreshButton.setSelected(false);
 				repaint();
 			}
 			else {
