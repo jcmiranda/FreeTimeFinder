@@ -81,6 +81,7 @@ public class CalendarGui {
 	private ImageIcon _nextIconInverted = new ImageIcon("small_right_button_invert.png");
 
 	private ImageIcon _kairosLogo = new ImageIcon("KairosLogo.png");
+	private ImageIcon _kairosIcon = new ImageIcon("KairosIcon.png");
 	
 	private JToggleButton _refreshButton = new JToggleButton(_refreshIcon);
 	private JButton _eventDispButton = new JButton(_toggleIcon);
@@ -365,12 +366,11 @@ public class CalendarGui {
 		public void actionPerformed(ActionEvent e) {
 			if(_slotGroup != null){
 				int selection = JOptionPane.showConfirmDialog(null,"Are you sure you want to submit?", "", 
-						JOptionPane.YES_NO_OPTION);
+						JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE, _kairosIcon);
 				if(selection == JOptionPane.YES_OPTION)
 					replyToEvent();
 			}
-		}
-
+		}		
 	}
 
 	private class NextListener implements ActionListener {

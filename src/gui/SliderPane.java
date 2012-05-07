@@ -5,6 +5,7 @@ import java.util.Collections;
 
 import javax.swing.JDialog;
 
+import javax.swing.ImageIcon;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
@@ -52,6 +53,7 @@ public class SliderPane{
 		_optionPane.setMessage(new Object[] { "How long is the event you are planning? ", _slider , _label});
 		_optionPane.setMessageType(JOptionPane.QUESTION_MESSAGE);
 		_optionPane.setOptionType(JOptionPane.DEFAULT_OPTION);
+		_optionPane.setIcon(new ImageIcon("KairosIcon.png"));
 
 		//		JOptionPane.showInput
 
