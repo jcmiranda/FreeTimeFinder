@@ -46,6 +46,8 @@ import calendar.When2MeetEvent;
 public class CalendarGui {
 
 	private Event _slotGroup = null;
+	private CalendarResponses _bestTimes = null;
+	private int _bestTimesDuration = -1;
 	private int _startHour = DEFAULT_START_HOUR;
 	private int _numHours = DEFAULT_END_HOUR - DEFAULT_START_HOUR;
 	private JFrame _frame;
@@ -82,7 +84,7 @@ public class CalendarGui {
 	
 	private JToggleButton _refreshButton = new JToggleButton(_refreshIcon);
 	private JButton _eventDispButton = new JButton(_toggleIcon);
-	private JButton _timeFindButton = new JButton(_findTimeIcon);
+	private JToggleButton _timeFindButton = new JToggleButton(_findTimeIcon);
 	private JButton _submitButton = new JButton(_submitIcon);
 	private JButton _nextButton = new JButton(_nextIcon);
 	private JButton _prevButton = new JButton(_prevIcon);
@@ -127,7 +129,7 @@ public class CalendarGui {
 		_timeFindButton.addActionListener(new TimeFindListener());
 		_timeFindButton.setFont(new Font(GuiConstants.FONT_NAME, _timeFindButton.getFont().getStyle(), _timeFindButton.getFont().getSize()));
 		_timeFindButton.setToolTipText("Find Best Times");
-		_timeFindButton.setPressedIcon(_findTimeIconInverted);
+		_timeFindButton.setSelectedIcon(_findTimeIconInverted);
 		
 		_nextButton.addActionListener(new NextListener());
 		_nextButton.setFont(new Font(GuiConstants.FONT_NAME, _nextButton.getFont().getStyle(), _nextButton.getFont().getSize()));
@@ -196,6 +198,12 @@ public class CalendarGui {
 			_startHour = 9;
 			_numHours = 8;
 		}
+		
+		_bestTimes = null;
+		_bestTimesDuration = -1;
+		_replyPanel.setBestTimes(_bestTimes);
+		_timeFindButton.setSelected(false);
+		
 		_updatesPanel.setEvent(_slotGroup);
 		_friendBar.setEvent(_slotGroup);
 //		updateHourLabels();
@@ -330,10 +338,16 @@ public class CalendarGui {
 
 	public void setBestTimes(int duration){
 		if(_slotGroup != null){
-			CalendarResponses bestTimes = _communicator.getBestTimes(String.valueOf(_slotGroup.getID()), duration);
-			_replyPanel.setBestTimes(bestTimes);
+			_bestTimesDuration = duration;
+			_bestTimes = _communicator.getBestTimes(String.valueOf(_slotGroup.getID()), duration);
+			_replyPanel.setBestTimes(_bestTimes);
 			repaint();
 		}
+	}
+	
+	public void updateBestTimes(){
+		if(_bestTimes != null && _bestTimesDuration >= 0)
+			setBestTimes(_bestTimesDuration);
 	}
 
 	private class SubmitListener implements ActionListener {
@@ -395,8 +409,18 @@ public class CalendarGui {
 
 		@Override
 		public void actionPerformed(ActionEvent arg0) {
-			if(_slotGroup != null && !_slotGroup.getCalendars().isEmpty() && !(_slotGroup.getCalendars().size() ==1 && _slotGroup.userHasSubmitted()))
-				new SliderPane(_numHours, CalendarGui.this);
+			System.out.println(_timeFindButton.isSelected());
+			if(_timeFindButton.isSelected()){
+				if(_slotGroup != null && !_slotGroup.getCalendars().isEmpty() && !(_slotGroup.getCalendars().size() ==1 && _slotGroup.userHasSubmitted())){
+					new SliderPane(_numHours, CalendarGui.this);
+				}
+			}
+			else{
+				_bestTimes = null;
+				_bestTimesDuration = -1;
+				_replyPanel.setBestTimes(_bestTimes);
+				repaint();
+			}
 		}
 
 	}

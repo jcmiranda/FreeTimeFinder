@@ -97,13 +97,22 @@ public class Communicator {
 	 */
 	private void showLoadingLabel(String msg){
 
-		_loadingLabel.setText(msg);
+		
 		_loadingDialog.setLocationRelativeTo(null);
 		_loadingDialog.setVisible(true);	
-		_loadingDialog.repaint();
+		_loadingLabel.setText(msg);
+//		_loadingLabel.repaint();
+//		
+//		_loadingDialog.getContentPane().invalidate();
+//		_loadingDialog.getContentPane().validate();
+//		_loadingDialog.getContentPane().repaint();
+//		
+//		_loadingDialog.repaint();
 		_loadingDialog.pack();
-		_loadingDialog.invalidate();
-		_loadingDialog.validate();
+//		_loadingDialog.invalidate();
+//		_loadingDialog.validate();
+//		_loadingDialog.repaint();
+//		_loadingDialog.pack();
 		
 	}
 
