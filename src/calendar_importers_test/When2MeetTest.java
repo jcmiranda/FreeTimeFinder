@@ -52,6 +52,5 @@ public class When2MeetTest {
 		expRespondees.put("User 2", 1872686);
 		testImport(wtmi, "http://www.when2meet.com/?438776-5kHqQ", "NewTest Event Name", expRespondees, 438776);
 		
-		
 	}
 }
