@@ -3,6 +3,7 @@ package cal_master;
 import java.awt.BorderLayout;
 import java.awt.Dimension;
 import java.awt.Font;
+import java.awt.Image;
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileWriter;
@@ -17,7 +18,9 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 
+import javax.imageio.ImageIO;
 import javax.swing.ImageIcon;
+import javax.swing.JDialog;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
@@ -60,10 +63,10 @@ public class Communicator {
 	private Converter _converter = new Converter();
 	private TimeFinderSlots _timeFinder = new TimeFinderSlots();
 	private ProgramOwner _progOwner = new ProgramOwner();
-
-	private JFrame _loadingFrame;
+	private JDialog _loadingDialog;
+//	private JFrame _loadingFrame;
 	private JLabel _loadingLabel;
-	private JPanel _loadingPanel;
+//	private JPanel _loadingPanel;
 		
 	private XStream _xstream = new XStream();
 
@@ -73,10 +76,18 @@ public class Communicator {
 
 	public Communicator() {
 
+		_loadingDialog = new JDialog(new JFrame());
+		_loadingDialog.setDefaultCloseOperation(JDialog.DO_NOTHING_ON_CLOSE);
 		_loadingLabel = new JLabel();
-		_loadingFrame = new JFrame();
-		_loadingFrame.add(_loadingLabel);
-		_loadingFrame.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
+
+		_loadingLabel.setFont(new Font(GuiConstants.FONT_NAME, _loadingLabel.getFont().getStyle(), _loadingLabel.getFont().getSize()));
+		JPanel loadingPanel = new JPanel();
+		
+		loadingPanel.add(new JLabel(new ImageIcon("KairosIcon.png")));
+		loadingPanel.add(_loadingLabel);
+		_loadingDialog.add(loadingPanel);
+		_loadingDialog.setSize(300, 50);
+		_loadingDialog.setUndecorated(true);
 	}
 	
 	/**
@@ -85,23 +96,20 @@ public class Communicator {
 	 * @param msg -- message to display to the user
 	 */
 	private void showLoadingLabel(String msg){
-	
+
 		_loadingLabel.setText(msg);
-		_loadingLabel.setFont(new Font(GuiConstants.FONT_NAME, _loadingLabel.getFont().getStyle(), _loadingLabel.getFont().getSize()));
-		_loadingFrame.add(_loadingLabel);
-		_loadingFrame.validate();
-		_loadingFrame.pack();
+		_loadingDialog.setLocationRelativeTo(null);
+		_loadingDialog.setVisible(true);	
+		_loadingDialog.repaint();
+		_loadingDialog.pack();
+		_loadingDialog.invalidate();
+		_loadingDialog.validate();
 		
-		
-		_loadingFrame.setLocationRelativeTo(null);
-		_loadingFrame.setVisible(true);
-		
-		System.out.println("MESSAGE MAGIC: " + _loadingLabel.getText());
 	}
 
 
 	private void hideLoadingLabel(){
-		_loadingFrame.setVisible(false);
+		_loadingDialog.setVisible(false);
 	}
 
 	/**

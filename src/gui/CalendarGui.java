@@ -78,6 +78,7 @@ public class CalendarGui {
 	private ImageIcon _nextIcon = new ImageIcon("small_right_button.png");
 	private ImageIcon _nextIconInverted = new ImageIcon("small_right_button_invert.png");
 
+	private ImageIcon _kairosLogo = new ImageIcon("KairosLogo.png");
 	
 	private JToggleButton _refreshButton = new JToggleButton(_refreshIcon);
 	private JButton _eventDispButton = new JButton(_toggleIcon);
@@ -149,16 +150,14 @@ public class CalendarGui {
 		_refreshButton.setToolTipText("Refresh");
 		_refreshButton.setPressedIcon(_refreshIconInverted);
 		
-		BufferedImage kairosLogo;
-		try {
-			kairosLogo = ImageIO.read(new File("KairosLogo.png"));
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-//			e.printStackTrace();
-			System.out.println("Logo Not Found");
-			kairosLogo = null;
-		}
-		_picLabel = new JLabel(new ImageIcon(kairosLogo));
+//		BufferedImage kairosLogo;
+//		try {
+//			kairosLogo = ImageIO.read(new File("KairosLogo.png"));
+//		} catch (IOException e) {
+//			System.out.println("Logo Not Found");
+//			kairosLogo = null;
+//		}
+		_picLabel = new JLabel(_kairosLogo);
 		
 		_numHours = 8;
 		
