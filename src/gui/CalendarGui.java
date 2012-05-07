@@ -228,12 +228,12 @@ public class CalendarGui {
 				calLayout.createSequentialGroup()
 //				.addComponent(_hourOfDayLabels, GroupLayout.PREFERRED_SIZE, _hourOfDayLabels.getPreferredSize().width,
 //						GroupLayout.PREFERRED_SIZE)
-						.addComponent(_replyPanel, GroupLayout.PREFERRED_SIZE, (int) (FRAME_WIDTH*.75),
+						.addComponent(_replyPanel, GroupLayout.PREFERRED_SIZE, (int) (FRAME_WIDTH*.70),
 								GroupLayout.PREFERRED_SIZE));
 
 		calLayout.setVerticalGroup(
 				calLayout.createParallelGroup(GroupLayout.Alignment.TRAILING)
-				.addComponent(_replyPanel, GroupLayout.PREFERRED_SIZE, FRAME_HEIGHT - _replyPanel.getPreferredSize().height,
+				.addComponent(_replyPanel, GroupLayout.PREFERRED_SIZE, FRAME_HEIGHT - _replyPanel.getPreferredSize().height + 15,
 						GroupLayout.PREFERRED_SIZE)
 //						.addComponent(_hourOfDayLabels, GroupLayout.PREFERRED_SIZE, FRAME_HEIGHT - _replyPanel.getPreferredSize().height - _replyPanel.getWeekDayPanelHeight(),
 //								GroupLayout.PREFERRED_SIZE)
@@ -275,7 +275,8 @@ public class CalendarGui {
 		
 		JPanel westPanel = new JPanel(new GridLayout(0, 1));
 		westPanel.add(_friendBar);
-		_friendBar.mySetSize(new Dimension((int) ((FRAME_WIDTH*.25*.25)), 400));
+		westPanel.setPreferredSize(new Dimension((int) ((FRAME_WIDTH*.25*.40)), 400));
+		_friendBar.mySetSize(new Dimension((int) ((FRAME_WIDTH*.25*.40)), 400));
 		_frame.add(westPanel, BorderLayout.WEST);
 
 		JPanel eastPanel = new JPanel(new GridLayout(0,1));
