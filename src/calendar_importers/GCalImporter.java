@@ -19,8 +19,6 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.ListSelectionModel;
 
-import org.joda.time.DateTime;
-
 import calendar.CalendarGroup;
 import calendar.CalendarResponses;
 import calendar.GoogleCalendars;
@@ -176,6 +174,9 @@ public class GCalImporter implements CalendarsImporter<CalendarResponses> {
             }
             //add calendar to group of calendars
             allCalendars.addCalendar(currCal);
+            
+            //TEST
+            //currCal.print();
             
           }
         return allCalendars;
