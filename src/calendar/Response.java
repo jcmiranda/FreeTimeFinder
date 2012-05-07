@@ -1,15 +1,12 @@
 package calendar;
-import static gui.GuiConstants.LINE_COLOR;
 import static gui.GuiConstants.INTERLINE_SPACING;
+import static gui.GuiConstants.LINE_COLOR;
 import static gui.GuiConstants.RESPONSE_NAME_COLOR;
 import static gui.GuiConstants.RESPONSE_NAME_SPACING;
 import static gui.GuiConstants.RESPONSE_SPACING;
 import gui.Day;
-import gui.DayPanel;
-import gui.GuiConstants;
 
 import java.awt.Color;
-import java.awt.Font;
 import java.awt.Graphics2D;
 import java.awt.font.FontRenderContext;
 import java.awt.font.LineBreakMeasurer;
@@ -20,6 +17,12 @@ import java.text.AttributedCharacterIterator;
 import java.text.AttributedString;
 
 import org.joda.time.DateTime;
+
+/**
+ * 
+ * Represents an individual "event" inside of a sub-calendar of the user-calendar (i.e. "Lunch" or "Conference Call")
+ *
+ */
 
 public class Response implements Comparable<Response>{
 	private DateTime _startTime;
@@ -32,6 +35,9 @@ public class Response implements Comparable<Response>{
 		return _indentation;
 	}
 	
+	/**
+	 * Used to set position on screen (which depends on the number of other responses scheduled at the same time)
+	 */
 	public void setIndentation(int indentation){
 		_indentation = indentation;
 	}
@@ -95,7 +101,6 @@ public class Response implements Comparable<Response>{
 		brush.setColor(color);
 		brush.fill(rect);
 		brush.setColor(RESPONSE_NAME_COLOR);
-//		brush.setFont(new Font(GuiConstants.FONT_NAME, brush.getFont().getStyle(), brush.getFont().getSize()));
 		if (getName()!=null){
 			drawStringRect(brush,
 					(int) (startXDbl+spaceDbl + RESPONSE_NAME_SPACING),

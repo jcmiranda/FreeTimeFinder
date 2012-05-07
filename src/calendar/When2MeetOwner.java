@@ -14,7 +14,6 @@ public class When2MeetOwner implements Owner {
 		return _name;
 	}
 	
-	//TODO check for ID being -1 before posting
 	public void setName(String name) {
 		_name = name; 
 		_id = -1;

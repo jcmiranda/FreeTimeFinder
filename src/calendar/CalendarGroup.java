@@ -5,7 +5,11 @@ import java.util.Collection;
 
 import org.joda.time.DateTime;
 
-import calendar.Event.CalByThatNameNotFoundException;
+/**
+ * Represents a collection of calendars, grouped by some commonality (from same usercal, same event)
+ *
+ * @param <C>
+ */
 
 public class CalendarGroup<C extends Calendar> {
 
@@ -34,7 +38,9 @@ public class CalendarGroup<C extends Calendar> {
 		return _end;
 	}
 	
+	
 	private int lenDayInMinutes() {
+		// midnight defaults to 0, but if the end time it should be the last minute of the day, not the first (for positive results after subtraction)
 		if(_end.getMinuteOfDay() == 0)
 			return 24*60 - _start.getMinuteOfDay();
 		else
@@ -74,6 +80,9 @@ public class CalendarGroup<C extends Calendar> {
 		_calendars.clear();
 	}
 	
+	/**
+	 * @return the type of calendar group this is based on what type of calendars it's storing
+	 */
 	public CalGroupType getCalGroupType() {
 		return _calGroupType;
 	}

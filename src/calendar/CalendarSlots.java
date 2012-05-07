@@ -2,7 +2,6 @@ package calendar;
 
 import static gui.GuiConstants.SLOT_COLOR;
 import gui.Day;
-import gui.DayPanel;
 
 import java.awt.Color;
 import java.awt.Graphics2D;
@@ -10,6 +9,13 @@ import java.awt.geom.Rectangle2D;
 import java.util.ArrayList;
 
 import org.joda.time.DateTime;
+
+
+/**
+ * Represents a when2meet-style response for one person. Represented by a 2D array of availability of size 
+ * numDays x num slots in day (e.g. num 15 min slots between the start and end times of the event)
+ *
+ */
 
 public class CalendarSlots implements Calendar {
 	private DateTime _startTime;
@@ -54,8 +60,9 @@ public class CalendarSlots implements Calendar {
 		_avail = availability;
 	}
 
-	// Need absolute value in case endtime is midnight
+	
 	public int lenDayInMinutes() {
+		// midnight defaults to minute 0, but if event ends at minute, we need it to be strictly greater than the start time, i.e. the last minute of the day
 		if(_endTime.getMinuteOfDay() == 0)
 			return 24*60 - _startTime.getMinuteOfDay();
 		else
@@ -72,10 +79,18 @@ public class CalendarSlots implements Calendar {
 		return -1;
 	}
 	
+	/**
+	 * 
+	 * @param b - whether the user wants to see this response when viewing the corresponding event
+	 */
 	public void setVisible(boolean b){
 		_isVisible = b;
 	}
 	
+	/**
+	 * 
+	 * @returns whether the calendar can be seen by the user when viewing the appropriate event
+	 */
 	public boolean isVisible(){
 		return _isVisible;
 	}
@@ -109,6 +124,7 @@ public class CalendarSlots implements Calendar {
 		int slotInDay = slot % _numSlotsInDay;
 		return _avail[day][slotInDay];
 	}
+	
 	public ArrayList<Integer> getSlotsForAvail(Availability avail){
 		ArrayList<Integer> toReturn = new ArrayList<Integer>();
 
@@ -160,8 +176,6 @@ public class CalendarSlots implements Calendar {
 			return daysOff * _numSlotsInDay + minutesOff / _minInSlot + 1;
 	}
 
-	//TODO this may fail if endTime is the same as the end of the calendar
-
 	public void setAvail(DateTime startTime, DateTime endTime, Availability avail) {
 		int startSlot = timeToSlot(startTime, true);
 		int endSlot = timeToSlot(endTime, false);
@@ -204,13 +218,13 @@ public class CalendarSlots implements Calendar {
 				for (int i=0; i< _numSlotsInDay; i++){
 					double iDbl = (double) i;
 					double hDbl = (double) d.getHeight();
-					double hrsDbl = (double) this.getNumHours(); // d.getNumHours();
+					double hrsDbl = (double) this.getNumHours();
 					double sDbl = (double) _numSlotsInDay;
 					
 					if (_avail[numDays][i]==Availability.free){
 						rect = new Rectangle2D.Double();
-						double startY = iDbl * hDbl / sDbl; //(hrsDbl*4.0);
-						rect.setFrame(0, startY, d.getWidth(), (double) (hDbl/ sDbl)); //(hrsDbl*4.0));
+						double startY = iDbl * hDbl / sDbl;
+						rect.setFrame(0, startY, d.getWidth(), (double) (hDbl/ sDbl));
 						brush.setColor(SLOT_COLOR);
 						brush.fill(rect);
 					}
