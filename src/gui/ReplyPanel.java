@@ -4,8 +4,11 @@ import static gui.GuiConstants.DAY_SPACING;
 import static gui.GuiConstants.DEFAULT_END_HOUR;
 import static gui.GuiConstants.DEFAULT_START_HOUR;
 import static gui.GuiConstants.LINE_COLOR;
+import static gui.GuiConstants.MAX_DAY_WIDTH;
 
 import java.awt.BorderLayout;
+import java.awt.Dimension;
+import java.awt.FlowLayout;
 import java.awt.Graphics;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
@@ -35,12 +38,17 @@ public class ReplyPanel extends JPanel{
 	private JPanel _hourOfDayLabels;
 	private HourOfDayPanel _innerLabelPanel;
 	private JPanel _bigDayPanel;
-	protected int _startHour = DEFAULT_START_HOUR;
-	protected int _endHour = DEFAULT_END_HOUR;
-	protected int _numHours =  DEFAULT_END_HOUR - DEFAULT_START_HOUR;
-	protected DateTime _startDay;
-	protected DateTime _endDay;
-	protected DayPanel[] _days;
+	private int _startHour = DEFAULT_START_HOUR;
+	private int _endHour = DEFAULT_END_HOUR;
+	private int _numHours =  DEFAULT_END_HOUR - DEFAULT_START_HOUR;
+	private DateTime _startDay;
+	private DateTime _endDay;
+	private DayPanel[] _days;
+//	private JPanel _prePadding;
+	private JPanel _postPadding;
+	private JPanel _outerBigDayPanel;
+
+	private boolean _fullWeekMode = true;
 
 	public ReplyPanel() {
 		super();
@@ -68,7 +76,19 @@ public class ReplyPanel extends JPanel{
 		if(_event != null){
 			_startHour = _event.getStartTime().getHourOfDay();
 			_endHour = _event.getEndTime().getHourOfDay();
-			_numHours = _event.getCalendars().get(0).getNumHours();
+			_numHours = _event.getNumHours();
+			if(CalendarSlots.getDaysBetween(_event.getStartTime(), _event.getEndTime()) + 1 < 7){
+				_fullWeekMode = false;
+				System.out.println("FULL WEEK MODE SET TO FALSE");
+			}
+			else{
+				System.out.println("CONSTRUCTOR SET FULL WEEK MODE TRUE");
+				_fullWeekMode = true;
+			}
+		}
+		else{
+			_fullWeekMode = true;
+			System.out.println("CONSTRUCTOR SET FULL WEEK MODE TRUE");
 		}
 
 		configDays();
@@ -96,11 +116,19 @@ public class ReplyPanel extends JPanel{
 			_startHour = _event.getStartTime().getHourOfDay();
 			_endHour = _event.getEndTime().getHourOfDay();
 			_numHours = _event.getNumHours();
+			if(CalendarSlots.getDaysBetween(_event.getStartTime(), _event.getEndTime()) + 1 < 7){
+				_fullWeekMode = false;
+				System.out.println("FULL WEEK MODE SET TO FALSE");
+			}
+			else{
+				_fullWeekMode = true;
+			}
 		}
 		else{
 			_startHour = 9;
 			_endHour = 5;
 			_numHours = 8;
+			_fullWeekMode = true;
 		}
 
 		setBestTimes(null);
@@ -113,7 +141,7 @@ public class ReplyPanel extends JPanel{
 			d.setBestTimes(bestTimes);
 		}
 	}
-	
+
 	public void nextWeek(){
 		if (_endDay.isBefore(_event.getEndTime())){
 			_startDay = _startDay.plusDays(7);
@@ -144,12 +172,12 @@ public class ReplyPanel extends JPanel{
 	public void makeHourLabels(){
 
 		_hourOfDayLabels = new JPanel();
-		
+
 		GridBagConstraints c1 = new GridBagConstraints();
 		_innerLabelPanel = new HourOfDayPanel(_startHour, _numHours);
 		_hourOfDayLabels.setLayout(new GridBagLayout());
 		_hourOfDayLabels.setBackground(GuiConstants.LINE_COLOR);
-		
+
 		JPanel space = new JPanel();
 		space.add(new JLabel("        "));
 		c1.fill = GridBagConstraints.HORIZONTAL;
@@ -159,7 +187,7 @@ public class ReplyPanel extends JPanel{
 		c1.gridx = 0;
 		c1.gridy = 0;
 		_hourOfDayLabels.add(space, c1);
-		
+
 		c1.fill = GridBagConstraints.BOTH;
 		c1.weightx = 1.0;
 		c1.weighty = 1.0;
@@ -190,26 +218,66 @@ public class ReplyPanel extends JPanel{
 	public void makeDays() {
 
 		this.setLayout(new BorderLayout());
-		_bigDayPanel.setLayout(new GridLayout(1,7,DAY_SPACING,0));
-		
-		
+		_bigDayPanel.setLayout(new GridLayout(1,0,DAY_SPACING,0));
+		_outerBigDayPanel = new JPanel();
+
 		makeHourLabels();
 		this.add(_hourOfDayLabels, BorderLayout.WEST);
 
 		_bigDays=new OuterDayPanel[7];
+//		_prePadding = new JPanel();
+		_postPadding = new JPanel();
 
 		for (int i=0; i<7; i++){
 			_bigDays[i]=new OuterDayPanel(new ClickableDayPanel(), new DayPanel(), new DateTime());
 			_bigDayPanel.add(_bigDays[i]);
 		}	
-		
-		this.add(_bigDayPanel, BorderLayout.CENTER);
+
+		_outerBigDayPanel.setLayout(new FlowLayout());
+		((FlowLayout)(_outerBigDayPanel.getLayout())).setHgap(0);
+		((FlowLayout)(_outerBigDayPanel.getLayout())).setVgap(0);
+		((FlowLayout)(_outerBigDayPanel.getLayout())).setAlignOnBaseline(true);
+//		_outerBigDayPanel.add(_prePadding);
+		_outerBigDayPanel.add(_bigDayPanel);
+		_outerBigDayPanel.add(_postPadding);
+
+		this.add(_outerBigDayPanel, BorderLayout.CENTER);
 	}
 
 	public void configDays(){
 
 		updateHourLabels();
+		_outerBigDayPanel.removeAll();
+		_bigDayPanel.removeAll();
 		
+		Dimension dayDim, padDim;
+
+		if (!_fullWeekMode){
+			System.out.println("NOT FULL WEEK MODE");
+			int numDays = CalendarSlots.getDaysBetween(_startDay, _endDay) + 1;
+			int maxCalWidth = Math.min(MAX_DAY_WIDTH*numDays, _outerBigDayPanel.getWidth());
+			
+			dayDim = new Dimension(maxCalWidth, _outerBigDayPanel.getHeight());
+			padDim = new Dimension((_outerBigDayPanel.getWidth() - maxCalWidth), _outerBigDayPanel.getHeight());
+		}
+		else{
+			System.out.println("OBDP WIDTH: " + _outerBigDayPanel.getWidth() + "\t OBDP HEIGHT: " + _outerBigDayPanel.getHeight());
+			System.out.println("This width: " + this.getWidth() + "\t this height: " + this.getHeight());
+			dayDim = new Dimension(_outerBigDayPanel.getWidth(), _outerBigDayPanel.getHeight());
+			padDim = new Dimension(0, _outerBigDayPanel.getHeight());
+		}
+		
+		// Which one??
+		_bigDayPanel.setMaximumSize(dayDim);
+		_bigDayPanel.setSize(dayDim);
+		_bigDayPanel.setPreferredSize(dayDim);
+//		_prePadding.setSize(padDim);
+//		_prePadding.setMaximumSize(padDim);
+//		_prePadding.setPreferredSize(padDim);
+		_postPadding.setSize(padDim);
+		_postPadding.setMaximumSize(padDim);
+		_postPadding.setPreferredSize(padDim);
+
 		int ctr = 0;
 
 		for (int i=0; i<7; i++){
@@ -218,6 +286,10 @@ public class ReplyPanel extends JPanel{
 			_bigDays[i].setDay(_startDay.plusDays(i));
 			if ((_event != null &&_startDay.plusDays(i).isAfter(_event.getEndTime())) || (_event == null && _startDay.plusDays(i).isAfter(_endDay))){
 				_bigDays[i].setActive(false);
+				if (_fullWeekMode){
+					_bigDayPanel.add(_bigDays[i]);
+				}
+
 			} else {
 				_bigDays[i].setActive(true);
 				_bigDays[i].getClickableDay().setResponses(_userCal);
@@ -229,8 +301,6 @@ public class ReplyPanel extends JPanel{
 						_clicks.addCalendar(((When2MeetEvent) _event).getUserResponse());
 					}
 					else{
-						System.out.println(_event.getMinInSlot());
-//						System.exit(0);
 						_clicks.addCalendar(new CalendarSlots(_event.getStartTime(),
 								_event.getEndTime(),
 								_event.getMinInSlot(),
@@ -240,12 +310,16 @@ public class ReplyPanel extends JPanel{
 				else
 					_clicks = null;
 
-
-
 				_bigDays[i].getClickableDay().setSlots(_clicks);
+				_bigDayPanel.add(_bigDays[i]);
 				ctr++;
 			}
-		}		
+		}
+		
+		_outerBigDayPanel.add(_bigDayPanel);
+		_outerBigDayPanel.add(_postPadding);
+		
+		this.revalidate();
 	}
 
 

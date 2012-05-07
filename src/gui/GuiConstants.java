@@ -12,6 +12,7 @@ public class GuiConstants {
 	public static final int RESPONSE_SPACING = 0;	
 	public static final int LINE_SPACING = 1;	
 	public static final int DAY_SPACING = 8;
+	public static final int MAX_DAY_WIDTH = 225;	
 	public static final int RESPONSE_NAME_SPACING = 6;	
 	public static final int RESPONSE_CONFLICT_SPACING = 30;
 	public static final float INTERLINE_SPACING = 1.0f;

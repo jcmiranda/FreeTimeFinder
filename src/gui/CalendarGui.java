@@ -111,7 +111,8 @@ public class CalendarGui {
 		if(_communicator.hasUserCal())
 			userCal =_communicator.getUserCal();
 
-		_replyPanel = new ReplyPanel(userCal, null);
+//		_replyPanel = new ReplyPanel(userCal, null);
+		_replyPanel = new ReplyPanel();
 
 		ArrayList<NameIDPair> pairs = _communicator.getNameIDPairs();
 		for(NameIDPair pair : pairs) {
@@ -164,6 +165,9 @@ public class CalendarGui {
 		_numHours = 8;
 		
 		buildFrame();
+		
+		_replyPanel.setUserCal(userCal);
+		_replyPanel.setEvent(null);
 	}
 	
 	public void displayButton(AbstractButton button) {
