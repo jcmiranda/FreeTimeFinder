@@ -33,19 +33,6 @@ public class TimeFinder {
 		return minutesOff / _interval;
 	}
 	
-	private void calculateAvailForDay(CalendarSlots cal, int day, int col, int[][] freeTimes){
-		for(int row=0; row<_numSlotsInDay; row++){
-			if(_numSlotsInDay == cal.getSlotsInDay()){
-				switch(cal.getAvail(day, row)){
-				case free:
-					freeTimes[row][col] = 1;
-					break;
-				case busy:
-					freeTimes[row][col] = 0;
-				}
-			}
-		}
-	}
 	
 	public CalendarResponses findBestTimes(Event e, int interval, int duration, int numToReturn, int minAttendees){
 		
@@ -145,7 +132,6 @@ public class TimeFinder {
 			else{
 				result[i] = 0;
 			}
-			// System.out.println(i + ": " + result[i]);
 		}
 		PriorityQueue<TimeAvailability> bestTimes = new PriorityQueue<TimeAvailability>();
 		int lastIn = 0;
