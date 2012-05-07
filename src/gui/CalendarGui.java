@@ -52,11 +52,8 @@ public class CalendarGui {
 	private int _numHours = DEFAULT_END_HOUR - DEFAULT_START_HOUR;
 	private JFrame _frame;
 	private ReplyPanel _replyPanel;
-//	private JPanel _hourOfDayLabels;
-//	private ArrayList<Integer> _hoursOfDay = new ArrayList<Integer>();
 	private Communicator _communicator = new Communicator();
 	private UserCalPanel _userCalPanel;
-	//private JButton _eventDispButton = new JButton("Toggle Event Display");
 	private PaintMethod _eventDispStyle = PaintMethod.Bars;
 	private EventPanel _eventPanel = new EventPanel(_communicator, this);
 	private UpdatesPanel _updatesPanel = new UpdatesPanel();
@@ -227,17 +224,8 @@ public class CalendarGui {
 	}
 
 
-	private class InnerWindowListener extends WindowAdapter {
-		@Override
-		public void windowClosing(WindowEvent e) {
-			//System.out.println("Window closing triggered");
-			//_communicator.saveAll();
-		}
-	}
-
 	public void buildFrame(){
 		_frame = new JFrame("Kairos");
-		_frame.addWindowListener(new InnerWindowListener());
 
 		JPanel calPanel = new JPanel();
 		GroupLayout calLayout = new GroupLayout(calPanel);
@@ -248,18 +236,13 @@ public class CalendarGui {
 
 		calLayout.setHorizontalGroup(
 				calLayout.createSequentialGroup()
-//				.addComponent(_hourOfDayLabels, GroupLayout.PREFERRED_SIZE, _hourOfDayLabels.getPreferredSize().width,
-//						GroupLayout.PREFERRED_SIZE)
 						.addComponent(_replyPanel, GroupLayout.PREFERRED_SIZE, (int) (FRAME_WIDTH*.70),
 								GroupLayout.PREFERRED_SIZE));
 
 		calLayout.setVerticalGroup(
 				calLayout.createParallelGroup(GroupLayout.Alignment.TRAILING)
 				.addComponent(_replyPanel, GroupLayout.PREFERRED_SIZE, FRAME_HEIGHT - _replyPanel.getPreferredSize().height - 25,
-						GroupLayout.PREFERRED_SIZE)
-//						.addComponent(_hourOfDayLabels, GroupLayout.PREFERRED_SIZE, FRAME_HEIGHT - _replyPanel.getPreferredSize().height - _replyPanel.getWeekDayPanelHeight(),
-//								GroupLayout.PREFERRED_SIZE)
-								);
+						GroupLayout.PREFERRED_SIZE));
 
 		_frame.add(calPanel, BorderLayout.CENTER);
 
@@ -276,9 +259,9 @@ public class CalendarGui {
 		buttonFunctionsPanel.add(_refreshButton);
 
 
-		JPanel buttonPanel = new JPanel(new GridLayout(1, 0));
-		buttonPanel.add(nextPrevPanel);
-		buttonPanel.add(buttonFunctionsPanel);
+//		JPanel buttonPanel = new JPanel(new GridLayout(1, 0));
+//		buttonPanel.add(nextPrevPanel);
+//		buttonPanel.add(buttonFunctionsPanel);
 
 		JPanel logoPanel = new JPanel();
 		logoPanel.add(_picLabel);
@@ -289,10 +272,9 @@ public class CalendarGui {
 		JPanel northPanel = new JPanel(new GridBagLayout());
 		
 		GridBagConstraints c = new GridBagConstraints();
-		c.fill = GridBagConstraints.HORIZONTAL;
+		c.fill = GridBagConstraints.NONE;
 		c.weightx = 0.0;
 		c.weighty = 1.0;
-		c.ipadx = 200;
 		c.gridx = 0;
 		c.gridy = 0;
 		c.ipady = 10;
@@ -302,13 +284,21 @@ public class CalendarGui {
 		c.fill = GridBagConstraints.HORIZONTAL;
 		c.weightx = 1.0;
 		c.weighty = 1.0;
-		c.ipadx = 0 ;
 		c.gridx = 1;
 		c.gridy = 0;
 		c.ipady = 0;
 		
-		northPanel.add(buttonPanel,c);
+		northPanel.add(nextPrevPanel, c);
 
+		c.fill = GridBagConstraints.EAST;
+		c.weightx = 0.0;
+		c.weighty = 1.0;
+		c.gridx = 2;
+		c.gridy = 0;
+		c.ipady = 0;
+		
+		northPanel.add(buttonFunctionsPanel, c);
+		
 		_frame.add(northPanel, BorderLayout.NORTH);
 		
 		JPanel westPanel = new JPanel(new GridLayout(0, 1));
@@ -322,7 +312,7 @@ public class CalendarGui {
 		eastPanel.add(_eventPanel);
 		eastPanel.add(_updatesPanel);
 
-		eastPanel.setPreferredSize(new Dimension((int) ((FRAME_WIDTH*.25)*.60), 700));
+		eastPanel.setPreferredSize(new Dimension((int) (FRAME_WIDTH*.25), 600));
 
 		_frame.add(eastPanel, BorderLayout.EAST);
 
@@ -383,13 +373,11 @@ public class CalendarGui {
 
 	}
 	private class PrevListener implements ActionListener {
-
 		@Override
 		public void actionPerformed(ActionEvent e) {
 			if(_slotGroup != null)
 				_replyPanel.prevWeek();
 		}
-
 	}
 	
 	private class EventDispButtonListener implements ActionListener {

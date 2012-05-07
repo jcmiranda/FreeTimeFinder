@@ -31,13 +31,11 @@ public class Event extends CalendarGroup<CalendarSlots> {
 
 	public Event(DateTime start, DateTime end, CalGroupType type){
 		super(start, end, type);
-		//System.out.println("Here " + _minInSlot);
 		initColors();
 	}
 
 	public Event(DateTime start, DateTime end, Collection<CalendarSlots> cals, CalGroupType type){
 		super(start, end, cals, type);
-		//System.out.println("There " + _minInSlot);
 		initColors();
 	}
 
@@ -83,16 +81,9 @@ public class Event extends CalendarGroup<CalendarSlots> {
 		}
 
 		if(_userResponse.getOwner().getName().equalsIgnoreCase(name)) {
-			System.out.println("Getting User Response Cal");
 			return _userResponse;
 		}
 
-		/*
-		for(int i = 0; i < this.getCalendars().size(); i++) { 
-			if(this.getCalendars().get(i).getOwner().getName().equalsIgnoreCase(name)) {
-				return this.getCalendars().get(i);
-			}
-		}*/
 		throw new CalByThatNameNotFoundException();
 	}
 
