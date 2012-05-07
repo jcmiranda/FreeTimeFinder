@@ -259,12 +259,6 @@ public class GCalImporter implements CalendarsImporter<CalendarResponses> {
 		public void actionPerformed(ActionEvent arg0) {
 			Object[] titles = _calList.getSelectedValues();
 			int[] ints = _calList.getSelectedIndices();
-			for (Object i : titles) {
-				System.out.println(i.toString());
-			}
-			for (int i : ints) {
-				System.out.println(i);
-			}
 			_selectedInd = ints;
 			_listFrame.setVisible(false);
 			_buttonClicked = true;
