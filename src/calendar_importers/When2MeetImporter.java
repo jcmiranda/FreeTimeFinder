@@ -27,34 +27,65 @@ import calendar.When2MeetEvent;
 import calendar.When2MeetOwner;
 
 
+// Class for importing events from when2meet into our program
+// Can either import a new event
+// or update an existing event to reflect the changes that have occurred
+// since the last time this event was loaded to the program
 public class When2MeetImporter implements CalendarsImporter<CalendarSlots> {
 
+	// The url associated with the event currently being imported and the 
+	// event name associated with the event currently being imported
 	private String _urlString = null, _eventName = null;
+	// Event id of the event currently being imported
 	private int _eventID;
+	// Mapping of userIDs to calendars to identifiying who is actually available
+	// at the different slots
 	private HashMap<Integer, CalendarSlots> _IDsToCals = new HashMap<Integer, CalendarSlots>();
+	// Mapping of string months to numbers for creating date times
 	private HashMap<String, Integer> _months = new HashMap<String, Integer>();
+	// Mapping of slot indices to slot IDS - necessary to store to identify slots
+	// for posting back to when2meet
 	private ArrayList<Integer> _slotIndexToSlotID = new ArrayList<Integer>();
 	
+	// Regular expression for matching userIDs to userNames and group index
+	// of name and id within regular expression
 	private Pattern _nameIDPattern = Pattern.compile("PeopleNames\\[(\\d+)\\] = '([\\w+\\s*]+)';PeopleIDs\\[(\\d+)\\] = (\\d+);");
 	private int _nameGroupIndex = 2, _IDGroupIndex = 4;
+	
+	// Regular expression for matching slot IDs
 	private Pattern _slotsPattern = Pattern.compile("TimeOfSlot\\[(\\d+)\\]=(\\d+);");
 	private int _slotIDGroupIndex = 2;
+	
+	// Regular expression for matching availabilities for creating list of who is available at
+	// a given time
 	private Pattern _availPattern = Pattern.compile("AvailableAtSlot\\[(\\d+)\\]\\.push\\((\\d+)\\);"); 
+	
+	// Regular expression for matching the dates for this when2meet
 	private Pattern _datesPattern = Pattern.compile("text\\-align:center;font\\-size:10px;width:44px;padding\\-right:1px;\">(\\w+) (\\d+)<br>");
+	
+	// Regular expression for matching the event ID
 	private Pattern _eventIDPattern = Pattern.compile("http://www.when2meet.com/\\?(\\d+)\\-[0-9a-zA-Z]+");
+	
+	// Regular expression for matching the event name for this event
 	private Pattern _eventNameDivPattern = Pattern.compile("<div id=\\\"NewEventNameDiv\\\" style=\\\"padding:20px 0px 20px 20px;font-size:30px;\\\">");
 	private Pattern _eventNamePattern = Pattern.compile("(.*)<br><span style=\\\"font-size: 12px;\\\">");
+	
+	// Regular expression for matching start time of day through end time of day
 	private Pattern _timesPattern = Pattern.compile("width:44px;font\\-size:10px;margin:4px 4px 0px 0px;'>(\\d*)(\\s*)(\\w+)&nbsp");
 	private int _timeIndex = 1;
 	private int _AMPMIndex = 3;
+	
+	// Start and end time of this event
 	private DateTime _startTime, _endTime;
 	private int _minInSlot = 15; // Minutes in a time slot
 	private int _year = 2012;
 	
+	// Initialize list of months 
 	public When2MeetImporter() {
-			initializeMonths();		
+		initializeMonths();		
 	}
 	
+	// Initialize list of months for turning strings for days into date times
 	private void initializeMonths() {
 		_months.put("Jan", 1);
 		_months.put("Feb", 2);
@@ -70,11 +101,13 @@ public class When2MeetImporter implements CalendarsImporter<CalendarSlots> {
 		_months.put("Dec", 12);
 	}
 	
+	// Returns true if a given url is indeed a when2meet url
 	public boolean isWhen2MeetURL(String url) {
 		Matcher eventIDMatcher = _eventIDPattern.matcher(url);
 		return eventIDMatcher.matches();
 	}
 	
+	// Parses the event ID from a when2meet URL
 	private void parseEventID() {
 		Matcher eventIDMatcher = _eventIDPattern.matcher(_urlString);
 		if(eventIDMatcher.find()) {
@@ -84,6 +117,7 @@ public class When2MeetImporter implements CalendarsImporter<CalendarSlots> {
 		}
 	}
 	
+	// initializes calendars for a list of name ID pairs
 	private void initCalendars(ArrayList<String> nameIDPairs) {
 		for(String s : nameIDPairs) {
 			Matcher nameIDMatcher = _nameIDPattern.matcher(s);
@@ -96,7 +130,6 @@ public class When2MeetImporter implements CalendarsImporter<CalendarSlots> {
 
 				if(_IDsToCals.containsKey(id)) {
 					System.err.println("cal already found for id: " + id);
-					System.exit(1);
 				} else {
 					CalendarSlots cal = new CalendarSlots(_startTime, _endTime, _minInSlot, Availability.busy);
 					cal.setOwner(new When2MeetOwner(name, id));
@@ -106,6 +139,7 @@ public class When2MeetImporter implements CalendarsImporter<CalendarSlots> {
 		}
 	}
 	
+	// Parses the availability from a list of lines of availability
 	private void parseAvailability(ArrayList<String> availLines) {
 		for(String s : availLines) {
 			Matcher m = _availPattern.matcher(s);
@@ -115,16 +149,24 @@ public class When2MeetImporter implements CalendarsImporter<CalendarSlots> {
 				Integer userId = new Integer(Integer.parseInt(m.group(2)));
 				assert(slot != null);
 				assert(userId != null);
-				if(_IDsToCals.get(userId) == null) {
+
+				if(_IDsToCals.get(userId) != null) {
+					_IDsToCals.get(userId).setAvail(slot, Availability.free);	
 				}
-				else
-					_IDsToCals.get(userId).setAvail(slot, Availability.free);		
 			}
 		}
 	}
 	
+	// Parses the HTML for a when2meet event ot pull out all of the relevant information for
+	// creating a when2meetevent including:
+	// 		- start time, end time
+	//		- start date, end date
+	//		- user names, id
+	//		- slot ids
+	//		- event id
+	//		- event name
 	private void parseHTML() throws IOException, MalformedURLException {
-		
+
 		URL url = new URL(_urlString);
 		BufferedReader page = new BufferedReader(new InputStreamReader(url.openStream()));
 		
@@ -136,6 +178,8 @@ public class When2MeetImporter implements CalendarsImporter<CalendarSlots> {
 		String inputLine;
 		boolean nextIsEventName = false;
 		
+		// Read each line of the page and pull out the lines that match various patterns
+		// worry about parsing the lines after all of the correct lines have been pulled out
 		while((inputLine = page.readLine()) != null) {
 			Matcher availMatcher = _availPattern.matcher(inputLine);
 			Matcher dateMatcher = _datesPattern.matcher(inputLine);
@@ -168,7 +212,6 @@ public class When2MeetImporter implements CalendarsImporter<CalendarSlots> {
 				
 			if(eventNameDivMatcher.matches()) 
 				nextIsEventName = true;
-			
 		}
 		
 		parseEventID();
@@ -178,6 +221,9 @@ public class When2MeetImporter implements CalendarsImporter<CalendarSlots> {
 		
 	}
 	
+	// Parses the list of date lines into a start and end date for the event
+	// Parses the list of hours into a start and end hour for the event
+	// adjusts midnight to be just prior to midnight for a variety of fun reasons
 	private void parseStartEndTime(ArrayList<String> dateLines, ArrayList<String> timeLines) {
 		LocalDate startDate = null;
 		LocalDate endDate = null;
@@ -232,12 +278,14 @@ public class When2MeetImporter implements CalendarsImporter<CalendarSlots> {
 			
 	}
 	
+	// Makes a date time from a local date, hours, and minutes
 	private DateTime makeDateTime(LocalDate date, int hours, int minutes) {
 		return new DateTime(_year, date.getMonthOfYear(), 
 				date.getDayOfMonth(), hours, minutes);
 	}
 	
 	
+	// IMPORTS A NEW EVENT given a url
 	@Override
 	public When2MeetEvent importNewEvent(String url) throws IOException{
 		_urlString = url.trim();
@@ -251,10 +299,14 @@ public class When2MeetImporter implements CalendarsImporter<CalendarSlots> {
 		return w2me;
 	}
 	
+	// Gets a user reponse based on an ID
 	private CalendarSlots getUserResponse(int id) {
 		return _IDsToCals.get(id);
 	}
 	
+	// Refreshes an event - updates it to include list of updates of things
+	// that have changed since last visit, as well as showing all the 
+	// latest data for respondees availability etc.
 	public When2MeetEvent refreshEvent(When2MeetEvent w2me) {
 		_urlString = w2me.getURL();
 		_IDsToCals.clear();
