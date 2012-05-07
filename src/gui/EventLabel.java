@@ -50,7 +50,7 @@ public class EventLabel extends JLabel implements MouseListener{
 	}
 	
 	public void setEvent(){
-		Event toReturn = _communicator.getW2M(_id);
+		Event toReturn = _communicator.getEvent(_id);
 		if(toReturn != null){
 			_gui.setEvent(toReturn);
 			toReturn.updatesViewed();

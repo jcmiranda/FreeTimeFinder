@@ -39,8 +39,9 @@ public class FriendBar extends JPanel {
 //		this.setLayout(new GridLayout(0,(int) (GuiConstants.FRAME_WIDTH*0.75)/5));
 		_scrollPaneInner.setLayout(_spiLayout);
 		_scrollPane = new JScrollPane(_scrollPaneInner);
-		_scrollPane.setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_ALWAYS);
-		_scrollPane.setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS);
+		_scrollPane.setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_AS_NEEDED);
+		_scrollPane.setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_AS_NEEDED);
+		_scrollPane.setBorder(null);
 		
 		this.setLayout(_layout);
 		_layout.setAutoCreateGaps(true);

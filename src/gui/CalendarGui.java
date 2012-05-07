@@ -61,21 +61,22 @@ public class CalendarGui {
 	private EventPanel _eventPanel = new EventPanel(_communicator, this);
 	private UpdatesPanel _updatesPanel = new UpdatesPanel();
 	private FriendBar _friendBar = new FriendBar(this);
-//	private JButton _submitButton = new JButton("Submit Response");
-	//private JButton _timeFindButton = new JButton("Find Best Times");
-	
-	//private JButton _refreshButton = new JButton("Refresh");
-	//ImageIcon submitIcon = new ImageIcon("KairosLogo.png");
+
 	private ImageIcon _findTimeIcon = new ImageIcon("small_logo_button.png");
 	private ImageIcon _findTimeIconInverted = new ImageIcon("small_logo_button_invert.png");
+	
 	private ImageIcon _toggleIcon = new ImageIcon("small_switch_button.png");
 	private ImageIcon _toggleIconInverted = new ImageIcon("small_switch_button_invert.png");
+	
 	private ImageIcon _refreshIcon = new ImageIcon("small_refresh_button.png");
 	private ImageIcon _refreshIconInverted = new ImageIcon("small_refresh_button_invert.png");
+	
 	private ImageIcon _submitIcon = new ImageIcon("small_submit_button.png");
 	private ImageIcon _submitIconInverted = new ImageIcon("small_submit_button_invert.png");
+	
 	private ImageIcon _prevIcon = new ImageIcon("small_left_button.png");
 	private ImageIcon _prevIconInverted = new ImageIcon("small_left_button_invert.png");
+	
 	private ImageIcon _nextIcon = new ImageIcon("small_right_button.png");
 	private ImageIcon _nextIconInverted = new ImageIcon("small_right_button_invert.png");
 
@@ -146,7 +147,6 @@ public class CalendarGui {
 //		_eventDispButton.setFont(new Font(GuiConstants.FONT_NAME, _eventDispButton.getFont().getStyle(), _eventDispButton.getFont().getSize()));
 
 		_refreshButton.addActionListener(new RefreshListener());
-		_refreshButton.setFont(new Font(GuiConstants.FONT_NAME, _refreshButton.getFont().getStyle(), _refreshButton.getFont().getSize()));
 		_refreshButton.setFocusable(false);
 		_refreshButton.setToolTipText("Refresh");
 		_refreshButton.setPressedIcon(_refreshIconInverted);
@@ -264,7 +264,6 @@ public class CalendarGui {
 		buttonPanel.add(nextPrevPanel);
 		buttonPanel.add(buttonFunctionsPanel);
 
-		
 		JPanel logoPanel = new JPanel();
 		logoPanel.add(_picLabel);
 		
@@ -292,7 +291,7 @@ public class CalendarGui {
 		
 		northPanel.add(buttonPanel,c);
 
-		_frame.add(northPanel, BorderLayout.NORTH);
+		_frame.add(buttonPanel, BorderLayout.NORTH);
 		
 		JPanel westPanel = new JPanel(new GridLayout(0, 1));
 		westPanel.add(_friendBar);
@@ -304,12 +303,13 @@ public class CalendarGui {
 		eastPanel.add(_eventPanel);
 		eastPanel.add(_updatesPanel);
 
-		eastPanel.setPreferredSize(new Dimension((int) ((FRAME_WIDTH*.25)*.75), 700));
+		eastPanel.setPreferredSize(new Dimension((int) ((FRAME_WIDTH*.25)*.60), 700));
 
 		_frame.add(eastPanel, BorderLayout.EAST);
 
 		_frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		_frame.setSize(FRAME_WIDTH, FRAME_HEIGHT);
+		//_frame.setSize(FRAME_WIDTH, FRAME_HEIGHT);
+		_frame.pack();
 		_frame.setVisible(true);
 	}
 
@@ -415,7 +415,7 @@ public class CalendarGui {
 				_communicator.refresh();
 				// Retrieve this when2meet in case it has changed
 				if(_slotGroup != null){
-					setEvent(_communicator.getW2M(""+_slotGroup.getID()));
+					setEvent(_communicator.getEvent(""+_slotGroup.getID()));
 					System.out.println("After setting event in GUI");
 					_slotGroup.printUpdates();
 					System.out.println("=====");
