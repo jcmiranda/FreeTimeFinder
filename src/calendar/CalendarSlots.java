@@ -200,6 +200,12 @@ public class CalendarSlots implements Calendar {
 		return _minInSlot * _numSlotsInDay / 60;
 	}
 	
+	/**
+	 * Static method that calculates the time difference between two days
+	 * @param start
+	 * @param end
+	 * @return
+	 */
 	public static int getDaysBetween(DateTime start, DateTime end){
 		if(end.getYear() == start.getYear())
 			return end.getDayOfYear() - start.getDayOfYear();
@@ -208,6 +214,11 @@ public class CalendarSlots implements Calendar {
 		return -1;
 	}
 	
+	/**
+	 * Draw this calendarSlots onto the day d
+	 * @param brush
+	 * @param d
+	 */
 	public void paint(Graphics2D brush, Day d){
 		Rectangle2D.Double rect;
 		assert _numSlotsInDay % 4 == 0;
@@ -231,6 +242,4 @@ public class CalendarSlots implements Calendar {
 			}
 		}
 	}
-
-
 }

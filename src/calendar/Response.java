@@ -78,6 +78,14 @@ public class Response implements Comparable<Response>{
 		return this.getStartTime().compareTo(r.getStartTime());
 	}
 
+	/**
+	 * Draw this response onto the day d as a rectangle with a border. 
+	 * @param brush
+	 * @param d
+	 * @param startX
+	 * @param endX
+	 * @param color
+	 */
 	public void paint(Graphics2D brush, Day d, int startX, int endX, Color color){
 
 		Rectangle2D.Double rect = new Rectangle2D.Double();
@@ -114,6 +122,16 @@ public class Response implements Comparable<Response>{
 		brush.draw(rect);
 	}
 	
+	/**
+	 * Method that draws a string within a box, and deals with word wrapping
+	 * @param graphics
+	 * @param x1
+	 * @param y1
+	 * @param x2
+	 * @param y2
+	 * @param interline
+	 * @param txt
+	 */
 	 private void drawStringRect(Graphics2D graphics, int x1, int y1, int x2, int y2, 
 		        float interline, String txt) {
 		        AttributedString as = new AttributedString(txt);
