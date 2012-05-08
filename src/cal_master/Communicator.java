@@ -76,7 +76,7 @@ public class Communicator {
 	private JDialog _loadingDialog;
 	private JLabel _loadingLabel;
 	
-	private ImageIcon _kairosIcon = new ImageIcon("KairosIcon.png");
+	private ImageIcon _kairosIcon = new ImageIcon(getClass().getResource("KairosIcon.png"));
 		
 	private XStream _xstream = new XStream();
 
@@ -93,7 +93,7 @@ public class Communicator {
 		_loadingLabel.setFont(new Font(GuiConstants.FONT_NAME, _loadingLabel.getFont().getStyle(), _loadingLabel.getFont().getSize()));
 		JPanel loadingPanel = new JPanel();
 		
-		loadingPanel.add(new JLabel(new ImageIcon("KairosIcon.png")));
+		loadingPanel.add(new JLabel(_kairosIcon));
 		loadingPanel.add(_loadingLabel);
 		_loadingDialog.add(loadingPanel);
 		_loadingDialog.setSize(300, 50);

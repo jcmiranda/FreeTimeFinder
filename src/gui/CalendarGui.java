@@ -53,26 +53,27 @@ public class CalendarGui {
 
 	//ImageIcons for different buttons on main display
 
-	private ImageIcon _findTimeIcon = new ImageIcon("small_logo_button.png");
-	private ImageIcon _findTimeIconInverted = new ImageIcon("small_logo_button_invert.png");
+	
+	private ImageIcon _findTimeIcon = new ImageIcon(getClass().getResource("small_logo_button.png"));
+	private ImageIcon _findTimeIconInverted = new ImageIcon(getClass().getResource("small_logo_button_invert.png"));
 
-	private ImageIcon _toggleIcon = new ImageIcon("small_switch_button.png");
-	private ImageIcon _toggleIconInverted = new ImageIcon("small_switch_button_invert.png");
+	private ImageIcon _toggleIcon = new ImageIcon(getClass().getResource("small_switch_button.png"));
+	private ImageIcon _toggleIconInverted = new ImageIcon(getClass().getResource("small_switch_button_invert.png"));
 
-	private ImageIcon _refreshIcon = new ImageIcon("small_refresh_button.png");
-	private ImageIcon _refreshIconInverted = new ImageIcon("small_refresh_button_invert.png");
+	private ImageIcon _refreshIcon = new ImageIcon(getClass().getResource("small_refresh_button.png"));
+	private ImageIcon _refreshIconInverted = new ImageIcon(getClass().getResource("small_refresh_button_invert.png"));
 
-	private ImageIcon _submitIcon = new ImageIcon("small_submit_button.png");
-	private ImageIcon _submitIconInverted = new ImageIcon("small_submit_button_invert.png");
+	private ImageIcon _submitIcon = new ImageIcon(getClass().getResource("small_submit_button.png"));
+	private ImageIcon _submitIconInverted = new ImageIcon(getClass().getResource("small_submit_button_invert.png"));
 
-	private ImageIcon _prevIcon = new ImageIcon("small_left_button.png");
-	private ImageIcon _prevIconInverted = new ImageIcon("small_left_button_invert.png");
+	private ImageIcon _prevIcon = new ImageIcon(getClass().getResource("small_left_button.png"));
+	private ImageIcon _prevIconInverted = new ImageIcon(getClass().getResource("small_left_button_invert.png"));
 
-	private ImageIcon _nextIcon = new ImageIcon("small_right_button.png");
-	private ImageIcon _nextIconInverted = new ImageIcon("small_right_button_invert.png");
+	private ImageIcon _nextIcon = new ImageIcon(getClass().getResource("small_right_button.png"));
+	private ImageIcon _nextIconInverted = new ImageIcon(getClass().getResource("small_right_button_invert.png"));
 
-	private ImageIcon _kairosLogo = new ImageIcon("KairosLogo.png");
-	private ImageIcon _kairosIcon = new ImageIcon("KairosIcon.png");
+	private ImageIcon _kairosLogo = new ImageIcon(getClass().getResource("KairosLogo.png"));
+	private ImageIcon _kairosIcon = new ImageIcon(getClass().getResource("KairosIcon.png"));
 
 	private JToggleButton _refreshButton = new JToggleButton(_refreshIcon);
 	private JButton _eventDispButton = new JButton(_toggleIcon);
@@ -505,7 +506,7 @@ public class CalendarGui {
 				repaint();
 			}
 			else {
-				ImageIcon grey = new ImageIcon("small_logo_button.png");
+				ImageIcon grey = new ImageIcon(getClass().getResource("small_logo_button.png"));
 				JOptionPane.showMessageDialog(null, "You are not connected to the Internet.\nKairos cannot import current data.", "Connection Error", JOptionPane.ERROR_MESSAGE, grey);
 			}
 		}

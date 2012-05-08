@@ -53,7 +53,7 @@ public class EventPanel extends JPanel {
 	private JScrollPane _eventsScrollPane;
 	private JPanel _scrollPaneInner = new JPanel();
 	private GroupLayout _layout= new GroupLayout(this), _spiLayout = new GroupLayout(_scrollPaneInner);
-	private ImageIcon _kairosIcon = new ImageIcon("KairosIcon.png");
+	private ImageIcon _kairosIcon = new ImageIcon(getClass().getResource("KairosIcon.png"));
 	
 	public EventPanel(Communicator communicator, CalendarGui gui){
 		_communicator = communicator;
@@ -372,7 +372,7 @@ public class EventPanel extends JPanel {
 //			super("O");
 			_eventID = eventID;
 			this.addMouseListener(this);
-			ImageIcon icon = new ImageIcon("open-in-new-window.png");
+			ImageIcon icon = new ImageIcon(getClass().getResource("open-in-new-window.png"));
 			this.setIcon(icon);
 			
 		}

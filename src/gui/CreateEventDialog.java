@@ -53,7 +53,7 @@ public class CreateEventDialog{
 	// Fields for selected start and end hour
 	private JComboBox _startHour;
 	private JComboBox _endHour;
-	private ImageIcon _kairosIcon = new ImageIcon("KairosIcon.png");
+	private ImageIcon _kairosIcon = new ImageIcon(getClass().getResource("KairosIcon.png"));
 	public static enum DaysOfWeek {Monday, Tuesday, Wednesday, Thursday, Friday, Saturday, Sunday};
 
 	public CreateEventDialog(EventPanel eventPanel){

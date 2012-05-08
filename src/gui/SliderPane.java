@@ -54,7 +54,7 @@ public class SliderPane{
 		_optionPane.setMessage(new Object[] { "How long is the event you are planning? ", _slider , _label});
 		_optionPane.setMessageType(JOptionPane.QUESTION_MESSAGE);
 		_optionPane.setOptionType(JOptionPane.DEFAULT_OPTION);
-		_optionPane.setIcon(new ImageIcon("KairosIcon.png"));
+		_optionPane.setIcon(new ImageIcon(getClass().getResource("KairosIcon.png")));
 
 		_dialog = _optionPane.createDialog(_parent, "Event Length");
 		_dialog.pack();
